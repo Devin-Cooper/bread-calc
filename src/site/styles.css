@@ -17,3 +17,7 @@ button { padding: 6px 12px; cursor: pointer; }
 @media (prefers-reduced-motion: no-preference) {
   .warn-row { transition: background 200ms; }
 }
+.metrics { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; margin: 0; }
+.metrics dt, .metrics dd { margin: 0; }
+.headline { font-weight: bold; color: var(--accent); }
+.error { color: var(--error); }
