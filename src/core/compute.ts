@@ -5,7 +5,7 @@ import { inferRole } from "./role.js";
 import { computeWeightedDdtWa, type FlourComponent } from "./flour.js";
 import { classifyZone } from "./zones.js";
 import { solveWithError } from "./solve.js";
-import { runWarnings } from "./warnings.js";
+import { runWarnings, emitSolverWarning } from "./warnings.js";
 import { buildTree, projectByLabel } from "./explain-tree.js";
 
 interface ResolvedItem {
@@ -58,15 +58,8 @@ function r2(n: number): number {
 }
 
 export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
+  // 1. Solve and resolve; collect solverError but don't emit warnings yet.
   const { recipe: solvedRecipe, error: solverError } = solveWithError(recipe, db);
-  const warnings: Warning[] = [];
-  if (solverError === "solver_overconstrained") {
-    warnings.push({ code: "solver_overconstrained", severity: "error", message: "Fixed-gram items already exceed the target dough mass." });
-  } else if (solverError === "solver_ambiguous_flour") {
-    warnings.push({ code: "solver_ambiguous_flour", severity: "error", message: "Cannot mix fixed flour grams with bakers' percentages on other items." });
-  } else if (solverError === "target_loaf_g_ignored_no_pcts") {
-    warnings.push({ code: "target_loaf_g_ignored_no_pcts", severity: "info", message: "target_loaf_g set but no items use bakers_pct; using your gram values directly." });
-  }
   const resolved = solvedRecipe.items.map((it) => resolveItem(it, db, solvedRecipe));
 
   const tree = buildTree(solvedRecipe, db);
@@ -121,6 +114,8 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
 
   const machine = db.machines.find((m) => m.id === (solvedRecipe.machine ?? db.defaults.default_machine_id))
                 ?? db.machines[0]!;
+
+  // 2. Build partial WITHOUT solver warnings (warnings: []).
   const partial: ComputedRecipe = {
     recipe: solvedRecipe,
     totals: { total_mass_g: r2(total_mass_g), total_flour_g: r2(total_flour_g), total_inclusions_g: r2(total_inclusions_g),
@@ -136,9 +131,30 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
       yeast_pct: hasFlour ? r2((yeast_grams / total_flour_g) * 100) : null,
     },
     ddt_water_absorption_pct: ddt_water_absorption_pct === null ? null : r2(ddt_water_absorption_pct),
-    warnings: [...warnings],
+    warnings: [],
     water_breakdown, salt_breakdown, sugar_breakdown, fat_breakdown,
   };
-  const ruleWarnings = runWarnings({ computed: partial, db, resolved: resolved.map((r) => ({ item: r.item, ingredient: r.ingredient, role: r.role, grams: r.grams })), machine });
-  return { ...partial, warnings: [...partial.warnings, ...ruleWarnings] };
+
+  // 3. Construct ctx and emit solver warnings (now that partial is available for fixes()).
+  const ctxForRules = {
+    computed: partial,
+    db,
+    resolved: resolved.map((r) => ({ item: r.item, ingredient: r.ingredient, role: r.role, grams: r.grams })),
+    machine,
+  };
+  const allWarnings: Warning[] = [];
+  if (solverError) {
+    const messages: Record<string, string> = {
+      solver_overconstrained: "Fixed-gram items already exceed the target dough mass.",
+      solver_ambiguous_flour: "Cannot mix fixed flour grams with bakers' percentages on other items.",
+      target_loaf_g_ignored_no_pcts: "target_loaf_g set but no items use bakers_pct; using your gram values directly.",
+    };
+    allWarnings.push(emitSolverWarning(ctxForRules, solverError, messages[solverError]!));
+  }
+
+  // 4. Run the rule registry (solver-error rules' evaluate() returns { fired: false }).
+  const ruleWarnings = runWarnings(ctxForRules);
+  allWarnings.push(...ruleWarnings);
+
+  return { ...partial, warnings: allWarnings };
 }

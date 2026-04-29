@@ -15,7 +15,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     parent.innerHTML = groups.map((g) => `
       <h3>${g[0]!.severity.toUpperCase()}</h3>
       <ul class="warn-list">${g.map((w) => `
-        <li class="warn-row ${w.severity}" data-related="${(w.related_ingredient_ids ?? []).join(",")}">
+        <li class="warn-row ${w.severity}" data-related="${(w.related_uids ?? []).join(",")}">
           <strong>${escapeHtml(w.code)}</strong>: ${escapeHtml(w.message)}
         </li>`).join("")}</ul>
     `).join("");

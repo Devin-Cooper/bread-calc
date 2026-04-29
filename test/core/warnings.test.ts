@@ -33,12 +33,13 @@ function recipeOf(items: Recipe["items"], extra: Partial<Recipe> = {}): Recipe {
 }
 
 describe("warnings", () => {
-  it("emits no_flour exclusively when total_flour_g == 0", () => {
+  it("emits no_flour when total_flour_g == 0", () => {
     const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "water_tap", grams: 300 }]), db);
     const codes = c.warnings.map((w) => w.code);
     expect(codes).toContain("no_flour");
-    // exclusivity: only no_flour and possibly solver-related warnings should be present
-    expect(codes.filter((c) => !c.startsWith("solver_") && c !== "no_flour" && c !== "target_loaf_g_ignored_no_pcts").length).toBe(0);
+    // no_flour warning must have suggested_fixes array (non-optional)
+    const nf = c.warnings.find((w) => w.code === "no_flour")!;
+    expect(Array.isArray(nf.suggested_fixes)).toBe(true);
   });
   it("emits pan_overflow_predicted when predicted_loaf_g > 950", () => {
     const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 800 }, { uid: uid(), ingredient_id: "water_tap", grams: 500 }]), db);

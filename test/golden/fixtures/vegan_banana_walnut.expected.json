@@ -100,22 +100,47 @@
     {
       "code": "pan_overflow_predicted",
       "severity": "error",
-      "message": "Predicted loaf weight 958.32 g exceeds pan threshold 950 g."
+      "message": "Predicted loaf weight 958.32 g exceeds pan threshold 950 g.",
+      "suggested_fixes": [
+        {
+          "kind": "decrease_grams",
+          "uid": "u_brdfl001",
+          "delta_g": 5,
+          "rationale": "Reduce flour to bring predicted loaf below 950 g pan threshold."
+        }
+      ]
     },
     {
       "code": "under_developed_gluten",
       "severity": "warn",
-      "message": "Effective hydration 60.94% is below this flour's DDT-WA of 62%; gluten may not develop fully."
+      "message": "Effective hydration 60.94% is below this flour's DDT-WA of 62%; gluten may not develop fully.",
+      "suggested_fixes": [
+        {
+          "kind": "increase_grams",
+          "uid": "u_almnd001",
+          "delta_g": 20,
+          "rationale": "Increase water by ~20 g to lift hydration toward the flour's DDT-WA."
+        }
+      ]
     },
     {
       "code": "fat_too_high",
       "severity": "warn",
-      "message": "Fat equivalent 13.68% > 12% may interfere with gluten."
+      "message": "Fat equivalent 13.68% > 12% may interfere with gluten.",
+      "suggested_fixes": [
+        {
+          "kind": "set_grams",
+          "uid": "u_oilca001",
+          "grams": 64,
+          "rationale": "Cap declared fat at 12% of flour."
+        }
+      ]
     },
     {
       "code": "inclusions_exceed_pan",
       "severity": "warn",
-      "message": "Inclusions are 53% of flour, above the 30% recommended maximum."
+      "message": "Inclusions are 53% of flour, above the 30% recommended maximum.",
+      "suggested_fixes": []
     }
   ],
   "water_breakdown": [

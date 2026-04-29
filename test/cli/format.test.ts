@@ -62,8 +62,8 @@ describe("formatComputed", () => {
   it("renders each warning with severity and code under a Warnings header", () => {
     const c = makeComputed({
       warnings: [
-        { severity: "warn", code: "under_developed_gluten", message: "low hydration" },
-        { severity: "error", code: "pan_overflow_predicted", message: "too big" },
+        { severity: "warn", code: "under_developed_gluten", message: "low hydration", suggested_fixes: [] },
+        { severity: "error", code: "pan_overflow_predicted", message: "too big", suggested_fixes: [] },
       ],
     });
     const out = formatComputed(c, "effective");
