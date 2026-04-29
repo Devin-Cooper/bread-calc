@@ -7,6 +7,8 @@ import { mount as mountResults } from "./components/results-panel.js";
 import { mount as mountWarnings } from "./components/warnings-panel.js";
 import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
+import { mount as mountHeader, type HeaderActionId } from "./components/header.js";
+import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -61,6 +63,40 @@ async function loadInitialRecipe(): Promise<Recipe> {
 (async () => {
   const initial = await loadInitialRecipe();
   const store = createStore(initial);
+
+  // Header + actions
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".bread.json,application/json";
+  fileInput.hidden = true;
+  document.body.appendChild(fileInput);
+
+  fileInput.addEventListener("change", async () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    try {
+      const recipe = await readRecipeFile(f);
+      if (recipe.schema_version !== "2.0") {
+        alert("This file uses an older recipe format. breadmachine.io now requires v2.0 recipes.");
+      } else {
+        store.dispatch({ type: "load", recipe });
+      }
+    } catch (e) {
+      alert(`Could not load recipe: ${(e as Error).message}`);
+    }
+    fileInput.value = "";
+  });
+
+  function handleHeaderAction(id: HeaderActionId): void {
+    if (id === "save") saveRecipeAsFile(store.getState(), store.getState().name ?? "recipe");
+    else if (id === "open") fileInput.click();
+    else if (id === "share") void navigator.clipboard.writeText(location.href);
+    else if (id === "pdf") window.print();
+    else if (id === "settings") {
+      // Phase 3 wires this up. For now, no-op.
+    }
+  }
+  mountHeader(document.querySelector("#site-header") as HTMLElement, { onAction: handleHeaderAction });
 
   mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
