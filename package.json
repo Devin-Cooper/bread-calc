@@ -1,6 +1,6 @@
 {
   "name": "bread-calc",
-  "version": "1.0.1",
+  "version": "2.0.0-alpha.0",
   "description": "Hydration and loaf-weight calculator for the Zojirushi BB-PDC20 (and similar 2-lb bread machines), with an LLM-agent-friendly API.",
   "type": "module",
   "engines": {
@@ -44,6 +44,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "update-goldens": "UPDATE_GOLDENS=1 vitest run test/golden",
+    "update-contract": "UPDATE_CONTRACT=1 vitest run test/contract",
+    "build:examples": "node --experimental-strip-types scripts/build-examples.mjs",
     "build:lib": "vite build --config vite.lib.config.ts && tsc --emitDeclarationOnly --declaration --outDir dist/lib --rootDir src/core src/core/index.ts",
     "build:cli": "vite build --config vite.cli.config.ts && node scripts/add-shebang.mjs",
     "build:site": "vite build --config vite.site.config.ts",
