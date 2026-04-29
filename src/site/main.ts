@@ -3,6 +3,7 @@ import { createStore } from "./state.js";
 import { mount as mountPicker } from "./components/ingredient-picker.js";
 import { mount as mountTable } from "./components/recipe-table.js";
 import { mount as mountResults } from "./components/results-panel.js";
+import { mount as mountWarnings } from "./components/warnings-panel.js";
 import { mount as mountMode } from "./components/mode-toggle.js";
 import { mount as mountHeadline } from "./components/headline-toggle.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
@@ -57,6 +58,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
   mountTable(document.querySelector("#recipe-table") as HTMLElement, store);
   mountResults(document.querySelector("#results-panel") as HTMLElement, store, db);
+  mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
   mountMode(document.querySelector("#mode-toggle") as HTMLSelectElement, store);
   mountHeadline(document.querySelector("#headline-toggle") as HTMLSelectElement, store);
 

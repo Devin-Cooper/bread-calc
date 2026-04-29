@@ -31,8 +31,6 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       </dl>
       <p>Predicted loaf weight: <strong>${c.totals.predicted_loaf_g} g</strong></p>
     `;
-    const wp = document.querySelector("#warnings-panel")!;
-    wp.innerHTML = c.warnings.map((w) => `<div class="warn-row ${w.severity}"><strong>${escapeHtml(w.code)}</strong>: ${escapeHtml(w.message)}</div>`).join("");
   }
   store.subscribe(render); render();
 }
