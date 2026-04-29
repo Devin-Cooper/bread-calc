@@ -25,4 +25,13 @@ describe("URL hash codec", () => {
     const encoded = await encodeRecipeHash(huge);
     await expect(decodeRecipeHash(encoded)).rejects.toThrow(/16 KB/);
   });
+  it("rejects payloads with schema_version other than '2.0'", async () => {
+    // Encode a v1.0-shaped recipe via the same codec — the test only cares about
+    // the round-trip rejection at decode time. We bypass the producer-side
+    // validator by passing the v1 blob through the public `encodeRecipeHash`
+    // (which doesn't validate schema_version).
+    const v1: any = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 553 }] };
+    const encoded = await encodeRecipeHash(v1);
+    await expect(decodeRecipeHash(encoded)).rejects.toThrow(/schema_version/);
+  });
 });
