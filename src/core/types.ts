@@ -156,9 +156,20 @@ export type ApplyFixResult =
   | { ok: true;  recipe: Recipe }
   | { ok: false; error: ApplyFixError };
 
+export interface BreakdownEntry {
+  uid: string;
+  ingredient_id: string;
+  grams: number;
+  contribution_g: number;
+  contribution_g_effective?: number;
+}
+
 export interface ComputedRecipe {
   recipe: Recipe;
-  totals: {
+
+  tree: ExplainTree;
+
+  metrics: {
     total_mass_g: number;
     total_flour_g: number;
     total_inclusions_g: number;
@@ -170,25 +181,33 @@ export interface ComputedRecipe {
     total_alcohol_g: number;
     predicted_loaf_g: number;
   };
+
   hydration: {
     effective_pct: number | null;
     nominal_pct: number | null;
     total_liquid_pct: number | null;
     zone: HydrationZone | null;
   };
-  bakers_pcts: {
-    by_ingredient: Record<string, number | null>;
+
+  bakers_percents: {
+    by_uid: Record<string, number | null>;
+    by_ingredient_id: Record<string, number[]>;
     salt_equivalent_pct: number | null;
     sugar_equivalent_pct: number | null;
     fat_equivalent_pct: number | null;
     yeast_pct: number | null;
   };
+
   ddt_water_absorption_pct: number | null;
+
   warnings: Warning[];
-  water_breakdown: Array<{ ingredient_id: string; grams: number; nominal_water_g: number; effective_water_g: number }>;
-  salt_breakdown:  Array<{ ingredient_id: string; grams: number; salt_g_contribution:  number }>;
-  sugar_breakdown: Array<{ ingredient_id: string; grams: number; sugar_g_contribution: number }>;
-  fat_breakdown:   Array<{ ingredient_id: string; grams: number; fat_g_contribution:   number }>;
+
+  breakdowns: {
+    water: BreakdownEntry[];
+    salt: BreakdownEntry[];
+    sugar: BreakdownEntry[];
+    fat: BreakdownEntry[];
+  };
 }
 
 export class RecipeValidationError extends Error {
