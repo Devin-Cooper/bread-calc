@@ -176,3 +176,70 @@ export interface RecipeValidationResult {
   valid: boolean;
   issues: Array<{ path: string; code: string; message: string }>;
 }
+
+// ----- Phase 2: derivation tree types -----
+
+export type ExplainTree = ExplainNode;
+
+export type ExplainNode =
+  | ConstantNode
+  | ProjectFieldNode
+  | SumNode
+  | WeightedSumNode
+  | ProductNode
+  | RatioNode
+  | ScaleNode
+  | ProjectFromTreeNode;
+
+interface BaseNode { id: string; label: string; }
+
+export interface ConstantNode extends BaseNode {
+  type: "Constant";
+  value: number;
+  unit?: string;
+}
+
+export interface ProjectFieldNode extends BaseNode {
+  type: "ProjectField";
+  source_uid: string;
+  field: string;        // e.g. "grams", "ingredient.water_pct"
+  value: number;
+}
+
+export interface SumNode extends BaseNode {
+  type: "Sum";
+  terms: ExplainNode[];
+  value: number | null;
+}
+
+export interface WeightedSumNode extends BaseNode {
+  type: "WeightedSum";
+  terms: Array<{ weight: ExplainNode; value: ExplainNode }>;
+  value: number | null;
+}
+
+export interface ProductNode extends BaseNode {
+  type: "Product";
+  factors: ExplainNode[];
+  value: number | null;
+}
+
+export interface RatioNode extends BaseNode {
+  type: "Ratio";
+  numerator: ExplainNode;
+  denominator: ExplainNode;
+  value: number | null;     // null when denominator is 0
+}
+
+export interface ScaleNode extends BaseNode {
+  type: "Scale";
+  input: ExplainNode;
+  factor: number;
+  value: number | null;
+}
+
+export interface ProjectFromTreeNode extends BaseNode {
+  type: "ProjectFromTree";
+  ref_id: string;           // id of another node in the same tree
+  value: number | null;
+}
