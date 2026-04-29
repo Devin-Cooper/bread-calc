@@ -4,6 +4,7 @@ import type {
 import { inferRole } from "./role.js";
 import { computeWeightedDdtWa, type FlourComponent } from "./flour.js";
 import { classifyZone } from "./zones.js";
+import { solveWithError } from "./solve.js";
 
 interface ResolvedItem {
   item: RecipeItem;
@@ -55,7 +56,16 @@ function r2(n: number): number {
 }
 
 export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
-  const resolved = recipe.items.map((it) => resolveItem(it, db, recipe));
+  const { recipe: solvedRecipe, error: solverError } = solveWithError(recipe, db);
+  const warnings: Warning[] = [];
+  if (solverError === "solver_overconstrained") {
+    warnings.push({ code: "solver_overconstrained", severity: "error", message: "Fixed-gram items already exceed the target dough mass." });
+  } else if (solverError === "solver_ambiguous_flour") {
+    warnings.push({ code: "solver_ambiguous_flour", severity: "error", message: "Cannot mix fixed flour grams with bakers' percentages on other items." });
+  } else if (solverError === "target_loaf_g_ignored_no_pcts") {
+    warnings.push({ code: "target_loaf_g_ignored_no_pcts", severity: "info", message: "target_loaf_g set but no items use bakers_pct; using your gram values directly." });
+  }
+  const resolved = solvedRecipe.items.map((it) => resolveItem(it, db, solvedRecipe));
 
   const total_mass_g = resolved.reduce((s, r) => s + r.grams, 0);
   const total_flour_g = resolved.filter((r) => r.role === "flour").reduce((s, r) => s + r.grams, 0);
@@ -107,7 +117,7 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   }));
 
   return {
-    recipe,
+    recipe: solvedRecipe,
     totals: {
       total_mass_g: r2(total_mass_g),
       total_flour_g: r2(total_flour_g),
@@ -134,7 +144,7 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
       yeast_pct: hasFlour ? r2((yeast_grams / total_flour_g) * 100) : null,
     },
     ddt_water_absorption_pct: ddt_water_absorption_pct === null ? null : r2(ddt_water_absorption_pct),
-    warnings: [], // populated by warnings.ts in Task 1.13
+    warnings: [...warnings],
     water_breakdown,
     salt_breakdown,
     sugar_breakdown,
