@@ -1,0 +1,1570 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "compute"
+  },
+  "payload": {
+    "recipe": {
+      "schema_version": "2.0",
+      "name": "With Solver Warning (overconstrained)",
+      "target_loaf_g": 100,
+      "items": [
+        {
+          "uid": "u_eg0000090",
+          "ingredient_id": "bread_flour",
+          "grams": 500
+        },
+        {
+          "uid": "u_eg0000091",
+          "ingredient_id": "water_tap",
+          "bakers_pct": 60
+        },
+        {
+          "uid": "u_eg0000092",
+          "ingredient_id": "salt_table",
+          "bakers_pct": 1.6
+        },
+        {
+          "uid": "u_eg0000093",
+          "ingredient_id": "yeast_instant",
+          "bakers_pct": 0.9
+        }
+      ]
+    },
+    "tree": {
+      "type": "Sum",
+      "id": "s_31",
+      "label": "computed_recipe_root",
+      "terms": [
+        {
+          "type": "Sum",
+          "id": "s_x",
+          "label": "total_mass_g",
+          "terms": [
+            {
+              "type": "ProjectField",
+              "id": "pf_t",
+              "label": "mass[u_eg0000090]",
+              "source_uid": "u_eg0000090",
+              "field": "grams",
+              "value": 500
+            },
+            {
+              "type": "ProjectField",
+              "id": "pf_u",
+              "label": "mass[u_eg0000091]",
+              "source_uid": "u_eg0000091",
+              "field": "grams",
+              "value": 0
+            },
+            {
+              "type": "ProjectField",
+              "id": "pf_v",
+              "label": "mass[u_eg0000092]",
+              "source_uid": "u_eg0000092",
+              "field": "grams",
+              "value": 0
+            },
+            {
+              "type": "ProjectField",
+              "id": "pf_w",
+              "label": "mass[u_eg0000093]",
+              "source_uid": "u_eg0000093",
+              "field": "grams",
+              "value": 0
+            }
+          ],
+          "value": 500
+        },
+        {
+          "type": "Sum",
+          "id": "s_s",
+          "label": "total_flour_g",
+          "terms": [
+            {
+              "type": "ProjectField",
+              "id": "pf_r",
+              "label": "flour_grams[u_eg0000090]",
+              "source_uid": "u_eg0000090",
+              "field": "grams",
+              "value": 500
+            }
+          ],
+          "value": 500
+        },
+        {
+          "type": "Sum",
+          "id": "s_y",
+          "label": "total_inclusions_g",
+          "terms": [],
+          "value": 0
+        },
+        {
+          "type": "Sum",
+          "id": "s_h",
+          "label": "total_water_g_nominal",
+          "terms": [
+            {
+              "type": "Product",
+              "id": "p_4",
+              "label": "nominal_water[u_eg0000090]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1",
+                  "label": "grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_3",
+                  "label": "water_frac[u_eg0000090]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_2",
+                    "label": "water_pct[u_eg0000090]",
+                    "source_uid": "u_eg0000090",
+                    "field": "ingredient.water_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_8",
+              "label": "nominal_water[u_eg0000091]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_5",
+                  "label": "grams[u_eg0000091]",
+                  "source_uid": "u_eg0000091",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_7",
+                  "label": "water_frac[u_eg0000091]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_6",
+                    "label": "water_pct[u_eg0000091]",
+                    "source_uid": "u_eg0000091",
+                    "field": "ingredient.water_pct",
+                    "value": 100
+                  },
+                  "factor": 0.01,
+                  "value": 1
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_c",
+              "label": "nominal_water[u_eg0000092]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_9",
+                  "label": "grams[u_eg0000092]",
+                  "source_uid": "u_eg0000092",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_b",
+                  "label": "water_frac[u_eg0000092]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_a",
+                    "label": "water_pct[u_eg0000092]",
+                    "source_uid": "u_eg0000092",
+                    "field": "ingredient.water_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_g",
+              "label": "nominal_water[u_eg0000093]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_d",
+                  "label": "grams[u_eg0000093]",
+                  "source_uid": "u_eg0000093",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_f",
+                  "label": "water_frac[u_eg0000093]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_e",
+                    "label": "water_pct[u_eg0000093]",
+                    "source_uid": "u_eg0000093",
+                    "field": "ingredient.water_pct",
+                    "value": 6
+                  },
+                  "factor": 0.01,
+                  "value": 0.06
+                }
+              ],
+              "value": 0
+            }
+          ],
+          "value": 0
+        },
+        {
+          "type": "Sum",
+          "id": "s_q",
+          "label": "total_water_g_effective",
+          "terms": [
+            {
+              "type": "Product",
+              "id": "p_j",
+              "label": "effective_water[u_eg0000090]",
+              "factors": [
+                {
+                  "type": "Product",
+                  "id": "p_4",
+                  "label": "nominal_water[u_eg0000090]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_1",
+                      "label": "grams[u_eg0000090]",
+                      "source_uid": "u_eg0000090",
+                      "field": "grams",
+                      "value": 500
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_3",
+                      "label": "water_frac[u_eg0000090]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_2",
+                        "label": "water_pct[u_eg0000090]",
+                        "source_uid": "u_eg0000090",
+                        "field": "ingredient.water_pct",
+                        "value": 0
+                      },
+                      "factor": 0.01,
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Constant",
+                  "id": "c_i",
+                  "label": "fwf[u_eg0000090]",
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_l",
+              "label": "effective_water[u_eg0000091]",
+              "factors": [
+                {
+                  "type": "Product",
+                  "id": "p_8",
+                  "label": "nominal_water[u_eg0000091]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_5",
+                      "label": "grams[u_eg0000091]",
+                      "source_uid": "u_eg0000091",
+                      "field": "grams",
+                      "value": 0
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_7",
+                      "label": "water_frac[u_eg0000091]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_6",
+                        "label": "water_pct[u_eg0000091]",
+                        "source_uid": "u_eg0000091",
+                        "field": "ingredient.water_pct",
+                        "value": 100
+                      },
+                      "factor": 0.01,
+                      "value": 1
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Constant",
+                  "id": "c_k",
+                  "label": "fwf[u_eg0000091]",
+                  "value": 1
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_n",
+              "label": "effective_water[u_eg0000092]",
+              "factors": [
+                {
+                  "type": "Product",
+                  "id": "p_c",
+                  "label": "nominal_water[u_eg0000092]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_9",
+                      "label": "grams[u_eg0000092]",
+                      "source_uid": "u_eg0000092",
+                      "field": "grams",
+                      "value": 0
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_b",
+                      "label": "water_frac[u_eg0000092]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_a",
+                        "label": "water_pct[u_eg0000092]",
+                        "source_uid": "u_eg0000092",
+                        "field": "ingredient.water_pct",
+                        "value": 0
+                      },
+                      "factor": 0.01,
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Constant",
+                  "id": "c_m",
+                  "label": "fwf[u_eg0000092]",
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_p",
+              "label": "effective_water[u_eg0000093]",
+              "factors": [
+                {
+                  "type": "Product",
+                  "id": "p_g",
+                  "label": "nominal_water[u_eg0000093]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_d",
+                      "label": "grams[u_eg0000093]",
+                      "source_uid": "u_eg0000093",
+                      "field": "grams",
+                      "value": 0
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_f",
+                      "label": "water_frac[u_eg0000093]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_e",
+                        "label": "water_pct[u_eg0000093]",
+                        "source_uid": "u_eg0000093",
+                        "field": "ingredient.water_pct",
+                        "value": 6
+                      },
+                      "factor": 0.01,
+                      "value": 0.06
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Constant",
+                  "id": "c_o",
+                  "label": "fwf[u_eg0000093]",
+                  "value": 0
+                }
+              ],
+              "value": 0
+            }
+          ],
+          "value": 0
+        },
+        {
+          "type": "Sum",
+          "id": "s_1f",
+          "label": "total_salt_g_equivalent",
+          "terms": [
+            {
+              "type": "Product",
+              "id": "p_12",
+              "label": "salt[u_eg0000090]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_z",
+                  "label": "grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_11",
+                  "label": "salt_frac[u_eg0000090]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_10",
+                    "label": "salt_pct[u_eg0000090]",
+                    "source_uid": "u_eg0000090",
+                    "field": "ingredient.salt_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_16",
+              "label": "salt[u_eg0000091]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_13",
+                  "label": "grams[u_eg0000091]",
+                  "source_uid": "u_eg0000091",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_15",
+                  "label": "salt_frac[u_eg0000091]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_14",
+                    "label": "salt_pct[u_eg0000091]",
+                    "source_uid": "u_eg0000091",
+                    "field": "ingredient.salt_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_1a",
+              "label": "salt[u_eg0000092]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_17",
+                  "label": "grams[u_eg0000092]",
+                  "source_uid": "u_eg0000092",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_19",
+                  "label": "salt_frac[u_eg0000092]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_18",
+                    "label": "salt_pct[u_eg0000092]",
+                    "source_uid": "u_eg0000092",
+                    "field": "ingredient.salt_pct",
+                    "value": 100
+                  },
+                  "factor": 0.01,
+                  "value": 1
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_1e",
+              "label": "salt[u_eg0000093]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1b",
+                  "label": "grams[u_eg0000093]",
+                  "source_uid": "u_eg0000093",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_1d",
+                  "label": "salt_frac[u_eg0000093]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_1c",
+                    "label": "salt_pct[u_eg0000093]",
+                    "source_uid": "u_eg0000093",
+                    "field": "ingredient.salt_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            }
+          ],
+          "value": 0
+        },
+        {
+          "type": "Sum",
+          "id": "s_1w",
+          "label": "total_sugar_g_equivalent",
+          "terms": [
+            {
+              "type": "Product",
+              "id": "p_1j",
+              "label": "sugar[u_eg0000090]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1g",
+                  "label": "grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_1i",
+                  "label": "sugar_frac[u_eg0000090]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_1h",
+                    "label": "sugar_pct[u_eg0000090]",
+                    "source_uid": "u_eg0000090",
+                    "field": "ingredient.sugar_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_1n",
+              "label": "sugar[u_eg0000091]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1k",
+                  "label": "grams[u_eg0000091]",
+                  "source_uid": "u_eg0000091",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_1m",
+                  "label": "sugar_frac[u_eg0000091]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_1l",
+                    "label": "sugar_pct[u_eg0000091]",
+                    "source_uid": "u_eg0000091",
+                    "field": "ingredient.sugar_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_1r",
+              "label": "sugar[u_eg0000092]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1o",
+                  "label": "grams[u_eg0000092]",
+                  "source_uid": "u_eg0000092",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_1q",
+                  "label": "sugar_frac[u_eg0000092]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_1p",
+                    "label": "sugar_pct[u_eg0000092]",
+                    "source_uid": "u_eg0000092",
+                    "field": "ingredient.sugar_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_1v",
+              "label": "sugar[u_eg0000093]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1s",
+                  "label": "grams[u_eg0000093]",
+                  "source_uid": "u_eg0000093",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_1u",
+                  "label": "sugar_frac[u_eg0000093]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_1t",
+                    "label": "sugar_pct[u_eg0000093]",
+                    "source_uid": "u_eg0000093",
+                    "field": "ingredient.sugar_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            }
+          ],
+          "value": 0
+        },
+        {
+          "type": "Sum",
+          "id": "s_2d",
+          "label": "total_fat_g_equivalent",
+          "terms": [
+            {
+              "type": "Product",
+              "id": "p_20",
+              "label": "fat[u_eg0000090]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_1x",
+                  "label": "grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_1z",
+                  "label": "fat_frac[u_eg0000090]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_1y",
+                    "label": "fat_pct[u_eg0000090]",
+                    "source_uid": "u_eg0000090",
+                    "field": "ingredient.fat_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_24",
+              "label": "fat[u_eg0000091]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_21",
+                  "label": "grams[u_eg0000091]",
+                  "source_uid": "u_eg0000091",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_23",
+                  "label": "fat_frac[u_eg0000091]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_22",
+                    "label": "fat_pct[u_eg0000091]",
+                    "source_uid": "u_eg0000091",
+                    "field": "ingredient.fat_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_28",
+              "label": "fat[u_eg0000092]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_25",
+                  "label": "grams[u_eg0000092]",
+                  "source_uid": "u_eg0000092",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_27",
+                  "label": "fat_frac[u_eg0000092]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_26",
+                    "label": "fat_pct[u_eg0000092]",
+                    "source_uid": "u_eg0000092",
+                    "field": "ingredient.fat_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_2c",
+              "label": "fat[u_eg0000093]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_29",
+                  "label": "grams[u_eg0000093]",
+                  "source_uid": "u_eg0000093",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_2b",
+                  "label": "fat_frac[u_eg0000093]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_2a",
+                    "label": "fat_pct[u_eg0000093]",
+                    "source_uid": "u_eg0000093",
+                    "field": "ingredient.fat_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            }
+          ],
+          "value": 0
+        },
+        {
+          "type": "Sum",
+          "id": "s_2u",
+          "label": "total_alcohol_g",
+          "terms": [
+            {
+              "type": "Product",
+              "id": "p_2h",
+              "label": "alcohol[u_eg0000090]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_2e",
+                  "label": "grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_2g",
+                  "label": "alcohol_frac[u_eg0000090]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_2f",
+                    "label": "alcohol_pct[u_eg0000090]",
+                    "source_uid": "u_eg0000090",
+                    "field": "ingredient.alcohol_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_2l",
+              "label": "alcohol[u_eg0000091]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_2i",
+                  "label": "grams[u_eg0000091]",
+                  "source_uid": "u_eg0000091",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_2k",
+                  "label": "alcohol_frac[u_eg0000091]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_2j",
+                    "label": "alcohol_pct[u_eg0000091]",
+                    "source_uid": "u_eg0000091",
+                    "field": "ingredient.alcohol_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_2p",
+              "label": "alcohol[u_eg0000092]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_2m",
+                  "label": "grams[u_eg0000092]",
+                  "source_uid": "u_eg0000092",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_2o",
+                  "label": "alcohol_frac[u_eg0000092]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_2n",
+                    "label": "alcohol_pct[u_eg0000092]",
+                    "source_uid": "u_eg0000092",
+                    "field": "ingredient.alcohol_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            {
+              "type": "Product",
+              "id": "p_2t",
+              "label": "alcohol[u_eg0000093]",
+              "factors": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_2q",
+                  "label": "grams[u_eg0000093]",
+                  "source_uid": "u_eg0000093",
+                  "field": "grams",
+                  "value": 0
+                },
+                {
+                  "type": "Scale",
+                  "id": "sc_2s",
+                  "label": "alcohol_frac[u_eg0000093]",
+                  "input": {
+                    "type": "ProjectField",
+                    "id": "pf_2r",
+                    "label": "alcohol_pct[u_eg0000093]",
+                    "source_uid": "u_eg0000093",
+                    "field": "ingredient.alcohol_pct",
+                    "value": 0
+                  },
+                  "factor": 0.01,
+                  "value": 0
+                }
+              ],
+              "value": 0
+            }
+          ],
+          "value": 0
+        },
+        {
+          "type": "Scale",
+          "id": "sc_2w",
+          "label": "effective_pct",
+          "input": {
+            "type": "Ratio",
+            "id": "r_2v",
+            "label": "effective_ratio",
+            "numerator": {
+              "type": "Sum",
+              "id": "s_q",
+              "label": "total_water_g_effective",
+              "terms": [
+                {
+                  "type": "Product",
+                  "id": "p_j",
+                  "label": "effective_water[u_eg0000090]",
+                  "factors": [
+                    {
+                      "type": "Product",
+                      "id": "p_4",
+                      "label": "nominal_water[u_eg0000090]",
+                      "factors": [
+                        {
+                          "type": "ProjectField",
+                          "id": "pf_1",
+                          "label": "grams[u_eg0000090]",
+                          "source_uid": "u_eg0000090",
+                          "field": "grams",
+                          "value": 500
+                        },
+                        {
+                          "type": "Scale",
+                          "id": "sc_3",
+                          "label": "water_frac[u_eg0000090]",
+                          "input": {
+                            "type": "ProjectField",
+                            "id": "pf_2",
+                            "label": "water_pct[u_eg0000090]",
+                            "source_uid": "u_eg0000090",
+                            "field": "ingredient.water_pct",
+                            "value": 0
+                          },
+                          "factor": 0.01,
+                          "value": 0
+                        }
+                      ],
+                      "value": 0
+                    },
+                    {
+                      "type": "Constant",
+                      "id": "c_i",
+                      "label": "fwf[u_eg0000090]",
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Product",
+                  "id": "p_l",
+                  "label": "effective_water[u_eg0000091]",
+                  "factors": [
+                    {
+                      "type": "Product",
+                      "id": "p_8",
+                      "label": "nominal_water[u_eg0000091]",
+                      "factors": [
+                        {
+                          "type": "ProjectField",
+                          "id": "pf_5",
+                          "label": "grams[u_eg0000091]",
+                          "source_uid": "u_eg0000091",
+                          "field": "grams",
+                          "value": 0
+                        },
+                        {
+                          "type": "Scale",
+                          "id": "sc_7",
+                          "label": "water_frac[u_eg0000091]",
+                          "input": {
+                            "type": "ProjectField",
+                            "id": "pf_6",
+                            "label": "water_pct[u_eg0000091]",
+                            "source_uid": "u_eg0000091",
+                            "field": "ingredient.water_pct",
+                            "value": 100
+                          },
+                          "factor": 0.01,
+                          "value": 1
+                        }
+                      ],
+                      "value": 0
+                    },
+                    {
+                      "type": "Constant",
+                      "id": "c_k",
+                      "label": "fwf[u_eg0000091]",
+                      "value": 1
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Product",
+                  "id": "p_n",
+                  "label": "effective_water[u_eg0000092]",
+                  "factors": [
+                    {
+                      "type": "Product",
+                      "id": "p_c",
+                      "label": "nominal_water[u_eg0000092]",
+                      "factors": [
+                        {
+                          "type": "ProjectField",
+                          "id": "pf_9",
+                          "label": "grams[u_eg0000092]",
+                          "source_uid": "u_eg0000092",
+                          "field": "grams",
+                          "value": 0
+                        },
+                        {
+                          "type": "Scale",
+                          "id": "sc_b",
+                          "label": "water_frac[u_eg0000092]",
+                          "input": {
+                            "type": "ProjectField",
+                            "id": "pf_a",
+                            "label": "water_pct[u_eg0000092]",
+                            "source_uid": "u_eg0000092",
+                            "field": "ingredient.water_pct",
+                            "value": 0
+                          },
+                          "factor": 0.01,
+                          "value": 0
+                        }
+                      ],
+                      "value": 0
+                    },
+                    {
+                      "type": "Constant",
+                      "id": "c_m",
+                      "label": "fwf[u_eg0000092]",
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Product",
+                  "id": "p_p",
+                  "label": "effective_water[u_eg0000093]",
+                  "factors": [
+                    {
+                      "type": "Product",
+                      "id": "p_g",
+                      "label": "nominal_water[u_eg0000093]",
+                      "factors": [
+                        {
+                          "type": "ProjectField",
+                          "id": "pf_d",
+                          "label": "grams[u_eg0000093]",
+                          "source_uid": "u_eg0000093",
+                          "field": "grams",
+                          "value": 0
+                        },
+                        {
+                          "type": "Scale",
+                          "id": "sc_f",
+                          "label": "water_frac[u_eg0000093]",
+                          "input": {
+                            "type": "ProjectField",
+                            "id": "pf_e",
+                            "label": "water_pct[u_eg0000093]",
+                            "source_uid": "u_eg0000093",
+                            "field": "ingredient.water_pct",
+                            "value": 6
+                          },
+                          "factor": 0.01,
+                          "value": 0.06
+                        }
+                      ],
+                      "value": 0
+                    },
+                    {
+                      "type": "Constant",
+                      "id": "c_o",
+                      "label": "fwf[u_eg0000093]",
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            "denominator": {
+              "type": "Sum",
+              "id": "s_s",
+              "label": "total_flour_g",
+              "terms": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_r",
+                  "label": "flour_grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                }
+              ],
+              "value": 500
+            },
+            "value": 0
+          },
+          "factor": 100,
+          "value": 0
+        },
+        {
+          "type": "Scale",
+          "id": "sc_2y",
+          "label": "nominal_pct",
+          "input": {
+            "type": "Ratio",
+            "id": "r_2x",
+            "label": "nominal_ratio",
+            "numerator": {
+              "type": "Sum",
+              "id": "s_h",
+              "label": "total_water_g_nominal",
+              "terms": [
+                {
+                  "type": "Product",
+                  "id": "p_4",
+                  "label": "nominal_water[u_eg0000090]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_1",
+                      "label": "grams[u_eg0000090]",
+                      "source_uid": "u_eg0000090",
+                      "field": "grams",
+                      "value": 500
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_3",
+                      "label": "water_frac[u_eg0000090]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_2",
+                        "label": "water_pct[u_eg0000090]",
+                        "source_uid": "u_eg0000090",
+                        "field": "ingredient.water_pct",
+                        "value": 0
+                      },
+                      "factor": 0.01,
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Product",
+                  "id": "p_8",
+                  "label": "nominal_water[u_eg0000091]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_5",
+                      "label": "grams[u_eg0000091]",
+                      "source_uid": "u_eg0000091",
+                      "field": "grams",
+                      "value": 0
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_7",
+                      "label": "water_frac[u_eg0000091]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_6",
+                        "label": "water_pct[u_eg0000091]",
+                        "source_uid": "u_eg0000091",
+                        "field": "ingredient.water_pct",
+                        "value": 100
+                      },
+                      "factor": 0.01,
+                      "value": 1
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Product",
+                  "id": "p_c",
+                  "label": "nominal_water[u_eg0000092]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_9",
+                      "label": "grams[u_eg0000092]",
+                      "source_uid": "u_eg0000092",
+                      "field": "grams",
+                      "value": 0
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_b",
+                      "label": "water_frac[u_eg0000092]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_a",
+                        "label": "water_pct[u_eg0000092]",
+                        "source_uid": "u_eg0000092",
+                        "field": "ingredient.water_pct",
+                        "value": 0
+                      },
+                      "factor": 0.01,
+                      "value": 0
+                    }
+                  ],
+                  "value": 0
+                },
+                {
+                  "type": "Product",
+                  "id": "p_g",
+                  "label": "nominal_water[u_eg0000093]",
+                  "factors": [
+                    {
+                      "type": "ProjectField",
+                      "id": "pf_d",
+                      "label": "grams[u_eg0000093]",
+                      "source_uid": "u_eg0000093",
+                      "field": "grams",
+                      "value": 0
+                    },
+                    {
+                      "type": "Scale",
+                      "id": "sc_f",
+                      "label": "water_frac[u_eg0000093]",
+                      "input": {
+                        "type": "ProjectField",
+                        "id": "pf_e",
+                        "label": "water_pct[u_eg0000093]",
+                        "source_uid": "u_eg0000093",
+                        "field": "ingredient.water_pct",
+                        "value": 6
+                      },
+                      "factor": 0.01,
+                      "value": 0.06
+                    }
+                  ],
+                  "value": 0
+                }
+              ],
+              "value": 0
+            },
+            "denominator": {
+              "type": "Sum",
+              "id": "s_s",
+              "label": "total_flour_g",
+              "terms": [
+                {
+                  "type": "ProjectField",
+                  "id": "pf_r",
+                  "label": "flour_grams[u_eg0000090]",
+                  "source_uid": "u_eg0000090",
+                  "field": "grams",
+                  "value": 500
+                }
+              ],
+              "value": 500
+            },
+            "value": 0
+          },
+          "factor": 100,
+          "value": 0
+        },
+        {
+          "type": "Scale",
+          "id": "sc_30",
+          "label": "predicted_loaf_g",
+          "input": {
+            "type": "ProjectFromTree",
+            "id": "rf_2z",
+            "label": "total_mass_ref",
+            "ref_id": "s_x",
+            "value": 500
+          },
+          "factor": 0.88,
+          "value": 440
+        }
+      ],
+      "value": 1440
+    },
+    "metrics": {
+      "total_mass_g": 500,
+      "total_flour_g": 500,
+      "total_inclusions_g": 0,
+      "total_water_g_nominal": 0,
+      "total_water_g_effective": 0,
+      "total_salt_g_equivalent": 0,
+      "total_sugar_g_equivalent": 0,
+      "total_fat_g_equivalent": 0,
+      "total_alcohol_g": 0,
+      "predicted_loaf_g": 440
+    },
+    "hydration": {
+      "effective_pct": 0,
+      "nominal_pct": 0,
+      "total_liquid_pct": 0,
+      "zone": {
+        "id": "dry",
+        "label": "Dry",
+        "range": [
+          0,
+          55
+        ],
+        "note": "butter rolls; enriched"
+      }
+    },
+    "bakers_percents": {
+      "by_uid": {
+        "u_eg0000090": 100,
+        "u_eg0000091": 0,
+        "u_eg0000092": 0,
+        "u_eg0000093": 0
+      },
+      "by_ingredient_id": {
+        "bread_flour": [
+          100
+        ],
+        "water_tap": [
+          0
+        ],
+        "salt_table": [
+          0
+        ],
+        "yeast_instant": [
+          0
+        ]
+      },
+      "salt_equivalent_pct": 0,
+      "sugar_equivalent_pct": 0,
+      "fat_equivalent_pct": 0,
+      "yeast_pct": 0
+    },
+    "ddt_water_absorption_pct": 62,
+    "warnings": [
+      {
+        "code": "solver_ambiguous_flour",
+        "severity": "error",
+        "message": "Cannot mix fixed flour grams with bakers' percentages on other items.",
+        "suggested_fixes": [
+          {
+            "kind": "set_grams",
+            "uid": "u_eg0000090",
+            "grams": 0,
+            "rationale": "Clear fixed grams on flour and let the solver derive it from bakers_pct on other items."
+          }
+        ]
+      },
+      {
+        "code": "pan_underfill_predicted",
+        "severity": "info",
+        "message": "Predicted loaf weight 440 g may underfill the pan (typical minimum 600 g).",
+        "suggested_fixes": []
+      },
+      {
+        "code": "under_developed_gluten",
+        "severity": "warn",
+        "message": "Effective hydration 0% is below this flour's DDT-WA of 62%; gluten may not develop fully.",
+        "suggested_fixes": [
+          {
+            "kind": "increase_grams",
+            "uid": "u_eg0000091",
+            "delta_g": 20,
+            "rationale": "Increase water by ~20 g to lift hydration toward the flour's DDT-WA."
+          }
+        ]
+      },
+      {
+        "code": "no_yeast_or_leavener",
+        "severity": "warn",
+        "message": "No yeast or leavener detected.",
+        "suggested_fixes": [
+          {
+            "kind": "add_ingredient",
+            "ingredient_id": "yeast_instant",
+            "grams": 5,
+            "rationale": "Add a small amount of instant yeast."
+          }
+        ]
+      },
+      {
+        "code": "no_salt",
+        "severity": "info",
+        "message": "Salt equivalent is below 0.5%; bread may taste flat unless intentional.",
+        "suggested_fixes": [
+          {
+            "kind": "set_grams",
+            "uid": "u_eg0000092",
+            "grams": 9,
+            "rationale": "Set salt to ~1.8% of flour for balanced flavor."
+          }
+        ]
+      }
+    ],
+    "breakdowns": {
+      "water": [
+        {
+          "uid": "u_eg0000090",
+          "ingredient_id": "bread_flour",
+          "grams": 500,
+          "contribution_g": 0,
+          "contribution_g_effective": 0
+        },
+        {
+          "uid": "u_eg0000091",
+          "ingredient_id": "water_tap",
+          "grams": 0,
+          "contribution_g": 0,
+          "contribution_g_effective": 0
+        },
+        {
+          "uid": "u_eg0000092",
+          "ingredient_id": "salt_table",
+          "grams": 0,
+          "contribution_g": 0,
+          "contribution_g_effective": 0
+        },
+        {
+          "uid": "u_eg0000093",
+          "ingredient_id": "yeast_instant",
+          "grams": 0,
+          "contribution_g": 0,
+          "contribution_g_effective": 0
+        }
+      ],
+      "salt": [
+        {
+          "uid": "u_eg0000090",
+          "ingredient_id": "bread_flour",
+          "grams": 500,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000091",
+          "ingredient_id": "water_tap",
+          "grams": 0,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000092",
+          "ingredient_id": "salt_table",
+          "grams": 0,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000093",
+          "ingredient_id": "yeast_instant",
+          "grams": 0,
+          "contribution_g": 0
+        }
+      ],
+      "sugar": [
+        {
+          "uid": "u_eg0000090",
+          "ingredient_id": "bread_flour",
+          "grams": 500,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000091",
+          "ingredient_id": "water_tap",
+          "grams": 0,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000092",
+          "ingredient_id": "salt_table",
+          "grams": 0,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000093",
+          "ingredient_id": "yeast_instant",
+          "grams": 0,
+          "contribution_g": 0
+        }
+      ],
+      "fat": [
+        {
+          "uid": "u_eg0000090",
+          "ingredient_id": "bread_flour",
+          "grams": 500,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000091",
+          "ingredient_id": "water_tap",
+          "grams": 0,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000092",
+          "ingredient_id": "salt_table",
+          "grams": 0,
+          "contribution_g": 0
+        },
+        {
+          "uid": "u_eg0000093",
+          "ingredient_id": "yeast_instant",
+          "grams": 0,
+          "contribution_g": 0
+        }
+      ]
+    }
+  }
+}

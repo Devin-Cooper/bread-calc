@@ -1,0 +1,10 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "compute"
+  },
+  "payload": {
+    "payload_key": "payload_value"
+  }
+}

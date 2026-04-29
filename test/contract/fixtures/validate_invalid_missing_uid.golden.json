@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "validate"
+  },
+  "payload": {
+    "valid": false,
+    "issues": [
+      {
+        "path": "/items/0",
+        "code": "schema_violation",
+        "message": "must have required property 'uid'"
+      },
+      {
+        "path": "/items/0/uid",
+        "code": "invalid_item_uid_format",
+        "message": "Item uid \"\" does not match ^[A-Za-z0-9_-]{8,16}$."
+      }
+    ]
+  }
+}

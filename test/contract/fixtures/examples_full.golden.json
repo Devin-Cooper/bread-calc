@@ -1,0 +1,512 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "examples"
+  },
+  "payload": [
+    {
+      "id": "classic_white",
+      "name": "Classic White (BB-PDC20)",
+      "course": "White",
+      "zone": "sandwich",
+      "description": "The default starter — 553 g bread flour, 326 g water, sandwich-zone hydration.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Classic White (BB-PDC20)",
+        "machine": "zojirushi_bb_pdc20",
+        "items": [
+          {
+            "uid": "u_eg0000001",
+            "ingredient_id": "bread_flour",
+            "grams": 553
+          },
+          {
+            "uid": "u_eg0000002",
+            "ingredient_id": "water_tap",
+            "grams": 326
+          },
+          {
+            "uid": "u_eg0000003",
+            "ingredient_id": "sugar_granulated",
+            "grams": 30
+          },
+          {
+            "uid": "u_eg0000004",
+            "ingredient_id": "salt_table",
+            "grams": 9
+          },
+          {
+            "uid": "u_eg0000005",
+            "ingredient_id": "butter_unsalted",
+            "grams": 28
+          },
+          {
+            "uid": "u_eg0000006",
+            "ingredient_id": "yeast_instant",
+            "grams": 5
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 59.4,
+        "hydration_zone": "sandwich",
+        "predicted_loaf_g": 836.88
+      }
+    },
+    {
+      "id": "whole_wheat_basic",
+      "name": "Whole Wheat (basic)",
+      "course": "Whole Wheat",
+      "zone": "sandwich",
+      "description": "All whole wheat, sandwich-zone hydration with butter for tenderness.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Whole Wheat (basic)",
+        "items": [
+          {
+            "uid": "u_eg0000010",
+            "ingredient_id": "whole_wheat_flour",
+            "grams": 500
+          },
+          {
+            "uid": "u_eg0000011",
+            "ingredient_id": "water_tap",
+            "grams": 320
+          },
+          {
+            "uid": "u_eg0000012",
+            "ingredient_id": "honey",
+            "grams": 30
+          },
+          {
+            "uid": "u_eg0000013",
+            "ingredient_id": "salt_table",
+            "grams": 8
+          },
+          {
+            "uid": "u_eg0000014",
+            "ingredient_id": "butter_unsalted",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000015",
+            "ingredient_id": "yeast_instant",
+            "grams": 5
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 64.86,
+        "hydration_zone": "sandwich",
+        "predicted_loaf_g": 781.44
+      }
+    },
+    {
+      "id": "whole_wheat_high_hydration",
+      "name": "Whole Wheat (high hydration)",
+      "course": "Whole Wheat",
+      "zone": "wet",
+      "description": "70% hydration whole wheat with vital wheat gluten for structure.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Whole Wheat (high hydration)",
+        "items": [
+          {
+            "uid": "u_eg0000020",
+            "ingredient_id": "whole_wheat_flour",
+            "grams": 500
+          },
+          {
+            "uid": "u_eg0000021",
+            "ingredient_id": "water_tap",
+            "grams": 350
+          },
+          {
+            "uid": "u_eg0000022",
+            "ingredient_id": "vital_wheat_gluten",
+            "grams": 8
+          },
+          {
+            "uid": "u_eg0000023",
+            "ingredient_id": "salt_table",
+            "grams": 8
+          },
+          {
+            "uid": "u_eg0000024",
+            "ingredient_id": "yeast_instant",
+            "grams": 5
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 70.04,
+        "hydration_zone": "wet",
+        "predicted_loaf_g": 766.48
+      }
+    },
+    {
+      "id": "multigrain_seeded",
+      "name": "Multigrain Seeded",
+      "course": "Multigrain",
+      "zone": "sandwich",
+      "description": "Bread flour + sunflower + flax with butter and brown sugar.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Multigrain Seeded",
+        "items": [
+          {
+            "uid": "u_eg0000030",
+            "ingredient_id": "bread_flour",
+            "grams": 450
+          },
+          {
+            "uid": "u_eg0000031",
+            "ingredient_id": "whole_wheat_flour",
+            "grams": 100
+          },
+          {
+            "uid": "u_eg0000032",
+            "ingredient_id": "water_tap",
+            "grams": 340
+          },
+          {
+            "uid": "u_eg0000033",
+            "ingredient_id": "sunflower_seed",
+            "grams": 40
+          },
+          {
+            "uid": "u_eg0000034",
+            "ingredient_id": "flax_seed_ground",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000035",
+            "ingredient_id": "sugar_brown",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000036",
+            "ingredient_id": "salt_table",
+            "grams": 9
+          },
+          {
+            "uid": "u_eg0000037",
+            "ingredient_id": "butter_unsalted",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000038",
+            "ingredient_id": "yeast_instant",
+            "grams": 5
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 62.48,
+        "hydration_zone": "sandwich",
+        "predicted_loaf_g": 896.72
+      }
+    },
+    {
+      "id": "gluten_free_basic",
+      "name": "Gluten Free (basic)",
+      "course": "Gluten Free",
+      "zone": "very_wet",
+      "description": "GF flour blend + psyllium husk + xanthan, very-wet hydration with eggs.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Gluten Free (basic)",
+        "items": [
+          {
+            "uid": "u_eg0000040",
+            "ingredient_id": "gf_flour_blend",
+            "grams": 400
+          },
+          {
+            "uid": "u_eg0000041",
+            "ingredient_id": "water_tap",
+            "grams": 340
+          },
+          {
+            "uid": "u_eg0000042",
+            "ingredient_id": "egg_whole_large",
+            "grams": 100
+          },
+          {
+            "uid": "u_eg0000043",
+            "ingredient_id": "xanthan_gum",
+            "grams": 4
+          },
+          {
+            "uid": "u_eg0000044",
+            "ingredient_id": "psyllium_husk",
+            "grams": 15
+          },
+          {
+            "uid": "u_eg0000045",
+            "ingredient_id": "sugar_granulated",
+            "grams": 20
+          },
+          {
+            "uid": "u_eg0000046",
+            "ingredient_id": "salt_table",
+            "grams": 7
+          },
+          {
+            "uid": "u_eg0000047",
+            "ingredient_id": "oil_canola",
+            "grams": 30
+          },
+          {
+            "uid": "u_eg0000048",
+            "ingredient_id": "yeast_instant",
+            "grams": 6
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 101.31,
+        "hydration_zone": "very_wet",
+        "predicted_loaf_g": 811.36
+      }
+    },
+    {
+      "id": "enriched_butter_roll",
+      "name": "Enriched Butter Roll",
+      "course": "White",
+      "zone": "dry",
+      "description": "Low-hydration enriched dough — high butter, sugar, eggs.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Enriched Butter Roll",
+        "items": [
+          {
+            "uid": "u_eg0000050",
+            "ingredient_id": "bread_flour",
+            "grams": 500
+          },
+          {
+            "uid": "u_eg0000051",
+            "ingredient_id": "milk_whole",
+            "grams": 220
+          },
+          {
+            "uid": "u_eg0000052",
+            "ingredient_id": "sugar_granulated",
+            "grams": 50
+          },
+          {
+            "uid": "u_eg0000053",
+            "ingredient_id": "salt_table",
+            "grams": 8
+          },
+          {
+            "uid": "u_eg0000054",
+            "ingredient_id": "butter_unsalted",
+            "grams": 60
+          },
+          {
+            "uid": "u_eg0000055",
+            "ingredient_id": "egg_whole_large",
+            "grams": 50
+          },
+          {
+            "uid": "u_eg0000056",
+            "ingredient_id": "yeast_instant",
+            "grams": 6
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 46.28,
+        "hydration_zone": "dry",
+        "predicted_loaf_g": 786.72
+      }
+    },
+    {
+      "id": "vegan_olive_oil",
+      "name": "Vegan Olive Oil",
+      "course": "Vegan",
+      "zone": "sandwich",
+      "description": "Vegan-friendly: olive oil instead of butter, no eggs/dairy.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Vegan Olive Oil",
+        "items": [
+          {
+            "uid": "u_eg0000060",
+            "ingredient_id": "bread_flour",
+            "grams": 500
+          },
+          {
+            "uid": "u_eg0000061",
+            "ingredient_id": "water_tap",
+            "grams": 310
+          },
+          {
+            "uid": "u_eg0000062",
+            "ingredient_id": "oil_olive_extra_virgin",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000063",
+            "ingredient_id": "sugar_granulated",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000064",
+            "ingredient_id": "salt_table",
+            "grams": 8
+          },
+          {
+            "uid": "u_eg0000065",
+            "ingredient_id": "yeast_instant",
+            "grams": 5
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 62,
+        "hydration_zone": "sandwich",
+        "predicted_loaf_g": 768.24
+      }
+    },
+    {
+      "id": "salt_free_low_yeast",
+      "name": "Salt-Free Low-Yeast",
+      "course": "Salt Free",
+      "zone": "sandwich",
+      "description": "Low-salt and low-yeast — fires `no_salt` info warning.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Salt-Free Low-Yeast",
+        "items": [
+          {
+            "uid": "u_eg0000070",
+            "ingredient_id": "bread_flour",
+            "grams": 500
+          },
+          {
+            "uid": "u_eg0000071",
+            "ingredient_id": "water_tap",
+            "grams": 310
+          },
+          {
+            "uid": "u_eg0000072",
+            "ingredient_id": "sugar_granulated",
+            "grams": 25
+          },
+          {
+            "uid": "u_eg0000073",
+            "ingredient_id": "salt_table",
+            "grams": 1
+          },
+          {
+            "uid": "u_eg0000074",
+            "ingredient_id": "butter_unsalted",
+            "grams": 20
+          },
+          {
+            "uid": "u_eg0000075",
+            "ingredient_id": "yeast_instant",
+            "grams": 3
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 62.36,
+        "hydration_zone": "sandwich",
+        "predicted_loaf_g": 755.92
+      }
+    },
+    {
+      "id": "target_mode_900g",
+      "name": "Target Mode 900g",
+      "course": "White",
+      "zone": "sandwich",
+      "description": "target_loaf_g=900, all items use bakers_pct.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Target Mode 900g",
+        "target_loaf_g": 900,
+        "items": [
+          {
+            "uid": "u_eg0000080",
+            "ingredient_id": "bread_flour",
+            "bakers_pct": 100
+          },
+          {
+            "uid": "u_eg0000081",
+            "ingredient_id": "water_tap",
+            "bakers_pct": 60
+          },
+          {
+            "uid": "u_eg0000082",
+            "ingredient_id": "sugar_granulated",
+            "bakers_pct": 5.4
+          },
+          {
+            "uid": "u_eg0000083",
+            "ingredient_id": "salt_table",
+            "bakers_pct": 1.6
+          },
+          {
+            "uid": "u_eg0000084",
+            "ingredient_id": "butter_unsalted",
+            "bakers_pct": 5
+          },
+          {
+            "uid": "u_eg0000085",
+            "ingredient_id": "yeast_instant",
+            "bakers_pct": 0.9
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 60.45,
+        "hydration_zone": "sandwich",
+        "predicted_loaf_g": 900
+      }
+    },
+    {
+      "id": "with_solver_warning",
+      "name": "With Solver Warning (overconstrained)",
+      "course": "White",
+      "zone": "sandwich",
+      "description": "Deliberately overconstrained — fires `solver_overconstrained` + its fixes.",
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "With Solver Warning (overconstrained)",
+        "target_loaf_g": 100,
+        "items": [
+          {
+            "uid": "u_eg0000090",
+            "ingredient_id": "bread_flour",
+            "grams": 500
+          },
+          {
+            "uid": "u_eg0000091",
+            "ingredient_id": "water_tap",
+            "bakers_pct": 60
+          },
+          {
+            "uid": "u_eg0000092",
+            "ingredient_id": "salt_table",
+            "bakers_pct": 1.6
+          },
+          {
+            "uid": "u_eg0000093",
+            "ingredient_id": "yeast_instant",
+            "bakers_pct": 0.9
+          }
+        ]
+      },
+      "expected_metrics": {
+        "hydration_effective_pct": 0,
+        "hydration_zone": "dry",
+        "predicted_loaf_g": 440
+      }
+    }
+  ]
+}

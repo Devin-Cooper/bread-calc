@@ -1,0 +1,1050 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "describe"
+  },
+  "payload": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "homepage": "https://breadmachine.io/",
+    "privacy": {
+      "network_calls": false
+    },
+    "subcommands": [
+      {
+        "name": "compute",
+        "description": "Compute a recipe end-to-end (tree, metrics, hydration, breakdowns, warnings).",
+        "args": [
+          {
+            "name": "recipe",
+            "required": true,
+            "description": "Recipe file path or '-' for stdin."
+          }
+        ],
+        "flags": [
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "Force JSON output."
+          },
+          {
+            "name": "slim",
+            "type": "boolean",
+            "description": "Omit tree from output."
+          },
+          {
+            "name": "metric",
+            "type": "string",
+            "description": "Headline metric (effective|nominal|total_liquid)."
+          }
+        ],
+        "reads_recipe": true,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok",
+          "1": "computed but recipe has error-severity warnings",
+          "2": "schema validation failed",
+          "3": "unknown ingredient_id",
+          "64": "bad usage"
+        }
+      },
+      {
+        "name": "solve",
+        "description": "Solve a target_loaf_g recipe to fill grams from bakers_pct.",
+        "args": [
+          {
+            "name": "recipe",
+            "required": true,
+            "description": "Recipe file path or '-'."
+          }
+        ],
+        "flags": [
+          {
+            "name": "target-g",
+            "type": "number",
+            "description": "Target loaf weight in grams."
+          },
+          {
+            "name": "out",
+            "type": "string",
+            "description": "Write output to file."
+          }
+        ],
+        "reads_recipe": true,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok",
+          "2": "schema error",
+          "3": "unknown ingredient",
+          "4": "solver error"
+        }
+      },
+      {
+        "name": "validate",
+        "description": "Validate a recipe against the v2.0 JSON schema.",
+        "args": [
+          {
+            "name": "recipe",
+            "required": true,
+            "description": "Recipe file path or '-'."
+          }
+        ],
+        "flags": [
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "Force JSON output."
+          }
+        ],
+        "reads_recipe": true,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok",
+          "2": "schema error",
+          "3": "unknown ingredient"
+        }
+      },
+      {
+        "name": "plot",
+        "description": "Render an SVG hydration chart.",
+        "args": [
+          {
+            "name": "recipe",
+            "required": true,
+            "description": "Recipe file path or '-'."
+          }
+        ],
+        "flags": [
+          {
+            "name": "out",
+            "type": "string",
+            "description": "Write SVG to file."
+          },
+          {
+            "name": "theme",
+            "type": "string",
+            "description": "light|dark."
+          }
+        ],
+        "reads_recipe": true,
+        "emits_envelope": false,
+        "exit_codes": {
+          "0": "ok",
+          "2": "schema error"
+        }
+      },
+      {
+        "name": "ingredients",
+        "description": "List bundled ingredients.",
+        "args": [],
+        "flags": [
+          {
+            "name": "category",
+            "type": "string",
+            "description": "Filter by category."
+          },
+          {
+            "name": "search",
+            "type": "string",
+            "description": "Free-text filter."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok"
+        }
+      },
+      {
+        "name": "reference",
+        "description": "List bundled BB-PDC20 reference recipes.",
+        "args": [],
+        "flags": [
+          {
+            "name": "course",
+            "type": "string",
+            "description": "Filter by course."
+          },
+          {
+            "name": "zone",
+            "type": "string",
+            "description": "Filter by zone id."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok"
+        }
+      },
+      {
+        "name": "schema",
+        "description": "Output the v2.0 JSON schema.",
+        "args": [],
+        "flags": [],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok"
+        }
+      },
+      {
+        "name": "describe",
+        "description": "Output the self-describing capability manifest.",
+        "args": [],
+        "flags": [
+          {
+            "name": "section",
+            "type": "string",
+            "description": "warnings|fixes|explain|subcommands."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok"
+        }
+      },
+      {
+        "name": "examples",
+        "description": "List or fetch curated example recipes.",
+        "args": [],
+        "flags": [
+          {
+            "name": "course",
+            "type": "string",
+            "description": "Filter by course."
+          },
+          {
+            "name": "zone",
+            "type": "string",
+            "description": "Filter by zone id."
+          },
+          {
+            "name": "id",
+            "type": "string",
+            "description": "Fetch a specific example by id."
+          },
+          {
+            "name": "limit",
+            "type": "number",
+            "description": "Cap result count."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok"
+        }
+      },
+      {
+        "name": "parse",
+        "description": "Parse a free-text recipe into a v2.0 Recipe.",
+        "args": [
+          {
+            "name": "text-file",
+            "required": false,
+            "description": "Path to text file or '-' for stdin."
+          }
+        ],
+        "flags": [
+          {
+            "name": "strict",
+            "type": "boolean",
+            "description": "Exit 7 on any unparseable line."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok",
+          "7": "strict-mode unparseable lines"
+        }
+      },
+      {
+        "name": "convert",
+        "description": "Convert qty unit ingredient_id → grams.",
+        "args": [
+          {
+            "name": "qty",
+            "required": true,
+            "description": ""
+          },
+          {
+            "name": "unit",
+            "required": true,
+            "description": ""
+          },
+          {
+            "name": "ingredient_id",
+            "required": true,
+            "description": ""
+          }
+        ],
+        "flags": [
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok",
+          "64": "bad usage"
+        }
+      },
+      {
+        "name": "lookup",
+        "description": "Fuzzy ingredient_id search.",
+        "args": [
+          {
+            "name": "query",
+            "required": true,
+            "description": ""
+          }
+        ],
+        "flags": [
+          {
+            "name": "limit",
+            "type": "number",
+            "description": "Cap result count (default 12)."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok"
+        }
+      },
+      {
+        "name": "apply",
+        "description": "Apply a Fix to a Recipe and emit the new Recipe.",
+        "args": [
+          {
+            "name": "recipe",
+            "required": true,
+            "description": "Recipe file path or '-'."
+          },
+          {
+            "name": "fix",
+            "required": false,
+            "description": "Fix file path (or use --fix=- or --fix-id)."
+          }
+        ],
+        "flags": [
+          {
+            "name": "fix",
+            "type": "string",
+            "description": "Use '-' to read fix JSON from stdin."
+          },
+          {
+            "name": "fix-id",
+            "type": "string",
+            "description": "Selector: <warning_code>.<index>"
+          },
+          {
+            "name": "out",
+            "type": "string",
+            "description": "Write to file."
+          }
+        ],
+        "reads_recipe": true,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "ok",
+          "5": "fix application failed",
+          "64": "bad usage"
+        }
+      },
+      {
+        "name": "verify",
+        "description": "Compare claimed metrics against computed truth.",
+        "args": [
+          {
+            "name": "claim",
+            "required": true,
+            "description": "Claim file: { recipe, claims }"
+          }
+        ],
+        "flags": [
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "JSON output."
+          }
+        ],
+        "reads_recipe": false,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "all match",
+          "6": "at least one diverged"
+        }
+      }
+    ],
+    "warnings": [
+      {
+        "code": "no_flour",
+        "severity_default": "error",
+        "category": "structural",
+        "description": "Recipe contains no flour items; hydration cannot be computed.",
+        "consumes": [
+          "metrics.total_flour_g"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "pan_overflow_predicted",
+        "severity_default": "error",
+        "category": "machine",
+        "description": "Predicted loaf weight exceeds the pan overflow threshold.",
+        "consumes": [
+          "metrics.predicted_loaf_g",
+          "machine.pan_overflow_threshold_g"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "pan_underfill_predicted",
+        "severity_default": "info",
+        "category": "machine",
+        "description": "Predicted loaf weight is below the pan-underfill threshold.",
+        "consumes": [
+          "metrics.predicted_loaf_g",
+          "machine.pan_underfill_threshold_g"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "under_developed_gluten",
+        "severity_default": "warn",
+        "category": "math",
+        "description": "Effective hydration is below the flour's DDT water-absorption.",
+        "consumes": [
+          "hydration.effective_pct",
+          "ddt_water_absorption_pct"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "sugar_too_high",
+        "severity_default": "warn",
+        "category": "ingredient",
+        "description": "Sugar equivalent exceeds 12% baker's percentage.",
+        "consumes": [
+          "bakers_percents.sugar_equivalent_pct"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "salt_too_high",
+        "severity_default": "warn",
+        "category": "ingredient",
+        "description": "Salt equivalent exceeds 2.5% baker's percentage.",
+        "consumes": [
+          "bakers_percents.salt_equivalent_pct"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "salt_inherent_dominant",
+        "severity_default": "info",
+        "category": "ingredient",
+        "description": "Most of the salt-equivalent comes from non-salt ingredients.",
+        "consumes": [
+          "bakers_percents.salt_equivalent_pct",
+          "resolved"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "fat_too_high",
+        "severity_default": "warn",
+        "category": "ingredient",
+        "description": "Fat equivalent exceeds 12% baker's percentage.",
+        "consumes": [
+          "bakers_percents.fat_equivalent_pct"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "enzymatic_gluten_degradation",
+        "severity_default": "warn",
+        "category": "ingredient",
+        "description": "Enzymatic ingredients may degrade gluten unless heat-treated.",
+        "consumes": [
+          "resolved"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "inclusions_exceed_pan",
+        "severity_default": "warn",
+        "category": "machine",
+        "description": "Inclusions exceed the machine's recommended fraction of flour.",
+        "consumes": [
+          "metrics.total_inclusions_g",
+          "metrics.total_flour_g",
+          "machine.inclusion_max_fraction_of_flour"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "wet_zone_needs_gluten_support",
+        "severity_default": "warn",
+        "category": "math",
+        "description": "Wet-zone hydration without a gluten strengthener.",
+        "consumes": [
+          "hydration.zone",
+          "resolved"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "very_wet_zone",
+        "severity_default": "warn",
+        "category": "math",
+        "description": "Very-wet-zone hydration without a GF stabilizer or eggs.",
+        "consumes": [
+          "hydration.zone",
+          "resolved"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "alcohol_yeast_inhibition",
+        "severity_default": "warn",
+        "category": "ingredient",
+        "description": "Alcohol fraction of total mass exceeds 3%.",
+        "consumes": [
+          "metrics.total_alcohol_g",
+          "metrics.total_mass_g"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "no_yeast_or_leavener",
+        "severity_default": "warn",
+        "category": "structural",
+        "description": "Recipe has no yeast or chemical leavener.",
+        "consumes": [
+          "resolved"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "late_water_release_present",
+        "severity_default": "info",
+        "category": "ingredient",
+        "description": "Recipe contains ingredients that release water late.",
+        "consumes": [
+          "resolved"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "humectant_overestimate_risk",
+        "severity_default": "info",
+        "category": "ingredient",
+        "description": "Humectant ingredients may cause hydration overestimate.",
+        "consumes": [
+          "resolved",
+          "metrics.total_flour_g",
+          "recipe.free_water_factor_overrides"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "flour_quantity_atypical",
+        "severity_default": "info",
+        "category": "machine",
+        "description": "Flour weight is outside the machine's typical range.",
+        "consumes": [
+          "metrics.total_flour_g",
+          "machine.flour_quantity_typical_min_g",
+          "machine.flour_quantity_typical_max_g"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "no_salt",
+        "severity_default": "info",
+        "category": "ingredient",
+        "description": "Salt equivalent below 0.5%; bread may taste flat.",
+        "consumes": [
+          "bakers_percents.salt_equivalent_pct"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "solver_overconstrained",
+        "severity_default": "error",
+        "category": "structural",
+        "description": "Fixed-gram items already exceed target dough mass.",
+        "consumes": [
+          "recipe.target_loaf_g",
+          "resolved"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "solver_ambiguous_flour",
+        "severity_default": "error",
+        "category": "structural",
+        "description": "Fixed-gram flour mixed with bakers_pct on other items.",
+        "consumes": [
+          "resolved"
+        ],
+        "has_fixes": true
+      },
+      {
+        "code": "target_loaf_g_ignored_no_pcts",
+        "severity_default": "info",
+        "category": "structural",
+        "description": "target_loaf_g is set but no items use bakers_pct.",
+        "consumes": [
+          "recipe.target_loaf_g",
+          "resolved"
+        ],
+        "has_fixes": false
+      }
+    ],
+    "fix_kinds": [
+      {
+        "kind": "set_grams",
+        "description": "Set the grams field of a single recipe item, replacing any prior value.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "uid",
+            "grams",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "grams": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "increase_grams",
+        "description": "Add delta_g (positive) to an item's grams; clamps at 0 minimum.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "uid",
+            "delta_g",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "delta_g": {
+              "type": "number"
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "decrease_grams",
+        "description": "Subtract delta_g (positive) from an item's grams; clamps at 0 minimum.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "uid",
+            "delta_g",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "delta_g": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "set_bakers_pct",
+        "description": "Set the bakers_pct field of a single recipe item.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "uid",
+            "bakers_pct",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "bakers_pct": {
+              "type": "number",
+              "minimum": 0
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "add_ingredient",
+        "description": "Append a new RecipeItem; uid is auto-generated if not supplied.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "ingredient_id",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "ingredient_id": {
+              "type": "string"
+            },
+            "grams": {
+              "type": "number",
+              "minimum": 0
+            },
+            "bakers_pct": {
+              "type": "number",
+              "minimum": 0
+            },
+            "role": {
+              "type": "string"
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "remove_ingredient",
+        "description": "Remove a RecipeItem by uid.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "uid",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "set_field",
+        "description": "Set a top-level Recipe field (bake_loss_pct | target_loaf_g | machine).",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "field",
+            "value",
+            "rationale"
+          ],
+          "properties": {
+            "field": {
+              "enum": [
+                "bake_loss_pct",
+                "target_loaf_g",
+                "machine"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "string",
+                "null"
+              ]
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      {
+        "kind": "set_role",
+        "description": "Override the inferred role for a recipe item.",
+        "payload_schema": {
+          "type": "object",
+          "required": [
+            "uid",
+            "role",
+            "rationale"
+          ],
+          "properties": {
+            "uid": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{8,16}$"
+            },
+            "role": {
+              "enum": [
+                "flour",
+                "wet",
+                "fat",
+                "sweetener",
+                "salt",
+                "yeast",
+                "leavener",
+                "inclusion",
+                "enrichment"
+              ]
+            },
+            "rationale": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      }
+    ],
+    "explain_node_types": [
+      {
+        "type": "Constant",
+        "description": "A literal numeric value (e.g. a default, a threshold).",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "value"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            }
+          }
+        }
+      },
+      {
+        "type": "ProjectField",
+        "description": "Reads a numeric field from a recipe item or its resolved ingredient.",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "source_uid",
+            "field",
+            "value"
+          ]
+        }
+      },
+      {
+        "type": "Sum",
+        "description": "Sum of child term values. null if any term is null.",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "terms"
+          ]
+        }
+      },
+      {
+        "type": "WeightedSum",
+        "description": "Sum of (weight × value) over child term pairs.",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "terms"
+          ]
+        }
+      },
+      {
+        "type": "Product",
+        "description": "Product of child factor values. null if any factor is null.",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "factors"
+          ]
+        }
+      },
+      {
+        "type": "Ratio",
+        "description": "numerator / denominator. null when denominator is 0 or null.",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "numerator",
+            "denominator"
+          ]
+        }
+      },
+      {
+        "type": "Scale",
+        "description": "input × factor (constant multiplier).",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "input",
+            "factor"
+          ]
+        }
+      },
+      {
+        "type": "ProjectFromTree",
+        "description": "Reads the value of another node in the tree by id (cross-reference).",
+        "schema": {
+          "required": [
+            "id",
+            "label",
+            "ref_id"
+          ]
+        }
+      }
+    ],
+    "catalogs": {
+      "categories": [
+        "liquids",
+        "sweeteners",
+        "fats",
+        "fresh_fruit",
+        "dried_fruit",
+        "nuts_seeds",
+        "eggs",
+        "cheese",
+        "vegetables",
+        "herbs_spices",
+        "acids_alcohols",
+        "specialty",
+        "flour",
+        "salt",
+        "yeast",
+        "leavener"
+      ],
+      "roles": [
+        "flour",
+        "wet",
+        "fat",
+        "sweetener",
+        "salt",
+        "yeast",
+        "leavener",
+        "inclusion",
+        "enrichment"
+      ],
+      "zones": [
+        {
+          "id": "dry",
+          "label": "Dry",
+          "range": [
+            0,
+            55
+          ],
+          "note": "butter rolls; enriched",
+          "color": "#e8e6e1"
+        },
+        {
+          "id": "sandwich",
+          "label": "Sandwich-loaf comfort",
+          "range": [
+            55,
+            67
+          ],
+          "note": "BB-PDC20 sweet spot",
+          "color": "#d8e6d3"
+        },
+        {
+          "id": "wet",
+          "label": "Wet",
+          "range": [
+            67,
+            75
+          ],
+          "note": "requires gluten support",
+          "color": "#f3ecc6"
+        },
+        {
+          "id": "very_wet",
+          "label": "Very wet",
+          "range": [
+            75,
+            100
+          ],
+          "note": "GF / hi-hydration WW only",
+          "color": "#f0d4cf"
+        }
+      ],
+      "severities": [
+        "info",
+        "warn",
+        "error"
+      ]
+    }
+  }
+}
