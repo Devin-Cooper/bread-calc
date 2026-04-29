@@ -20,13 +20,12 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       parent.innerHTML = `<p class="placeholder">No ingredients yet — use the picker above to add some.</p>`;
       return;
     }
-    if (targetMode) {
-      const header = document.createElement("div");
-      header.className = "row-header";
-      header.setAttribute("role", "row");
-      header.innerHTML = `<span role="columnheader">Ingredient</span><span role="columnheader">Solved g</span><span role="columnheader">Baker's %</span><span role="columnheader">Role</span><span role="columnheader" aria-label="actions"></span>`;
-      parent.appendChild(header);
-    }
+    const header = document.createElement("div");
+    header.className = "row-header";
+    header.setAttribute("role", "row");
+    const gramsHeader = targetMode ? "Solved g" : "Grams";
+    header.innerHTML = `<span role="columnheader">Ingredient</span><span role="columnheader">${gramsHeader}</span><span role="columnheader">Baker's %</span><span role="columnheader">Role</span><span role="columnheader" aria-label="actions"></span>`;
+    parent.appendChild(header);
     for (let i = 0; i < state.items.length; i++) {
       const item = state.items[i]!;
       const solvedItem = solved.items[i]!;

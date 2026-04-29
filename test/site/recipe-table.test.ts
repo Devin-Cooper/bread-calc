@@ -19,7 +19,7 @@ describe("recipe-table", () => {
       { ingredient_id: "water_tap", grams: 320 },
     ]});
     mountTable(root, store, db);
-    expect(root.querySelectorAll('[role="row"]').length).toBe(2);
+    expect(root.querySelectorAll('[role="row"]:not(.row-header)').length).toBe(2);
   });
 
   it("dispatches set_grams on input change", () => {
@@ -37,14 +37,14 @@ describe("recipe-table", () => {
     const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
     mountTable(root, store, db);
     store.dispatch({ type: "add_item", ingredient_id: "water_tap" });
-    expect(root.querySelectorAll('[role="row"]').length).toBe(2);
+    expect(root.querySelectorAll('[role="row"]:not(.row-header)').length).toBe(2);
   });
 
   it("renders empty-state placeholder when items list is empty", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
     const store = createStore({ schema_version: "1.0", items: [] });
     mountTable(root, store, db);
-    expect(root.querySelectorAll('[role="row"]').length).toBe(0);
+    expect(root.querySelectorAll('[role="row"]:not(.row-header)').length).toBe(0);
     expect(root.querySelector(".placeholder")?.textContent).toMatch(/No ingredients/);
   });
 
