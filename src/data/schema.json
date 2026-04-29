@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://breadmachine.io/schema/v1.0",
+  "$id": "https://breadmachine.io/schema/v2.0",
   "title": "bread-calc data schemas",
   "$defs": {
     "Category": {
@@ -163,8 +163,9 @@
     },
     "RecipeItem": {
       "type": "object",
-      "required": ["ingredient_id"],
+      "required": ["uid", "ingredient_id"],
       "properties": {
+        "uid": { "type": "string", "pattern": "^[A-Za-z0-9_-]{8,16}$" },
         "ingredient_id": { "type": "string" },
         "grams": { "type": "number", "minimum": 0 },
         "bakers_pct": { "type": "number", "minimum": 0 },
@@ -177,7 +178,7 @@
       "type": "object",
       "required": ["schema_version", "items"],
       "properties": {
-        "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+$" },
+        "schema_version": { "const": "2.0" },
         "name": { "type": "string" },
         "notes": { "type": "string" },
         "machine": { "type": "string" },
