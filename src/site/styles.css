@@ -1,19 +1,54 @@
-:root { --fg: #222; --bg: #fff; --muted: #777; --warn: #b8860b; --error: #b22222; --info: #4682b4; --accent: #2e7d32; }
-@media (prefers-color-scheme: dark) { :root { --fg: #eee; --bg: #1c1c1c; --muted: #aaa; } }
+:root {
+  --fg: #222;
+  --bg: #fff;
+  --muted: #777;
+  --warn: #b8860b;
+  --error: #b22222;
+  --info: #4682b4;
+  --accent: #2e7d32;
+  --border: #ddd;
+  --border-soft: #eee;
+  --panel: #fff;
+  --warn-bg: #fffbe6;
+  --warn-bg-error: #fff0f0;
+  --warn-bg-info: #f0f4ff;
+  --user-row-bg: #fffbe6;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #eee;
+    --bg: #1c1c1c;
+    --muted: #aaa;
+    --warn: #d4a857;
+    --error: #ff6b6b;
+    --info: #6fa8dc;
+    --accent: #6bbf73;
+    --border: #444;
+    --border-soft: #2a2a2a;
+    --panel: #242424;
+    --warn-bg: #3a3322;
+    --warn-bg-error: #3a2222;
+    --warn-bg-info: #22303a;
+    --user-row-bg: #3a3322;
+  }
+}
 * { box-sizing: border-box; }
 body { font: 16px/1.4 system-ui, -apple-system, sans-serif; color: var(--fg); background: var(--bg); margin: 0; padding: 0; }
-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-bottom: 1px solid #ddd; }
+header { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px; border-bottom: 1px solid var(--border); }
 .header-controls { display: flex; gap: 16px; }
 main { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; padding: 24px; }
 @media (max-width: 768px) { main { grid-template-columns: 1fr; } }
-section { padding: 16px; border: 1px solid #eee; border-radius: 8px; }
+section { padding: 16px; border: 1px solid var(--border-soft); border-radius: 8px; background: var(--panel); }
 .placeholder { color: var(--muted); font-style: italic; }
 [role="row"] { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 8px; align-items: center; padding: 4px 0; }
-input[type="number"] { width: 100%; padding: 4px 6px; }
+input[type="number"], input[type="search"], select, button { color: var(--fg); background: var(--panel); border: 1px solid var(--border); border-radius: 4px; }
+input[type="number"], input[type="search"] { width: 100%; padding: 4px 6px; }
 button { padding: 6px 12px; cursor: pointer; }
-.warn-row { padding: 8px; margin: 4px 0; border-left: 4px solid var(--warn); background: #fffbe6; }
-.warn-row.error { border-left-color: var(--error); background: #fff0f0; }
-.warn-row.info { border-left-color: var(--info); background: #f0f4ff; }
+button:hover { border-color: var(--accent); }
+.warn-row { padding: 8px; margin: 4px 0; border-left: 4px solid var(--warn); background: var(--warn-bg); color: var(--fg); }
+.warn-row.error { border-left-color: var(--error); background: var(--warn-bg-error); }
+.warn-row.info { border-left-color: var(--info); background: var(--warn-bg-info); }
 @media (prefers-reduced-motion: no-preference) {
   .warn-row { transition: background 200ms; }
 }
@@ -24,13 +59,19 @@ button { padding: 6px 12px; cursor: pointer; }
 details { margin-top: 8px; }
 details summary { cursor: pointer; font-weight: 600; }
 details table { width: 100%; border-collapse: collapse; margin-top: 4px; }
-details td, details th { padding: 2px 6px; border-bottom: 1px solid #eee; }
+details td, details th { padding: 2px 6px; border-bottom: 1px solid var(--border-soft); }
 .chart-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.chart-table th, .chart-table td { padding: 4px 8px; border-bottom: 1px solid #eee; text-align: left; }
-.chart-table tr.user-row { background: #fffbe6; }
+.chart-table th, .chart-table td { padding: 4px 8px; border-bottom: 1px solid var(--border-soft); text-align: left; }
+.chart-table tr.user-row { background: var(--user-row-bg); }
 .chart-controls { margin-bottom: 8px; }
+#ing-results { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; list-style: none; padding: 4px 0; margin: 4px 0 0; }
+#ing-results li { padding: 4px 8px; cursor: pointer; }
+#ing-results li:hover { background: var(--border-soft); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-@media (prefers-contrast: more) { :root { --fg: #000; --bg: #fff; } button { border: 2px solid currentColor; } }
+@media (prefers-contrast: more) {
+  :root { --fg: #000; --bg: #fff; --border: #000; }
+  button { border: 2px solid currentColor; }
+}
 @media (forced-colors: active) {
   .warn-row, .zone-band { border: 1px solid CanvasText !important; }
 }

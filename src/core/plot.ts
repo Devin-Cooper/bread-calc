@@ -28,12 +28,32 @@ function courseColor(course: string): string {
   return "#666";
 }
 
+interface ThemeColors {
+  text: string;
+  axis: string;
+  legendStroke: string;
+  legendCaption: string;
+  starFill: string;
+  starStroke: string;
+  dotStroke: string;
+}
+
+const LIGHT_THEME: ThemeColors = {
+  text: "#333", axis: "#333", legendStroke: "#999", legendCaption: "#555",
+  starFill: "#000", starStroke: "#fff", dotStroke: "#fff",
+};
+const DARK_THEME: ThemeColors = {
+  text: "#ddd", axis: "#aaa", legendStroke: "#666", legendCaption: "#bbb",
+  starFill: "#fff", starStroke: "#000", dotStroke: "#1c1c1c",
+};
+
 export function renderHydrationChart(computed: ComputedRecipe, options: ChartOptions = {}): string {
   const W = options.width ?? 720;
   const H = options.height ?? 480;
   const M = { top: 40, right: 160, bottom: 56, left: 64 };
   const plotW = W - M.left - M.right;
   const plotH = H - M.top - M.bottom;
+  const t = options.theme === "dark" ? DARK_THEME : LIGHT_THEME;
 
   const xMin = 380, xMax = 760;
   const yMin = 50, yMax = 90;
@@ -52,7 +72,7 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
   const dots = refs.map((r) => {
     const cx = x(r.total_flour_g), cy = y(r.hydration_pct_nominal);
     const c = courseColor(r.course);
-    return `<circle class="ref-dot" cx="${cx}" cy="${cy}" r="5" fill="${c}" stroke="#fff" stroke-width="1"><title>${escapeXml(`${r.name} — ${r.hydration_pct_nominal}% · ${r.total_flour_g} g flour (${r.course})`)}</title></circle>`;
+    return `<circle class="ref-dot" cx="${cx}" cy="${cy}" r="5" fill="${c}" stroke="${t.dotStroke}" stroke-width="1"><title>${escapeXml(`${r.name} — ${r.hydration_pct_nominal}% · ${r.total_flour_g} g flour (${r.course})`)}</title></circle>`;
   }).join("");
 
   let star = "";
@@ -65,8 +85,8 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
       return [`${cx + 12 * Math.cos(a)},${cy - 12 * Math.sin(a)}`, `${cx + 5 * Math.cos(ai)},${cy - 5 * Math.sin(ai)}`];
     }).join(" ");
     const label = `${escapeXml(computed.recipe.name ?? "Your recipe")} — ${computed.hydration.nominal_pct!.toFixed(1)}% · ${computed.totals.total_flour_g} g flour`;
-    star = `<polygon class="user-star" points="${points}" fill="#000" stroke="#fff" stroke-width="1.5"><title>${label}</title></polygon>
-            <text x="${cx + 18}" y="${cy + 4}" font-family="system-ui, sans-serif" font-size="12" fill="#000">${label}</text>`;
+    star = `<polygon class="user-star" points="${points}" fill="${t.starFill}" stroke="${t.starStroke}" stroke-width="1.5"><title>${label}</title></polygon>
+            <text x="${cx + 18}" y="${cy + 4}" font-family="system-ui, sans-serif" font-size="12" fill="${t.starFill}">${label}</text>`;
   } else {
     userTitle = `<title>no flour — not plotted</title>`;
   }
