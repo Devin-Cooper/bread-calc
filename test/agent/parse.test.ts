@@ -63,6 +63,13 @@ describe("parseText", () => {
     expect(r.recipe.name).toBe("My loaf");
   });
 
+  it("strips inline comments from `# title:` capture", () => {
+    const r1 = parseText("# title: My loaf  // a note\n500 g bread_flour\n300 g water_tap", db);
+    expect(r1.recipe.name).toBe("My loaf");
+    const r2 = parseText("# title: Loaf # also has hash\n500 g bread_flour\n300 g water_tap", db);
+    expect(r2.recipe.name).toBe("Loaf");
+  });
+
   it("each parsed item has a unique uid", () => {
     const r = parseText("500 g bread_flour\n500 g bread_flour", db);
     const uids = r.recipe.items.map((i) => i.uid);

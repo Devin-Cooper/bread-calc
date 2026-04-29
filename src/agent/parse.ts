@@ -74,7 +74,14 @@ export function parseText(text: string, db?: Database): { recipe: Recipe; unpars
   for (let i = 0; i < rawLines.length; i++) {
     const raw = rawLines[i]!;
     const titleMatch = raw.match(/^\s*#\s*title:\s*(.+?)\s*$/i);
-    if (titleMatch && extractedName === undefined) extractedName = titleMatch[1]!.trim();
+    if (titleMatch && extractedName === undefined) {
+      // Strip inline `//` and inner `#` comments from the captured title so a
+      // line like `# title: My loaf // note` doesn't include " // note" in the name.
+      let t = titleMatch[1]!;
+      const dbl = t.indexOf("//");  if (dbl >= 0) t = t.slice(0, dbl);
+      const hash = t.indexOf("#");  if (hash >= 0) t = t.slice(0, hash);
+      extractedName = t.trim();
+    }
     const stripped = stripComments(raw);
     if (stripped.length === 0) continue;
 
