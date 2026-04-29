@@ -43,4 +43,12 @@ describe("bread-calc compute", () => {
     const r = run(["compute"]);
     expect(r.code).toBe(64);
   });
+  it("emits output (human or JSON) when --json is omitted", () => {
+    // execFileSync pipes stdout, so process.stdout.isTTY is undefined and the handler
+    // auto-falls back to JSON. Once Task 2.5 wires up the human formatter, the assertion
+    // can tighten to check for human-format markers ("Effective hydration") specifically.
+    const r = run(["compute", "test/golden/fixtures/classic_white.bread.json"]);
+    expect(r.code).toBe(0);
+    expect(r.stdout).toMatch(/Effective hydration|"hydration"/);
+  });
 });
