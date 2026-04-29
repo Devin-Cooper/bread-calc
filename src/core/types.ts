@@ -1,0 +1,170 @@
+// Public types for bread-calc. Mirrors src/data/schema.json (JSON Schema).
+
+export type Category =
+  | "liquids" | "sweeteners" | "fats" | "fresh_fruit" | "dried_fruit"
+  | "nuts_seeds" | "eggs" | "cheese" | "vegetables"
+  | "herbs_spices" | "acids_alcohols" | "specialty"
+  | "flour" | "salt" | "yeast" | "leavener";
+
+export type Role =
+  | "flour" | "wet" | "fat" | "sweetener" | "salt" | "yeast" | "leavener"
+  | "inclusion" | "enrichment";
+
+export type ZoneId = "dry" | "sandwich" | "wet" | "very_wet";
+
+export type IngredientFlag =
+  | "enzymatic_protease" | "late_water_release" | "humectant_bound_water"
+  | "alcohol_yeast_inhibitor" | "high_salt" | "acidic" | "leavener_consumed"
+  | "gluten_strengthener" | "gf_stabilizer";
+
+export interface Ingredient {
+  id: string;
+  name: string;
+  category: Category;
+  is_liquid: boolean;
+  water_pct: number;
+  salt_pct: number;
+  sugar_pct: number;
+  fat_pct: number;
+  free_water_factor: number;
+  density_g_per_cup: number | null;
+  protein_pct?: number;
+  carb_pct?: number;
+  alcohol_pct?: number;
+  ash_pct?: number;
+  ph?: number;
+  notes?: string;
+  usda_fdc_id?: number;
+  form_variants?: string[];
+  flags?: IngredientFlag[];
+}
+
+export interface Flour {
+  id: string;
+  name: string;
+  category: "flour";
+  protein_pct: number;
+  ddt_water_absorption_pct: number;
+  density_g_per_cup: number;
+  notes?: string;
+}
+
+export interface BBPDC20Recipe {
+  name: string;
+  course: string;
+  total_water_g: number;
+  total_flour_g: number;
+  hydration_pct_nominal: number;
+  zone: ZoneId;
+  excluded_from_chart?: boolean;
+}
+
+export interface Defaults {
+  default_free_water_factors_by_category: Record<Category, number>;
+  default_bake_loss_pct: number;
+  default_machine_id: string;
+}
+
+export interface Machine {
+  id: string;
+  name: string;
+  pan_capacity_g: number;
+  pan_overflow_threshold_g: number;
+  pan_underfill_threshold_g: number;
+  flour_quantity_typical_min_g: number;
+  flour_quantity_typical_max_g: number;
+  inclusion_max_fraction_of_flour: number;
+}
+
+export interface Database {
+  ingredients: readonly Ingredient[];
+  flours: readonly Flour[];
+  defaults: Defaults;
+  references: readonly BBPDC20Recipe[];
+  machines: readonly Machine[];
+}
+
+export interface RecipeItem {
+  ingredient_id: string;
+  grams?: number;
+  bakers_pct?: number;
+  role?: Role;
+}
+
+export interface Recipe {
+  schema_version: "1.0";
+  name?: string;
+  notes?: string;
+  machine?: string;
+  target_loaf_g?: number;
+  bake_loss_pct?: number;
+  items: RecipeItem[];
+  free_water_factor_overrides?: Record<string, number>;
+  headline_metric?: "effective" | "nominal" | "total_liquid";
+}
+
+export type WarningCode =
+  | "no_flour" | "solver_overconstrained" | "solver_ambiguous_flour" | "pan_overflow_predicted"
+  | "under_developed_gluten" | "sugar_too_high" | "salt_too_high" | "fat_too_high"
+  | "enzymatic_gluten_degradation" | "inclusions_exceed_pan"
+  | "wet_zone_needs_gluten_support" | "very_wet_zone"
+  | "alcohol_yeast_inhibition" | "no_yeast_or_leavener"
+  | "pan_underfill_predicted" | "late_water_release_present" | "humectant_overestimate_risk"
+  | "flour_quantity_atypical" | "no_salt" | "salt_inherent_dominant"
+  | "target_loaf_g_ignored_no_pcts";
+
+export interface Warning {
+  code: WarningCode;
+  severity: "info" | "warn" | "error";
+  message: string;
+  related_ingredient_ids?: string[];
+}
+
+export interface ComputedRecipe {
+  recipe: Recipe;
+  totals: {
+    total_mass_g: number;
+    total_flour_g: number;
+    total_inclusions_g: number;
+    total_water_g_nominal: number;
+    total_water_g_effective: number;
+    total_salt_g_equivalent: number;
+    total_sugar_g_equivalent: number;
+    total_fat_g_equivalent: number;
+    total_alcohol_g: number;
+    predicted_loaf_g: number;
+  };
+  hydration: {
+    effective_pct: number | null;
+    nominal_pct: number | null;
+    total_liquid_pct: number | null;
+    zone: ZoneId | null;
+  };
+  bakers_pcts: {
+    by_ingredient: Record<string, number | null>;
+    salt_equivalent_pct: number | null;
+    sugar_equivalent_pct: number | null;
+    fat_equivalent_pct: number | null;
+    yeast_pct: number | null;
+  };
+  ddt_water_absorption_pct: number | null;
+  warnings: Warning[];
+  water_breakdown: Array<{ ingredient_id: string; grams: number; nominal_water_g: number; effective_water_g: number }>;
+  salt_breakdown:  Array<{ ingredient_id: string; grams: number; salt_g_contribution:  number }>;
+  sugar_breakdown: Array<{ ingredient_id: string; grams: number; sugar_g_contribution: number }>;
+  fat_breakdown:   Array<{ ingredient_id: string; grams: number; fat_g_contribution:   number }>;
+}
+
+export class RecipeValidationError extends Error {
+  readonly issues: Array<{ path: string; code: string; message: string }>;
+  constructor(issues: Array<{ path: string; code: string; message: string }>) {
+    super(`recipe validation failed: ${issues.length} issue(s)`);
+    this.name = "RecipeValidationError";
+    this.issues = issues;
+  }
+}
+
+export interface RecipeValidationResult {
+  valid: boolean;
+  issues: Array<{ path: string; code: string; message: string }>;
+}
