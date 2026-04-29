@@ -10,7 +10,11 @@ Open https://breadmachine.io/, edit the recipe, copy the share-URL, or click "Ex
 ```sh
 npm i -g bread-calc
 bread-calc compute   my-recipe.bread.json
-bread-calc compute   my-recipe.bread.json --json | jq '.payload.hydration.effective_pct'
+bread-calc compute   my-recipe.bread.json --slim --json | jq '.payload.hydration.effective_pct'
+# (--slim drops the derivation tree from JSON output. Without it, large compute
+#  outputs (~70KB+) can exceed the 64KB POSIX pipe buffer on macOS and truncate.
+#  Drop --slim if you need the tree for verification/audit; pipe to a file in
+#  that case (`--json > c.json`) rather than `| jq`.)
 bread-calc solve     my-recipe.bread.json --target-g=900
 bread-calc validate  my-recipe.bread.json
 bread-calc plot      my-recipe.bread.json --out=plot.svg
