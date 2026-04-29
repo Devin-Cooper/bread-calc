@@ -31,6 +31,25 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       </dl>
       <p>Predicted loaf weight: <strong>${c.totals.predicted_loaf_g} g</strong></p>
     `;
+    parent.insertAdjacentHTML("beforeend", `
+      <details>
+        <summary>Where's the water? (${c.water_breakdown.length} items)</summary>
+        <table><thead><tr><th>Ingredient</th><th>g</th><th>nominal water (g)</th><th>effective water (g)</th></tr></thead>
+        <tbody>${c.water_breakdown.map((b) => `<tr><td>${escapeHtml(b.ingredient_id)}</td><td>${b.grams}</td><td>${b.nominal_water_g}</td><td>${b.effective_water_g}</td></tr>`).join("")}</tbody></table>
+      </details>
+      <details>
+        <summary>Where's the salt?</summary>
+        <table><tbody>${c.salt_breakdown.filter((b) => b.salt_g_contribution > 0).map((b) => `<tr><td>${escapeHtml(b.ingredient_id)}</td><td>${b.salt_g_contribution} g</td></tr>`).join("")}</tbody></table>
+      </details>
+      <details>
+        <summary>Where's the sugar?</summary>
+        <table><tbody>${c.sugar_breakdown.filter((b) => b.sugar_g_contribution > 0).map((b) => `<tr><td>${escapeHtml(b.ingredient_id)}</td><td>${b.sugar_g_contribution} g</td></tr>`).join("")}</tbody></table>
+      </details>
+      <details>
+        <summary>Where's the fat?</summary>
+        <table><tbody>${c.fat_breakdown.filter((b) => b.fat_g_contribution > 0).map((b) => `<tr><td>${escapeHtml(b.ingredient_id)}</td><td>${b.fat_g_contribution} g</td></tr>`).join("")}</tbody></table>
+      </details>
+    `);
   }
   store.subscribe(render); render();
 }

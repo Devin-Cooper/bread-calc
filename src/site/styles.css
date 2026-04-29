@@ -21,3 +21,7 @@ button { padding: 6px 12px; cursor: pointer; }
 .metrics dt, .metrics dd { margin: 0; }
 .headline { font-weight: bold; color: var(--accent); }
 .error { color: var(--error); }
+details { margin-top: 8px; }
+details summary { cursor: pointer; font-weight: 600; }
+details table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+details td, details th { padding: 2px 6px; border-bottom: 1px solid #eee; }
