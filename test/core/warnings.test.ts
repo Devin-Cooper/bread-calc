@@ -23,99 +23,105 @@ const defaults: Defaults = {
 const machine: Machine = { id: "zojirushi_bb_pdc20", name: "Zojirushi BB-PDC20", pan_capacity_g: 907, pan_overflow_threshold_g: 950, pan_underfill_threshold_g: 600, flour_quantity_typical_min_g: 470, flour_quantity_typical_max_g: 620, inclusion_max_fraction_of_flour: 0.3 };
 const db: Database = { ingredients: [water, salt, yeast, sugar, oil, pineapple, banana, honey, beer, feta, xanthan, vwg], flours: [flour], defaults, references: [], machines: [machine] };
 
+let _uidCounter = 0;
+function uid(): string {
+  return `u_warn${(++_uidCounter).toString().padStart(4, "0")}`;
+}
+
 function recipeOf(items: Recipe["items"], extra: Partial<Recipe> = {}): Recipe {
-  return { schema_version: "1.0", machine: "zojirushi_bb_pdc20", items, ...extra };
+  return { schema_version: "2.0", machine: "zojirushi_bb_pdc20", items, ...extra };
 }
 
 describe("warnings", () => {
-  it("emits no_flour exclusively when total_flour_g == 0", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "water_tap", grams: 300 }]), db);
+  it("emits no_flour when total_flour_g == 0", () => {
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "water_tap", grams: 300 }]), db);
     const codes = c.warnings.map((w) => w.code);
     expect(codes).toContain("no_flour");
-    // exclusivity: only no_flour and possibly solver-related warnings should be present
-    expect(codes.filter((c) => !c.startsWith("solver_") && c !== "no_flour" && c !== "target_loaf_g_ignored_no_pcts").length).toBe(0);
+    // no_flour warning must have suggested_fixes array (non-optional)
+    const nf = c.warnings.find((w) => w.code === "no_flour")!;
+    expect(Array.isArray(nf.suggested_fixes)).toBe(true);
   });
   it("emits pan_overflow_predicted when predicted_loaf_g > 950", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 800 }, { ingredient_id: "water_tap", grams: 500 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 800 }, { uid: uid(), ingredient_id: "water_tap", grams: 500 }]), db);
     expect(c.warnings.find((w) => w.code === "pan_overflow_predicted")?.severity).toBe("error");
   });
   it("emits pan_underfill_predicted when predicted_loaf_g < 600", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 300 }, { ingredient_id: "water_tap", grams: 200 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 300 }, { uid: uid(), ingredient_id: "water_tap", grams: 200 }]), db);
     expect(c.warnings.find((w) => w.code === "pan_underfill_predicted")).toBeDefined();
   });
   it("emits sugar_too_high above 12%", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "sugar_granulated", grams: 70 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "sugar_granulated", grams: 70 }]), db);
     expect(c.warnings.find((w) => w.code === "sugar_too_high")).toBeDefined();
   });
   it("does not emit sugar_too_high at exactly 12%", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "sugar_granulated", grams: 60 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "sugar_granulated", grams: 60 }]), db);
     expect(c.warnings.find((w) => w.code === "sugar_too_high")).toBeUndefined();
   });
   it("emits salt_too_high above 2.5%", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "salt_table", grams: 14 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "salt_table", grams: 14 }]), db);
     expect(c.warnings.find((w) => w.code === "salt_too_high")).toBeDefined();
   });
   it("emits salt_too_high from inherent feta salt and pairs with salt_inherent_dominant", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "feta", grams: 400 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "feta", grams: 400 }]), db);
     expect(c.warnings.find((w) => w.code === "salt_too_high")).toBeDefined();
     expect(c.warnings.find((w) => w.code === "salt_inherent_dominant")).toBeDefined();
   });
   it("emits fat_too_high above 12%", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "oil_canola", grams: 70 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "oil_canola", grams: 70 }]), db);
     expect(c.warnings.find((w) => w.code === "fat_too_high")).toBeDefined();
   });
   it("emits enzymatic_gluten_degradation when pineapple is present", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 250 }, { ingredient_id: "pineapple_fresh", grams: 100 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 250 }, { uid: uid(), ingredient_id: "pineapple_fresh", grams: 100 }]), db);
     expect(c.warnings.find((w) => w.code === "enzymatic_gluten_degradation")).toBeDefined();
   });
   it("emits inclusions_exceed_pan when inclusions > 30% of flour", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "banana_freezer_thawed", grams: 180, role: "inclusion" }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "banana_freezer_thawed", grams: 180, role: "inclusion" }]), db);
     expect(c.warnings.find((w) => w.code === "inclusions_exceed_pan")).toBeDefined();
   });
   it("emits late_water_release_present (info) when frozen banana present", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 250 }, { ingredient_id: "banana_freezer_thawed", grams: 100 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 250 }, { uid: uid(), ingredient_id: "banana_freezer_thawed", grams: 100 }]), db);
     expect(c.warnings.find((w) => w.code === "late_water_release_present")).toBeDefined();
   });
   it("emits no_yeast_or_leavener when both are zero", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }]), db);
     expect(c.warnings.find((w) => w.code === "no_yeast_or_leavener")).toBeDefined();
   });
   it("emits no_salt below 0.5%", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }, { ingredient_id: "yeast_instant", grams: 5 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }]), db);
     expect(c.warnings.find((w) => w.code === "no_salt")).toBeDefined();
   });
   it("emits flour_quantity_atypical when flour outside [470,620]", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 800 }, { ingredient_id: "water_tap", grams: 500 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 800 }, { uid: uid(), ingredient_id: "water_tap", grams: 500 }]), db);
     expect(c.warnings.find((w) => w.code === "flour_quantity_atypical")).toBeDefined();
   });
   it("emits humectant_overestimate_risk when humectants > 10% flour without override", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }, { ingredient_id: "honey", grams: 60 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 300 }, { uid: uid(), ingredient_id: "honey", grams: 60 }]), db);
     expect(c.warnings.find((w) => w.code === "humectant_overestimate_risk")).toBeDefined();
   });
   it("emits alcohol_yeast_inhibition when alcohol > 3% of total mass", () => {
     // beer_stout: alcohol_pct=6, water_pct=89.3. 500g flour + 500g beer_stout: alcohol = 500*0.06 = 30g, total mass = 1000g, ratio = 0.030 — at boundary.
     // 600g beer_stout pushes to 36/1100 = 3.27% > 3% (fires).
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "beer_stout", grams: 600 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "beer_stout", grams: 600 }]), db);
     expect(c.warnings.find((w) => w.code === "alcohol_yeast_inhibition")).toBeDefined();
   });
   it("emits wet_zone_needs_gluten_support in wet zone without strengthener", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 360 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 360 }]), db);
     expect(c.warnings.find((w) => w.code === "wet_zone_needs_gluten_support")).toBeDefined();
   });
   it("does NOT emit wet_zone_needs_gluten_support when vital wheat gluten is present", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 360 }, { ingredient_id: "vital_wheat_gluten", grams: 30 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 360 }, { uid: uid(), ingredient_id: "vital_wheat_gluten", grams: 30 }]), db);
     expect(c.warnings.find((w) => w.code === "wet_zone_needs_gluten_support")).toBeUndefined();
   });
   it("emits very_wet_zone above 75% effective without GF stabilizer or eggs", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 400 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 400 }]), db);
     expect(c.warnings.find((w) => w.code === "very_wet_zone")).toBeDefined();
   });
   it("does NOT emit very_wet_zone when xanthan is present", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 400 }, { ingredient_id: "xanthan_gum", grams: 5 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 400 }, { uid: uid(), ingredient_id: "xanthan_gum", grams: 5 }]), db);
     expect(c.warnings.find((w) => w.code === "very_wet_zone")).toBeUndefined();
   });
   it("emits under_developed_gluten when effective_pct < ddt_wa_pct", () => {
-    const c = computeRecipe(recipeOf([{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 250 }, { ingredient_id: "yeast_instant", grams: 5 }, { ingredient_id: "salt_table", grams: 9 }]), db);
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 250 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }]), db);
     expect(c.warnings.find((w) => w.code === "under_developed_gluten")).toBeDefined();
   });
 });

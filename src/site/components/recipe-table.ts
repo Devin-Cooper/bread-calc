@@ -15,7 +15,12 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     // columns aren't blank for hand-entered grams-only recipes. The user can
     // still type a baker's % to override the derived value.
     let derivedPcts: Record<string, number | null> = {};
-    try { derivedPcts = computeRecipe(solved, db).bakers_pcts.by_ingredient; }
+    try {
+      const computed = computeRecipe(solved, db);
+      for (const item of solved.items) {
+        derivedPcts[item.uid] = computed.bakers_percents.by_uid[item.uid] ?? null;
+      }
+    }
     catch { /* invalid recipe — leave derived empty */ }
     const lookupCategoryAndLiquid = (ingredient_id: string): { category: string; isLiquid: boolean } | null => {
       const flour = db.flours.find((f) => f.id === ingredient_id);
@@ -46,6 +51,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       const row = document.createElement("div");
       row.setAttribute("role", "row");
       row.dataset["focusKey"] = `row-${i}`;
+      row.dataset["uid"] = item.uid;
       // grams/bakers_pct are typed `number | undefined`. The raw template
       // interpolation below is XSS-safe today because numbers stringify
       // to digits/decimals only. If the type ever widens to `string`,
@@ -55,7 +61,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         : `<input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
                  data-field="grams" data-index="${i}" value="${item.grams ?? ""}"
                  aria-label="grams for ${escapeHtml(item.ingredient_id)}" />`;
-      const derivedPct = derivedPcts[item.ingredient_id];
+      const derivedPct = derivedPcts[item.uid];
       const pctIsDerived = item.bakers_pct == null;
       const pctValue = pctIsDerived
         ? (derivedPct != null ? derivedPct.toFixed(1) : "")

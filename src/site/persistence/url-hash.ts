@@ -36,5 +36,9 @@ export async function decodeRecipeHash(s: string): Promise<Recipe> {
   const gz = base64UrlToBytes(s);
   const json = await gunzip(gz);
   if (json.byteLength > MAX_DECODED_BYTES) throw new Error(`URL-hash payload exceeds 16 KB cap (${json.byteLength} bytes)`);
-  return JSON.parse(new TextDecoder().decode(json)) as Recipe;
+  const recipe = JSON.parse(new TextDecoder().decode(json)) as Recipe;
+  if (recipe.schema_version !== "2.0") {
+    throw new Error(`URL-hash recipe is schema_version "${recipe.schema_version}", expected "2.0".`);
+  }
+  return recipe;
 }

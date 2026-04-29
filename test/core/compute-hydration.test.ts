@@ -15,29 +15,29 @@ const db: Database = { ingredients: [water, banana], flours: [flour], defaults, 
 
 describe("computeRecipe — hydration metrics", () => {
   it("nominal_pct counts all water from all ingredients", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }, { ingredient_id: "banana_ripe", grams: 200 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }, { uid: "u_banan01", ingredient_id: "banana_ripe", grams: 200 }] };
     const c = computeRecipe(r, db);
     // (300 + 200*0.753) / 500 * 100 = (300 + 150.6)/500*100 = 90.12
     expect(c.hydration.nominal_pct).toBeCloseTo(90.12, 2);
   });
   it("effective_pct applies free_water_factor per ingredient", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }, { ingredient_id: "banana_ripe", grams: 200 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }, { uid: "u_banan01", ingredient_id: "banana_ripe", grams: 200 }] };
     const c = computeRecipe(r, db);
     // (300*1 + 200*0.753*0.7) / 500 * 100 = (300 + 105.42)/500*100 = 81.084
     expect(c.hydration.effective_pct).toBeCloseTo(81.08, 1);
   });
   it("total_liquid_pct counts only is_liquid=true grams", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }, { ingredient_id: "banana_ripe", grams: 200 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }, { uid: "u_banan01", ingredient_id: "banana_ripe", grams: 200 }] };
     const c = computeRecipe(r, db);
     expect(c.hydration.total_liquid_pct).toBeCloseTo(60, 5);
   });
   it("nominal_pct >= effective_pct (free_water_factor <= 1)", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }, { ingredient_id: "banana_ripe", grams: 200 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }, { uid: "u_banan01", ingredient_id: "banana_ripe", grams: 200 }] };
     const c = computeRecipe(r, db);
     expect(c.hydration.nominal_pct!).toBeGreaterThanOrEqual(c.hydration.effective_pct!);
   });
   it("returns null for all hydration metrics when total_flour_g == 0", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "water_tap", grams: 300 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_water01", ingredient_id: "water_tap", grams: 300 }] };
     const c = computeRecipe(r, db);
     expect(c.hydration.effective_pct).toBeNull();
     expect(c.hydration.nominal_pct).toBeNull();
@@ -45,14 +45,14 @@ describe("computeRecipe — hydration metrics", () => {
     expect(c.hydration.zone).toBeNull();
   });
   it("classifies zone from effective_pct", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }] };
-    expect(computeRecipe(r, db).hydration.zone).toBe("sandwich"); // 60%
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }] };
+    expect(computeRecipe(r, db).hydration.zone?.id).toBe("sandwich"); // 60%
   });
   it("respects free_water_factor_overrides", () => {
     const r: Recipe = {
-      schema_version: "1.0",
+      schema_version: "2.0",
       free_water_factor_overrides: { banana_ripe: 0.5 },
-      items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "banana_ripe", grams: 200 }],
+      items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_banan01", ingredient_id: "banana_ripe", grams: 200 }],
     };
     const c = computeRecipe(r, db);
     // 200 * 0.753 * 0.5 / 500 * 100 = 15.06

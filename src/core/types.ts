@@ -12,6 +12,13 @@ export type Role =
 
 export type ZoneId = "dry" | "sandwich" | "wet" | "very_wet";
 
+export interface HydrationZone {
+  id: ZoneId;
+  label: string;
+  range: readonly [number, number];
+  note: string;
+}
+
 export type IngredientFlag =
   | "enzymatic_protease" | "late_water_release" | "humectant_bound_water"
   | "alcohol_yeast_inhibitor" | "high_salt" | "acidic" | "leavener_consumed"
@@ -85,6 +92,7 @@ export interface Database {
 }
 
 export interface RecipeItem {
+  uid: string;
   ingredient_id: string;
   grams?: number;
   bakers_pct?: number;
@@ -92,7 +100,7 @@ export interface RecipeItem {
 }
 
 export interface Recipe {
-  schema_version: "1.0";
+  schema_version: "2.0";
   name?: string;
   notes?: string;
   machine?: string;
@@ -117,12 +125,51 @@ export interface Warning {
   code: WarningCode;
   severity: "info" | "warn" | "error";
   message: string;
-  related_ingredient_ids?: string[];
+  related_uids?: string[];
+  suggested_fixes: Fix[];   // non-optional; empty array for pure-info warnings
+}
+
+export type Fix =
+  | { kind: "set_grams";          uid: string; grams: number;       rationale: string; }
+  | { kind: "increase_grams";     uid: string; delta_g: number;     rationale: string; }
+  | { kind: "decrease_grams";     uid: string; delta_g: number;     rationale: string; }
+  | { kind: "set_bakers_pct";     uid: string; bakers_pct: number;  rationale: string; }
+  | { kind: "add_ingredient";     uid?: string; ingredient_id: string;
+                                  grams?: number; bakers_pct?: number; role?: Role;
+                                  rationale: string; }
+  | { kind: "remove_ingredient";  uid: string; rationale: string; }
+  | { kind: "set_field";          field: "bake_loss_pct" | "target_loaf_g" | "machine";
+                                  value: number | string | null; rationale: string; }
+  | { kind: "set_role";           uid: string; role: Role; rationale: string; };
+
+export type ApplyFixErrorCode =
+  | "unknown_uid" | "unknown_kind" | "invalid_payload" | "post_apply_invalid"
+  | "negative_grams" | "value_type_mismatch";
+
+export interface ApplyFixError {
+  code: ApplyFixErrorCode;
+  message: string;
+  details?: unknown;
+}
+
+export type ApplyFixResult =
+  | { ok: true;  recipe: Recipe }
+  | { ok: false; error: ApplyFixError };
+
+export interface BreakdownEntry {
+  uid: string;
+  ingredient_id: string;
+  grams: number;
+  contribution_g: number;
+  contribution_g_effective?: number;
 }
 
 export interface ComputedRecipe {
   recipe: Recipe;
-  totals: {
+
+  tree: ExplainTree;
+
+  metrics: {
     total_mass_g: number;
     total_flour_g: number;
     total_inclusions_g: number;
@@ -134,25 +181,33 @@ export interface ComputedRecipe {
     total_alcohol_g: number;
     predicted_loaf_g: number;
   };
+
   hydration: {
     effective_pct: number | null;
     nominal_pct: number | null;
     total_liquid_pct: number | null;
-    zone: ZoneId | null;
+    zone: HydrationZone | null;
   };
-  bakers_pcts: {
-    by_ingredient: Record<string, number | null>;
+
+  bakers_percents: {
+    by_uid: Record<string, number | null>;
+    by_ingredient_id: Record<string, number[]>;
     salt_equivalent_pct: number | null;
     sugar_equivalent_pct: number | null;
     fat_equivalent_pct: number | null;
     yeast_pct: number | null;
   };
+
   ddt_water_absorption_pct: number | null;
+
   warnings: Warning[];
-  water_breakdown: Array<{ ingredient_id: string; grams: number; nominal_water_g: number; effective_water_g: number }>;
-  salt_breakdown:  Array<{ ingredient_id: string; grams: number; salt_g_contribution:  number }>;
-  sugar_breakdown: Array<{ ingredient_id: string; grams: number; sugar_g_contribution: number }>;
-  fat_breakdown:   Array<{ ingredient_id: string; grams: number; fat_g_contribution:   number }>;
+
+  breakdowns: {
+    water: BreakdownEntry[];
+    salt: BreakdownEntry[];
+    sugar: BreakdownEntry[];
+    fat: BreakdownEntry[];
+  };
 }
 
 export class RecipeValidationError extends Error {
@@ -167,4 +222,71 @@ export class RecipeValidationError extends Error {
 export interface RecipeValidationResult {
   valid: boolean;
   issues: Array<{ path: string; code: string; message: string }>;
+}
+
+// ----- Phase 2: derivation tree types -----
+
+export type ExplainTree = ExplainNode;
+
+export type ExplainNode =
+  | ConstantNode
+  | ProjectFieldNode
+  | SumNode
+  | WeightedSumNode
+  | ProductNode
+  | RatioNode
+  | ScaleNode
+  | ProjectFromTreeNode;
+
+interface BaseNode { id: string; label: string; }
+
+export interface ConstantNode extends BaseNode {
+  type: "Constant";
+  value: number;
+  unit?: string;
+}
+
+export interface ProjectFieldNode extends BaseNode {
+  type: "ProjectField";
+  source_uid: string;
+  field: string;        // e.g. "grams", "ingredient.water_pct"
+  value: number;
+}
+
+export interface SumNode extends BaseNode {
+  type: "Sum";
+  terms: ExplainNode[];
+  value: number | null;
+}
+
+export interface WeightedSumNode extends BaseNode {
+  type: "WeightedSum";
+  terms: Array<{ weight: ExplainNode; value: ExplainNode }>;
+  value: number | null;
+}
+
+export interface ProductNode extends BaseNode {
+  type: "Product";
+  factors: ExplainNode[];
+  value: number | null;
+}
+
+export interface RatioNode extends BaseNode {
+  type: "Ratio";
+  numerator: ExplainNode;
+  denominator: ExplainNode;
+  value: number | null;     // null when denominator is 0
+}
+
+export interface ScaleNode extends BaseNode {
+  type: "Scale";
+  input: ExplainNode;
+  factor: number;
+  value: number | null;
+}
+
+export interface ProjectFromTreeNode extends BaseNode {
+  type: "ProjectFromTree";
+  ref_id: string;           // id of another node in the same tree
+  value: number | null;
 }

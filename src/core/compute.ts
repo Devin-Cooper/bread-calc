@@ -1,11 +1,12 @@
 import type {
-  Recipe, RecipeItem, Database, Ingredient, Flour, ComputedRecipe, Role, ZoneId, Warning,
+  Recipe, RecipeItem, Database, Ingredient, Flour, ComputedRecipe, Role, Warning,
 } from "./types.js";
 import { inferRole } from "./role.js";
 import { computeWeightedDdtWa, type FlourComponent } from "./flour.js";
 import { classifyZone } from "./zones.js";
 import { solveWithError } from "./solve.js";
-import { runWarnings } from "./warnings.js";
+import { runWarnings, emitSolverWarning } from "./warnings.js";
+import { buildTree, projectByLabel } from "./explain-tree.js";
 
 interface ResolvedItem {
   item: RecipeItem;
@@ -57,29 +58,23 @@ function r2(n: number): number {
 }
 
 export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
+  // 1. Solve and resolve; collect solverError but don't emit warnings yet.
   const { recipe: solvedRecipe, error: solverError } = solveWithError(recipe, db);
-  const warnings: Warning[] = [];
-  if (solverError === "solver_overconstrained") {
-    warnings.push({ code: "solver_overconstrained", severity: "error", message: "Fixed-gram items already exceed the target dough mass." });
-  } else if (solverError === "solver_ambiguous_flour") {
-    warnings.push({ code: "solver_ambiguous_flour", severity: "error", message: "Cannot mix fixed flour grams with bakers' percentages on other items." });
-  } else if (solverError === "target_loaf_g_ignored_no_pcts") {
-    warnings.push({ code: "target_loaf_g_ignored_no_pcts", severity: "info", message: "target_loaf_g set but no items use bakers_pct; using your gram values directly." });
-  }
   const resolved = solvedRecipe.items.map((it) => resolveItem(it, db, solvedRecipe));
 
-  const total_mass_g = resolved.reduce((s, r) => s + r.grams, 0);
-  const total_flour_g = resolved.filter((r) => r.role === "flour").reduce((s, r) => s + r.grams, 0);
-  const total_inclusions_g = resolved.filter((r) => r.role === "inclusion").reduce((s, r) => s + r.grams, 0);
+  const tree = buildTree(solvedRecipe, db);
+  const total_mass_g            = projectByLabel(tree, "total_mass_g")            ?? 0;
+  const total_flour_g           = projectByLabel(tree, "total_flour_g")           ?? 0;
+  const total_inclusions_g      = projectByLabel(tree, "total_inclusions_g")      ?? 0;
+  const total_water_g_nominal   = projectByLabel(tree, "total_water_g_nominal")   ?? 0;
+  const total_water_g_effective = projectByLabel(tree, "total_water_g_effective") ?? 0;
+  const total_salt_g_equivalent = projectByLabel(tree, "total_salt_g_equivalent") ?? 0;
+  const total_sugar_g_equivalent= projectByLabel(tree, "total_sugar_g_equivalent")?? 0;
+  const total_fat_g_equivalent  = projectByLabel(tree, "total_fat_g_equivalent")  ?? 0;
+  const total_alcohol_g         = projectByLabel(tree, "total_alcohol_g")         ?? 0;
+  const predicted_loaf_g        = projectByLabel(tree, "predicted_loaf_g")        ?? 0;
+  // total_liquid_g is not in the tree yet (added in Phase 4); compute locally from resolved.
   const total_liquid_g = resolved.filter((r) => r.is_liquid).reduce((s, r) => s + r.grams, 0);
-  const total_alcohol_g = resolved.reduce((s, r) => s + (r.grams * r.alcohol_pct) / 100, 0);
-  const total_water_g_nominal = resolved.reduce((s, r) => s + (r.grams * r.water_pct) / 100, 0);
-  const total_water_g_effective = resolved.reduce((s, r) => s + (r.grams * r.water_pct * r.freeWaterFactor) / 100, 0);
-  const total_salt_g_equivalent = resolved.reduce((s, r) => s + (r.grams * r.salt_pct) / 100, 0);
-  const total_sugar_g_equivalent = resolved.reduce((s, r) => s + (r.grams * r.sugar_pct) / 100, 0);
-  const total_fat_g_equivalent = resolved.reduce((s, r) => s + (r.grams * r.fat_pct) / 100, 0);
-  const bake_loss_pct = recipe.bake_loss_pct ?? db.defaults.default_bake_loss_pct;
-  const predicted_loaf_g = total_mass_g * (1 - bake_loss_pct / 100);
 
   const flourComponents: FlourComponent[] = resolved
     .filter((r) => r.role === "flour" && r.flour)
@@ -87,56 +82,98 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   const ddt_water_absorption_pct = computeWeightedDdtWa(flourComponents);
 
   const hasFlour = total_flour_g > 0;
-  const effective_pct = hasFlour ? (total_water_g_effective / total_flour_g) * 100 : null;
-  const nominal_pct = hasFlour ? (total_water_g_nominal / total_flour_g) * 100 : null;
+  const effective_pct = projectByLabel(tree, "effective_pct");
+  const nominal_pct   = projectByLabel(tree, "nominal_pct");
   const total_liquid_pct = hasFlour ? (total_liquid_g / total_flour_g) * 100 : null;
-  const zone: ZoneId | null = effective_pct === null ? null : classifyZone(effective_pct);
+  const zone = effective_pct === null ? null : classifyZone(effective_pct);
 
   const yeast_grams = resolved.filter((r) => r.role === "yeast").reduce((s, r) => s + r.grams, 0);
-  const by_ingredient: Record<string, number | null> = {};
+
+  // Build by_uid and by_ingredient_id
+  const by_uid: Record<string, number | null> = {};
+  const by_ingredient_id: Record<string, number[]> = {};
   for (const r of resolved) {
-    by_ingredient[r.item.ingredient_id] = hasFlour ? r2((r.grams / total_flour_g) * 100) : null;
+    const pct = hasFlour ? r2((r.grams / total_flour_g) * 100) : null;
+    by_uid[r.item.uid] = pct;
+    if (pct !== null) {
+      if (!by_ingredient_id[r.item.ingredient_id]) by_ingredient_id[r.item.ingredient_id] = [];
+      by_ingredient_id[r.item.ingredient_id]!.push(pct);
+    }
   }
 
-  const water_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id,
-    grams: r.grams,
-    nominal_water_g: r2((r.grams * r.water_pct) / 100),
-    effective_water_g: r2((r.grams * r.water_pct * r.freeWaterFactor) / 100),
-  }));
-  const salt_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id, grams: r.grams,
-    salt_g_contribution: r2((r.grams * r.salt_pct) / 100),
-  }));
-  const sugar_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id, grams: r.grams,
-    sugar_g_contribution: r2((r.grams * r.sugar_pct) / 100),
-  }));
-  const fat_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id, grams: r.grams,
-    fat_g_contribution: r2((r.grams * r.fat_pct) / 100),
-  }));
+  // Build breakdowns from resolved (each entry uses uid + ingredient_id + grams + contribution_g)
+  const breakdowns = {
+    water: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g:           r2((r.grams * r.water_pct) / 100),
+      contribution_g_effective: r2((r.grams * r.water_pct * r.freeWaterFactor) / 100),
+    })),
+    salt: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g: r2((r.grams * r.salt_pct) / 100),
+    })),
+    sugar: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g: r2((r.grams * r.sugar_pct) / 100),
+    })),
+    fat: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g: r2((r.grams * r.fat_pct) / 100),
+    })),
+  };
 
   const machine = db.machines.find((m) => m.id === (solvedRecipe.machine ?? db.defaults.default_machine_id))
                 ?? db.machines[0]!;
+
+  // 2. Build partial WITHOUT solver warnings (warnings: []).
   const partial: ComputedRecipe = {
     recipe: solvedRecipe,
-    totals: { total_mass_g: r2(total_mass_g), total_flour_g: r2(total_flour_g), total_inclusions_g: r2(total_inclusions_g),
+    tree,
+    metrics: {
+      total_mass_g: r2(total_mass_g), total_flour_g: r2(total_flour_g), total_inclusions_g: r2(total_inclusions_g),
       total_water_g_nominal: r2(total_water_g_nominal), total_water_g_effective: r2(total_water_g_effective),
       total_salt_g_equivalent: r2(total_salt_g_equivalent), total_sugar_g_equivalent: r2(total_sugar_g_equivalent),
       total_fat_g_equivalent: r2(total_fat_g_equivalent), total_alcohol_g: r2(total_alcohol_g),
-      predicted_loaf_g: r2(predicted_loaf_g) },
-    hydration: { effective_pct: effective_pct === null ? null : r2(effective_pct), nominal_pct: nominal_pct === null ? null : r2(nominal_pct), total_liquid_pct: total_liquid_pct === null ? null : r2(total_liquid_pct), zone },
-    bakers_pcts: { by_ingredient,
-      salt_equivalent_pct: hasFlour ? r2((total_salt_g_equivalent / total_flour_g) * 100) : null,
+      predicted_loaf_g: r2(predicted_loaf_g),
+    },
+    hydration: {
+      effective_pct: effective_pct === null ? null : r2(effective_pct),
+      nominal_pct: nominal_pct === null ? null : r2(nominal_pct),
+      total_liquid_pct: total_liquid_pct === null ? null : r2(total_liquid_pct),
+      zone,
+    },
+    bakers_percents: {
+      by_uid, by_ingredient_id,
+      salt_equivalent_pct:  hasFlour ? r2((total_salt_g_equivalent  / total_flour_g) * 100) : null,
       sugar_equivalent_pct: hasFlour ? r2((total_sugar_g_equivalent / total_flour_g) * 100) : null,
-      fat_equivalent_pct: hasFlour ? r2((total_fat_g_equivalent / total_flour_g) * 100) : null,
-      yeast_pct: hasFlour ? r2((yeast_grams / total_flour_g) * 100) : null,
+      fat_equivalent_pct:   hasFlour ? r2((total_fat_g_equivalent   / total_flour_g) * 100) : null,
+      yeast_pct:            hasFlour ? r2((yeast_grams / total_flour_g) * 100) : null,
     },
     ddt_water_absorption_pct: ddt_water_absorption_pct === null ? null : r2(ddt_water_absorption_pct),
-    warnings: [...warnings],
-    water_breakdown, salt_breakdown, sugar_breakdown, fat_breakdown,
+    warnings: [],
+    breakdowns,
   };
-  const ruleWarnings = runWarnings({ computed: partial, db, resolved: resolved.map((r) => ({ item: r.item, ingredient: r.ingredient, role: r.role, grams: r.grams })), machine });
-  return { ...partial, warnings: [...partial.warnings, ...ruleWarnings] };
+
+  // 3. Construct ctx and emit solver warnings (now that partial is available for fixes()).
+  const ctxForRules = {
+    computed: partial,
+    db,
+    resolved: resolved.map((r) => ({ item: r.item, ingredient: r.ingredient, role: r.role, grams: r.grams })),
+    machine,
+  };
+  const allWarnings: Warning[] = [];
+  if (solverError) {
+    const messages: Record<string, string> = {
+      solver_overconstrained: "Fixed-gram items already exceed the target dough mass.",
+      solver_ambiguous_flour: "Cannot mix fixed flour grams with bakers' percentages on other items.",
+      target_loaf_g_ignored_no_pcts: "target_loaf_g set but no items use bakers_pct; using your gram values directly.",
+    };
+    allWarnings.push(emitSolverWarning(ctxForRules, solverError, messages[solverError]!));
+  }
+
+  // 4. Run the rule registry (solver-error rules' evaluate() returns { fired: false }).
+  const ruleWarnings = runWarnings(ctxForRules);
+  allWarnings.push(...ruleWarnings);
+
+  return { ...partial, warnings: allWarnings };
 }

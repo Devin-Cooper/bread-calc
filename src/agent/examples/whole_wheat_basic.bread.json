@@ -1,0 +1,48 @@
+{
+  "id": "whole_wheat_basic",
+  "name": "Whole Wheat (basic)",
+  "course": "Whole Wheat",
+  "zone": "sandwich",
+  "description": "All whole wheat, sandwich-zone hydration with butter for tenderness.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Whole Wheat (basic)",
+    "items": [
+      {
+        "uid": "u_eg0000010",
+        "ingredient_id": "whole_wheat_flour",
+        "grams": 500
+      },
+      {
+        "uid": "u_eg0000011",
+        "ingredient_id": "water_tap",
+        "grams": 320
+      },
+      {
+        "uid": "u_eg0000012",
+        "ingredient_id": "honey",
+        "grams": 30
+      },
+      {
+        "uid": "u_eg0000013",
+        "ingredient_id": "salt_table",
+        "grams": 8
+      },
+      {
+        "uid": "u_eg0000014",
+        "ingredient_id": "butter_unsalted",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000015",
+        "ingredient_id": "yeast_instant",
+        "grams": 5
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 64.86,
+    "hydration_zone": "sandwich",
+    "predicted_loaf_g": 781.44
+  }
+}

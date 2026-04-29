@@ -1,0 +1,63 @@
+{
+  "id": "multigrain_seeded",
+  "name": "Multigrain Seeded",
+  "course": "Multigrain",
+  "zone": "sandwich",
+  "description": "Bread flour + sunflower + flax with butter and brown sugar.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Multigrain Seeded",
+    "items": [
+      {
+        "uid": "u_eg0000030",
+        "ingredient_id": "bread_flour",
+        "grams": 450
+      },
+      {
+        "uid": "u_eg0000031",
+        "ingredient_id": "whole_wheat_flour",
+        "grams": 100
+      },
+      {
+        "uid": "u_eg0000032",
+        "ingredient_id": "water_tap",
+        "grams": 340
+      },
+      {
+        "uid": "u_eg0000033",
+        "ingredient_id": "sunflower_seed",
+        "grams": 40
+      },
+      {
+        "uid": "u_eg0000034",
+        "ingredient_id": "flax_seed_ground",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000035",
+        "ingredient_id": "sugar_brown",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000036",
+        "ingredient_id": "salt_table",
+        "grams": 9
+      },
+      {
+        "uid": "u_eg0000037",
+        "ingredient_id": "butter_unsalted",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000038",
+        "ingredient_id": "yeast_instant",
+        "grams": 5
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 62.48,
+    "hydration_zone": "sandwich",
+    "predicted_loaf_g": 896.72
+  }
+}

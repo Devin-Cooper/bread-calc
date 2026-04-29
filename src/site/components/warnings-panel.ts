@@ -15,7 +15,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     parent.innerHTML = groups.map((g) => `
       <h3>${g[0]!.severity.toUpperCase()}</h3>
       <ul class="warn-list">${g.map((w) => `
-        <li class="warn-row ${w.severity}" data-related="${(w.related_ingredient_ids ?? []).join(",")}">
+        <li class="warn-row ${w.severity}" data-related="${(w.related_uids ?? []).join(",")}">
           <strong>${escapeHtml(w.code)}</strong>: ${escapeHtml(w.message)}
         </li>`).join("")}</ul>
     `).join("");
@@ -24,11 +24,12 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
   parent.addEventListener("click", (e) => {
     const li = (e.target as HTMLElement).closest("li.warn-row") as HTMLElement | null;
     if (!li) return;
-    const ids = (li.dataset["related"] ?? "").split(",").filter(Boolean);
-    if (ids.length === 0) return;
-    const rows = document.querySelectorAll<HTMLElement>(`#recipe-table [role="row"]`);
-    const target = Array.from(rows).find((r) => ids.some((id) => r.textContent?.includes(id)));
-    target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    const uids = (li.dataset["related"] ?? "").split(",").filter(Boolean);
+    if (uids.length === 0) return;
+    for (const uid of uids) {
+      const target = document.querySelector<HTMLElement>(`#recipe-table [data-uid="${uid}"]`);
+      if (target) { target.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+    }
   });
 
   store.subscribe(render); render();

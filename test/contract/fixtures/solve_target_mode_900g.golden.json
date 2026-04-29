@@ -1,0 +1,50 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "solve"
+  },
+  "payload": {
+    "schema_version": "2.0",
+    "name": "Target Mode 900g",
+    "target_loaf_g": 900,
+    "items": [
+      {
+        "uid": "u_eg0000080",
+        "ingredient_id": "bread_flour",
+        "bakers_pct": 100,
+        "grams": 591.5137494084863
+      },
+      {
+        "uid": "u_eg0000081",
+        "ingredient_id": "water_tap",
+        "bakers_pct": 60,
+        "grams": 354.90824964509176
+      },
+      {
+        "uid": "u_eg0000082",
+        "ingredient_id": "sugar_granulated",
+        "bakers_pct": 5.4,
+        "grams": 31.941742468058266
+      },
+      {
+        "uid": "u_eg0000083",
+        "ingredient_id": "salt_table",
+        "bakers_pct": 1.6,
+        "grams": 9.464219990535781
+      },
+      {
+        "uid": "u_eg0000084",
+        "ingredient_id": "butter_unsalted",
+        "bakers_pct": 5,
+        "grams": 29.575687470424317
+      },
+      {
+        "uid": "u_eg0000085",
+        "ingredient_id": "yeast_instant",
+        "bakers_pct": 0.9,
+        "grams": 5.323623744676377
+      }
+    ]
+  }
+}

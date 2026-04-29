@@ -1,20 +1,42 @@
 {
   "name": "bread-calc",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Hydration and loaf-weight calculator for the Zojirushi BB-PDC20 (and similar 2-lb bread machines), with an LLM-agent-friendly API.",
   "type": "module",
-  "engines": { "node": ">=22.0.0" },
-  "main": "./dist/lib/index.js",
-  "types": "./dist/lib/index.d.ts",
-  "exports": {
-    ".":         { "import": "./dist/lib/index.js", "types": "./dist/lib/index.d.ts" },
-    "./data":    { "import": "./dist/lib/data/index.js", "types": "./dist/lib/data/index.d.ts" },
-    "./schema":  "./dist/lib/schema.json"
+  "engines": {
+    "node": ">=22.0.0"
   },
-  "bin": { "bread-calc": "./dist/cli/bin.js" },
-  "files": ["dist/lib", "dist/cli", "README.md", "LICENSE"],
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/core/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/lib/index.js",
+      "types": "./dist/lib/core/index.d.ts"
+    },
+    "./agent": {
+      "import": "./dist/lib/agent.js",
+      "types": "./dist/lib/agent/index.d.ts"
+    },
+    "./data": {
+      "import": "./dist/lib/data/index.js",
+      "types": "./dist/lib/data/index.d.ts"
+    },
+    "./schema": "./dist/lib/schema.json"
+  },
+  "bin": {
+    "bread-calc": "dist/cli/bin.js"
+  },
+  "files": [
+    "dist/lib",
+    "dist/cli",
+    "README.md",
+    "LICENSE"
+  ],
   "homepage": "https://breadmachine.io/",
-  "repository": { "type": "git", "url": "git+https://github.com/Devin-Cooper/bread-calc.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Devin-Cooper/bread-calc.git"
+  },
   "license": "MIT",
   "scripts": {
     "compile:validator": "node scripts/compile-validator.mjs",
@@ -22,11 +44,13 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint --no-error-on-unmatched-pattern src test",
     "format": "prettier --write src test",
-    "pretest": "npm run compile:validator && npm run build:lib && npm run transform:data && npm run build:cli",
+    "pretest": "npm run compile:validator && npm run build:lib && npm run transform:data && npm run build:cli && npm run build:examples",
     "test": "vitest run",
     "test:watch": "vitest",
     "update-goldens": "UPDATE_GOLDENS=1 vitest run test/golden",
-    "build:lib": "vite build --config vite.lib.config.ts && tsc --emitDeclarationOnly --declaration --outDir dist/lib --rootDir src/core src/core/index.ts",
+    "update-contract": "UPDATE_CONTRACT=1 vitest run test/contract",
+    "build:examples": "node --experimental-strip-types scripts/build-examples.mjs",
+    "build:lib": "vite build --config vite.lib.config.ts",
     "build:cli": "vite build --config vite.cli.config.ts && node scripts/add-shebang.mjs",
     "build:site": "vite build --config vite.site.config.ts",
     "build": "npm run compile:validator && npm run build:lib && npm run transform:data && npm run build:cli && npm run build:site",
@@ -40,11 +64,14 @@
     "@typescript-eslint/parser": "^8.20.0",
     "ajv": "^8.17.0",
     "eslint": "^9.18.0",
+    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-plugin-import": "^2.29.0",
     "fast-check": "^3.23.0",
     "happy-dom": "^16.0.0",
     "prettier": "^3.4.0",
     "typescript": "^5.7.0",
     "vite": "^5.4.0",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^2.1.0"
   }
 }

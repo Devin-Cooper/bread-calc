@@ -1,0 +1,48 @@
+{
+  "id": "vegan_olive_oil",
+  "name": "Vegan Olive Oil",
+  "course": "Vegan",
+  "zone": "sandwich",
+  "description": "Vegan-friendly: olive oil instead of butter, no eggs/dairy.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Vegan Olive Oil",
+    "items": [
+      {
+        "uid": "u_eg0000060",
+        "ingredient_id": "bread_flour",
+        "grams": 500
+      },
+      {
+        "uid": "u_eg0000061",
+        "ingredient_id": "water_tap",
+        "grams": 310
+      },
+      {
+        "uid": "u_eg0000062",
+        "ingredient_id": "oil_olive_extra_virgin",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000063",
+        "ingredient_id": "sugar_granulated",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000064",
+        "ingredient_id": "salt_table",
+        "grams": 8
+      },
+      {
+        "uid": "u_eg0000065",
+        "ingredient_id": "yeast_instant",
+        "grams": 5
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 62,
+    "hydration_zone": "sandwich",
+    "predicted_loaf_g": 768.24
+  }
+}

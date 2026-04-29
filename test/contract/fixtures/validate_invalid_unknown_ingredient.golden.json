@@ -1,0 +1,17 @@
+{
+  "_meta": {
+    "tool_version": "<TOOL_VERSION>",
+    "output_schema_version": "2.0",
+    "subcommand": "validate"
+  },
+  "payload": {
+    "valid": false,
+    "issues": [
+      {
+        "path": "/items/0/ingredient_id",
+        "code": "unknown_ingredient_id",
+        "message": "Unknown ingredient_id: nonexistent_ingredient_xyz"
+      }
+    ]
+  }
+}

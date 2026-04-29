@@ -1,13 +1,13 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "2.0",
   "name": "Classic White (BB-PDC20)",
   "machine": "zojirushi_bb_pdc20",
   "items": [
-    { "ingredient_id": "bread_flour", "grams": 553 },
-    { "ingredient_id": "water_tap", "grams": 326 },
-    { "ingredient_id": "sugar_granulated", "grams": 30 },
-    { "ingredient_id": "salt_table", "grams": 9 },
-    { "ingredient_id": "butter_unsalted", "grams": 28 },
-    { "ingredient_id": "yeast_instant", "grams": 5 }
+    { "uid": "u_brdfl001", "ingredient_id": "bread_flour", "grams": 553 },
+    { "uid": "u_water001", "ingredient_id": "water_tap", "grams": 326 },
+    { "uid": "u_sugar001", "ingredient_id": "sugar_granulated", "grams": 30 },
+    { "uid": "u_salt0001", "ingredient_id": "salt_table", "grams": 9 },
+    { "uid": "u_butr0001", "ingredient_id": "butter_unsalted", "grams": 28 },
+    { "uid": "u_yest0001", "ingredient_id": "yeast_instant", "grams": 5 }
   ]
 }

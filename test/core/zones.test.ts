@@ -1,28 +1,36 @@
 import { describe, it, expect } from "vitest";
-import { HYDRATION_ZONES, classifyZone } from "../../src/core/zones.js";
+import { classifyZone, classifyZoneId, HYDRATION_ZONES } from "../../src/core/zones.js";
 
-describe("HYDRATION_ZONES", () => {
-  it("has four zones in order dry → very_wet", () => {
-    expect(HYDRATION_ZONES.map((z) => z.id)).toEqual(["dry", "sandwich", "wet", "very_wet"]);
+describe("classifyZoneId", () => {
+  it("classifies all zone boundaries correctly", () => {
+    expect(classifyZoneId(0)).toBe("dry");
+    expect(classifyZoneId(54.99)).toBe("dry");
+    expect(classifyZoneId(55)).toBe("sandwich");
+    expect(classifyZoneId(66.99)).toBe("sandwich");
+    expect(classifyZoneId(67)).toBe("wet");
+    expect(classifyZoneId(74.99)).toBe("wet");
+    expect(classifyZoneId(75)).toBe("very_wet");
+    expect(classifyZoneId(100)).toBe("very_wet");
+    expect(classifyZoneId(150)).toBe("very_wet");
   });
-  it("zones tile [0, 100] without gaps or overlaps", () => {
-    for (let i = 0; i < HYDRATION_ZONES.length - 1; i++) {
-      expect(HYDRATION_ZONES[i]!.max).toBe(HYDRATION_ZONES[i + 1]!.min);
-    }
-    expect(HYDRATION_ZONES[0]!.min).toBe(0);
-    expect(HYDRATION_ZONES.at(-1)!.max).toBe(100);
+  it("defaults to dry on NaN/negative", () => {
+    expect(classifyZoneId(NaN)).toBe("dry");
+    expect(classifyZoneId(-1)).toBe("dry");
   });
 });
 
-describe("classifyZone", () => {
-  it("returns dry for 0%", () => { expect(classifyZone(0)).toBe("dry"); });
-  it("returns dry for 54.99%", () => { expect(classifyZone(54.99)).toBe("dry"); });
-  it("returns sandwich for 55% (boundary inclusive on min)", () => { expect(classifyZone(55)).toBe("sandwich"); });
-  it("returns sandwich for 60.8% (v4 just-ripe)", () => { expect(classifyZone(60.8)).toBe("sandwich"); });
-  it("returns sandwich for 66.99%", () => { expect(classifyZone(66.99)).toBe("sandwich"); });
-  it("returns wet for 67%", () => { expect(classifyZone(67)).toBe("wet"); });
-  it("returns wet for 74.99%", () => { expect(classifyZone(74.99)).toBe("wet"); });
-  it("returns very_wet for 75%", () => { expect(classifyZone(75)).toBe("very_wet"); });
-  it("returns very_wet for 80.6% (v1 failed)", () => { expect(classifyZone(80.6)).toBe("very_wet"); });
-  it("returns very_wet for 100%", () => { expect(classifyZone(100)).toBe("very_wet"); });
+describe("classifyZone (object form)", () => {
+  it("returns rich HydrationZone with id/label/range/note", () => {
+    const z = classifyZone(60);
+    expect(z.id).toBe("sandwich");
+    expect(z.label).toBe("Sandwich-loaf comfort");
+    expect(z.range).toEqual([55, 67]);
+    expect(z.note).toBe("BB-PDC20 sweet spot");
+  });
+});
+
+describe("HYDRATION_ZONES", () => {
+  it("has exactly 4 zones in id-order", () => {
+    expect(HYDRATION_ZONES.map((z) => z.id)).toEqual(["dry", "sandwich", "wet", "very_wet"]);
+  });
 });

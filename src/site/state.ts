@@ -1,4 +1,5 @@
 import type { Recipe, RecipeItem } from "../core/index.js";
+import { generateUid } from "../core/uid.js";
 
 export type Action =
   | { type: "add_item"; ingredient_id: string }
@@ -15,7 +16,7 @@ export type Action =
 
 function reduce(state: Recipe, action: Action): Recipe {
   switch (action.type) {
-    case "add_item": return { ...state, items: [...state.items, { ingredient_id: action.ingredient_id, grams: 0 }] };
+    case "add_item": return { ...state, items: [...state.items, { uid: generateUid(), ingredient_id: action.ingredient_id, grams: 0 }] };
     case "remove_item": return { ...state, items: state.items.filter((_, i) => i !== action.index) };
     case "set_grams": return { ...state, items: state.items.map((it, i) => i === action.index ? { ...it, grams: action.grams } : it) };
     case "set_bakers_pct": return { ...state, items: state.items.map((it, i) => i === action.index ? { ...it, bakers_pct: action.bakers_pct } : it) };
