@@ -1,7 +1,6 @@
 // test/data/database.test.ts
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
-// @ts-expect-error generated module
 import { validateIngredientsFile, validateFloursFile, validateBBPDC20RecipesFile, validateMachinesFile, validateDefaults } from "../../src/core/validator.generated.js";
 import { classifyZone } from "../../src/core/zones.js";
 
