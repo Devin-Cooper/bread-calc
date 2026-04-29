@@ -113,16 +113,27 @@ const ALLOWED: Record<string, ReadonlyArray<keyof typeof ALL_OPTIONS>> = {
 
 const SUBCOMMANDS = Object.keys(ALLOWED);
 
-const { values, positionals } = parseArgs({
-  allowPositionals: true,
-  strict: true,
-  options: ALL_OPTIONS,
-});
+let parsed;
+try {
+  parsed = parseArgs({
+    allowPositionals: true,
+    strict: true,
+    options: ALL_OPTIONS,
+  });
+} catch (e) {
+  process.stderr.write(`bread-calc: ${(e as Error).message}\n`);
+  process.exit(64);
+}
+const { values, positionals } = parsed;
 
 if (values.version) { console.log(readPkg().version); process.exit(0); }
-if (values.help || positionals.length === 0) {
+if (values.help) {
   console.log(helpText());
-  process.exit(positionals.length === 0 ? 64 : 0);
+  process.exit(0);
+}
+if (positionals.length === 0) {
+  console.log(helpText());
+  process.exit(64);
 }
 
 const sub = positionals[0]!;
