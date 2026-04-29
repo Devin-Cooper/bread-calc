@@ -35,18 +35,18 @@ describe("computeRecipe — totals", () => {
       ],
     };
     const c = computeRecipe(r, db);
-    expect(c.totals.total_mass_g).toBeCloseTo(834, 5);
+    expect(c.metrics.total_mass_g).toBeCloseTo(834, 5);
   });
   it("computes total_flour_g from items with role=flour", () => {
     const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 320 }] };
-    expect(computeRecipe(r, db).totals.total_flour_g).toBe(500);
+    expect(computeRecipe(r, db).metrics.total_flour_g).toBe(500);
   });
   it("computes predicted_loaf_g with default 12% bake loss", () => {
     const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 320 }] };
-    expect(computeRecipe(r, db).totals.predicted_loaf_g).toBeCloseTo(820 * 0.88, 5);
+    expect(computeRecipe(r, db).metrics.predicted_loaf_g).toBeCloseTo(820 * 0.88, 5);
   });
   it("honors a custom bake_loss_pct", () => {
     const r: Recipe = { schema_version: "2.0", bake_loss_pct: 10, items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }] };
-    expect(computeRecipe(r, db).totals.predicted_loaf_g).toBeCloseTo(800 * 0.90, 5);
+    expect(computeRecipe(r, db).metrics.predicted_loaf_g).toBeCloseTo(800 * 0.90, 5);
   });
 });

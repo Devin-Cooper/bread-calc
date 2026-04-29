@@ -51,7 +51,7 @@ warningRules.register({
   consumes: ["metrics.total_flour_g"],
   has_fixes: false,
   evaluate(ctx) {
-    return ctx.computed.totals.total_flour_g === 0
+    return ctx.computed.metrics.total_flour_g === 0
       ? { fired: true, message: "Recipe has no flour; cannot compute hydration." }
       : { fired: false };
   },
@@ -66,16 +66,16 @@ warningRules.register({
   consumes: ["metrics.predicted_loaf_g", "machine.pan_overflow_threshold_g"],
   has_fixes: true,
   evaluate({ computed, machine }) {
-    if (computed.totals.predicted_loaf_g > machine.pan_overflow_threshold_g) {
+    if (computed.metrics.predicted_loaf_g > machine.pan_overflow_threshold_g) {
       return { fired: true,
-        message: `Predicted loaf weight ${computed.totals.predicted_loaf_g} g exceeds pan threshold ${machine.pan_overflow_threshold_g} g.` };
+        message: `Predicted loaf weight ${computed.metrics.predicted_loaf_g} g exceeds pan threshold ${machine.pan_overflow_threshold_g} g.` };
     }
     return { fired: false };
   },
   fixes(ctx) {
     const flourItem = ctx.resolved.find((r) => r.role === "flour");
     if (!flourItem) return [];
-    const ratio = ctx.machine.pan_overflow_threshold_g / ctx.computed.totals.predicted_loaf_g;
+    const ratio = ctx.machine.pan_overflow_threshold_g / ctx.computed.metrics.predicted_loaf_g;
     return [{
       kind: "decrease_grams",
       uid: flourItem.item.uid,
@@ -93,9 +93,9 @@ warningRules.register({
   consumes: ["metrics.predicted_loaf_g", "machine.pan_underfill_threshold_g"],
   has_fixes: false,
   evaluate({ computed, machine }) {
-    return computed.totals.predicted_loaf_g < machine.pan_underfill_threshold_g
+    return computed.metrics.predicted_loaf_g < machine.pan_underfill_threshold_g
       ? { fired: true,
-          message: `Predicted loaf weight ${computed.totals.predicted_loaf_g} g may underfill the pan (typical minimum ${machine.pan_underfill_threshold_g} g).` }
+          message: `Predicted loaf weight ${computed.metrics.predicted_loaf_g} g may underfill the pan (typical minimum ${machine.pan_underfill_threshold_g} g).` }
       : { fired: false };
   },
   fixes() { return []; },  // info-only
@@ -136,7 +136,7 @@ warningRules.register({
   consumes: ["bakers_percents.sugar_equivalent_pct"],
   has_fixes: true,
   evaluate({ computed }) {
-    const s = computed.bakers_pcts.sugar_equivalent_pct ?? 0;
+    const s = computed.bakers_percents.sugar_equivalent_pct ?? 0;
     return s > 12
       ? { fired: true, message: `Sugar equivalent ${s}% > 12% may inhibit yeast.` }
       : { fired: false };
@@ -144,7 +144,7 @@ warningRules.register({
   fixes(ctx) {
     const sugar = ctx.resolved.find((r) => r.role === "sweetener");
     if (!sugar) return [];
-    const flour = ctx.computed.totals.total_flour_g;
+    const flour = ctx.computed.metrics.total_flour_g;
     const targetSugarG = flour * 0.12;
     return [{
       kind: "set_grams",
@@ -163,7 +163,7 @@ warningRules.register({
   consumes: ["bakers_percents.salt_equivalent_pct"],
   has_fixes: true,
   evaluate({ computed }) {
-    const s = computed.bakers_pcts.salt_equivalent_pct ?? 0;
+    const s = computed.bakers_percents.salt_equivalent_pct ?? 0;
     return s > 2.5
       ? { fired: true, message: `Salt equivalent ${s}% > 2.5%.` }
       : { fired: false };
@@ -171,7 +171,7 @@ warningRules.register({
   fixes(ctx) {
     const salt = ctx.resolved.find((r) => r.role === "salt");
     if (!salt) return [];
-    const flour = ctx.computed.totals.total_flour_g;
+    const flour = ctx.computed.metrics.total_flour_g;
     const targetSaltG = flour * 0.025;
     const out: Fix[] = [{
       kind: "set_grams",
@@ -200,10 +200,10 @@ warningRules.register({
   consumes: ["bakers_percents.salt_equivalent_pct", "resolved"],
   has_fixes: false,
   evaluate(ctx) {
-    const salt = ctx.computed.bakers_pcts.salt_equivalent_pct ?? 0;
+    const salt = ctx.computed.bakers_percents.salt_equivalent_pct ?? 0;
     if (salt <= 2.5) return { fired: false };
     const declared = ctx.resolved.filter((r) => r.role === "salt").reduce((s, r) => s + r.grams, 0);
-    const inherent = ctx.computed.totals.total_salt_g_equivalent - declared;
+    const inherent = ctx.computed.metrics.total_salt_g_equivalent - declared;
     if (inherent > declared) {
       return { fired: true,
         message: `Most salt comes from ingredients (${inherent.toFixed(1)} g) rather than declared salt (${declared.toFixed(1)} g).` };
@@ -221,7 +221,7 @@ warningRules.register({
   consumes: ["bakers_percents.fat_equivalent_pct"],
   has_fixes: true,
   evaluate({ computed }) {
-    const f = computed.bakers_pcts.fat_equivalent_pct ?? 0;
+    const f = computed.bakers_percents.fat_equivalent_pct ?? 0;
     return f > 12
       ? { fired: true, message: `Fat equivalent ${f}% > 12% may interfere with gluten.` }
       : { fired: false };
@@ -229,7 +229,7 @@ warningRules.register({
   fixes(ctx) {
     const fat = ctx.resolved.find((r) => r.role === "fat");
     if (!fat) return [];
-    const flour = ctx.computed.totals.total_flour_g;
+    const flour = ctx.computed.metrics.total_flour_g;
     const targetFatG = flour * 0.12;
     return [{
       kind: "set_grams",
@@ -274,8 +274,8 @@ warningRules.register({
   consumes: ["metrics.total_inclusions_g", "metrics.total_flour_g", "machine.inclusion_max_fraction_of_flour"],
   has_fixes: false,
   evaluate({ computed, machine }) {
-    if (computed.totals.total_flour_g === 0) return { fired: false };
-    const ratio = computed.totals.total_inclusions_g / computed.totals.total_flour_g;
+    if (computed.metrics.total_flour_g === 0) return { fired: false };
+    const ratio = computed.metrics.total_inclusions_g / computed.metrics.total_flour_g;
     if (ratio > machine.inclusion_max_fraction_of_flour) {
       return { fired: true,
         message: `Inclusions are ${(ratio * 100).toFixed(0)}% of flour, above the ${machine.inclusion_max_fraction_of_flour * 100}% recommended maximum.` };
@@ -336,8 +336,8 @@ warningRules.register({
   consumes: ["metrics.total_alcohol_g", "metrics.total_mass_g"],
   has_fixes: false,
   evaluate({ computed }) {
-    if (computed.totals.total_mass_g === 0) return { fired: false };
-    const ratio = computed.totals.total_alcohol_g / computed.totals.total_mass_g;
+    if (computed.metrics.total_mass_g === 0) return { fired: false };
+    const ratio = computed.metrics.total_alcohol_g / computed.metrics.total_mass_g;
     return ratio > 0.03
       ? { fired: true, message: `Alcohol is ${(ratio * 100).toFixed(1)}% of total mass; >3% suppresses yeast.` }
       : { fired: false };
@@ -388,7 +388,7 @@ warningRules.register({
   has_fixes: false,
   evaluate(ctx) {
     const hum = gramsByFlag(ctx, "humectant_bound_water");
-    const flour = ctx.computed.totals.total_flour_g;
+    const flour = ctx.computed.metrics.total_flour_g;
     if (flour === 0 || hum / flour <= 0.10) return { fired: false };
     const overrides = ctx.computed.recipe.free_water_factor_overrides ?? {};
     const ids = ctx.resolved.filter((r) => r.ingredient?.flags?.includes("humectant_bound_water")).map((r) => r.item.ingredient_id);
@@ -406,7 +406,7 @@ warningRules.register({
   consumes: ["metrics.total_flour_g", "machine.flour_quantity_typical_min_g", "machine.flour_quantity_typical_max_g"],
   has_fixes: false,
   evaluate({ computed, machine }) {
-    const f = computed.totals.total_flour_g;
+    const f = computed.metrics.total_flour_g;
     if (f === 0) return { fired: false };
     if (f < machine.flour_quantity_typical_min_g || f > machine.flour_quantity_typical_max_g) {
       return { fired: true,
@@ -425,13 +425,13 @@ warningRules.register({
   consumes: ["bakers_percents.salt_equivalent_pct"],
   has_fixes: true,
   evaluate({ computed }) {
-    return (computed.bakers_pcts.salt_equivalent_pct ?? 0) < 0.5
+    return (computed.bakers_percents.salt_equivalent_pct ?? 0) < 0.5
       ? { fired: true, message: "Salt equivalent is below 0.5%; bread may taste flat unless intentional." }
       : { fired: false };
   },
   fixes(ctx) {
     const salt = ctx.resolved.find((r) => r.role === "salt");
-    const flour = ctx.computed.totals.total_flour_g;
+    const flour = ctx.computed.metrics.total_flour_g;
     const targetGrams = Math.round(flour * 0.018 * 10) / 10;  // 1.8% — common target
     if (salt) {
       return [{ kind: "set_grams", uid: salt.item.uid, grams: targetGrams, rationale: "Set salt to ~1.8% of flour for balanced flavor." }];

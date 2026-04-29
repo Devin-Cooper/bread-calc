@@ -88,29 +88,39 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   const zone = effective_pct === null ? null : classifyZone(effective_pct);
 
   const yeast_grams = resolved.filter((r) => r.role === "yeast").reduce((s, r) => s + r.grams, 0);
-  const by_ingredient: Record<string, number | null> = {};
+
+  // Build by_uid and by_ingredient_id
+  const by_uid: Record<string, number | null> = {};
+  const by_ingredient_id: Record<string, number[]> = {};
   for (const r of resolved) {
-    by_ingredient[r.item.ingredient_id] = hasFlour ? r2((r.grams / total_flour_g) * 100) : null;
+    const pct = hasFlour ? r2((r.grams / total_flour_g) * 100) : null;
+    by_uid[r.item.uid] = pct;
+    if (pct !== null) {
+      if (!by_ingredient_id[r.item.ingredient_id]) by_ingredient_id[r.item.ingredient_id] = [];
+      by_ingredient_id[r.item.ingredient_id]!.push(pct);
+    }
   }
 
-  const water_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id,
-    grams: r.grams,
-    nominal_water_g: r2((r.grams * r.water_pct) / 100),
-    effective_water_g: r2((r.grams * r.water_pct * r.freeWaterFactor) / 100),
-  }));
-  const salt_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id, grams: r.grams,
-    salt_g_contribution: r2((r.grams * r.salt_pct) / 100),
-  }));
-  const sugar_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id, grams: r.grams,
-    sugar_g_contribution: r2((r.grams * r.sugar_pct) / 100),
-  }));
-  const fat_breakdown = resolved.map((r) => ({
-    ingredient_id: r.item.ingredient_id, grams: r.grams,
-    fat_g_contribution: r2((r.grams * r.fat_pct) / 100),
-  }));
+  // Build breakdowns from resolved (each entry uses uid + ingredient_id + grams + contribution_g)
+  const breakdowns = {
+    water: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g:           r2((r.grams * r.water_pct) / 100),
+      contribution_g_effective: r2((r.grams * r.water_pct * r.freeWaterFactor) / 100),
+    })),
+    salt: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g: r2((r.grams * r.salt_pct) / 100),
+    })),
+    sugar: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g: r2((r.grams * r.sugar_pct) / 100),
+    })),
+    fat: resolved.map((r) => ({
+      uid: r.item.uid, ingredient_id: r.item.ingredient_id, grams: r.grams,
+      contribution_g: r2((r.grams * r.fat_pct) / 100),
+    })),
+  };
 
   const machine = db.machines.find((m) => m.id === (solvedRecipe.machine ?? db.defaults.default_machine_id))
                 ?? db.machines[0]!;
@@ -118,21 +128,30 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   // 2. Build partial WITHOUT solver warnings (warnings: []).
   const partial: ComputedRecipe = {
     recipe: solvedRecipe,
-    totals: { total_mass_g: r2(total_mass_g), total_flour_g: r2(total_flour_g), total_inclusions_g: r2(total_inclusions_g),
+    tree,
+    metrics: {
+      total_mass_g: r2(total_mass_g), total_flour_g: r2(total_flour_g), total_inclusions_g: r2(total_inclusions_g),
       total_water_g_nominal: r2(total_water_g_nominal), total_water_g_effective: r2(total_water_g_effective),
       total_salt_g_equivalent: r2(total_salt_g_equivalent), total_sugar_g_equivalent: r2(total_sugar_g_equivalent),
       total_fat_g_equivalent: r2(total_fat_g_equivalent), total_alcohol_g: r2(total_alcohol_g),
-      predicted_loaf_g: r2(predicted_loaf_g) },
-    hydration: { effective_pct: effective_pct === null ? null : r2(effective_pct), nominal_pct: nominal_pct === null ? null : r2(nominal_pct), total_liquid_pct: total_liquid_pct === null ? null : r2(total_liquid_pct), zone },
-    bakers_pcts: { by_ingredient,
-      salt_equivalent_pct: hasFlour ? r2((total_salt_g_equivalent / total_flour_g) * 100) : null,
+      predicted_loaf_g: r2(predicted_loaf_g),
+    },
+    hydration: {
+      effective_pct: effective_pct === null ? null : r2(effective_pct),
+      nominal_pct: nominal_pct === null ? null : r2(nominal_pct),
+      total_liquid_pct: total_liquid_pct === null ? null : r2(total_liquid_pct),
+      zone,
+    },
+    bakers_percents: {
+      by_uid, by_ingredient_id,
+      salt_equivalent_pct:  hasFlour ? r2((total_salt_g_equivalent  / total_flour_g) * 100) : null,
       sugar_equivalent_pct: hasFlour ? r2((total_sugar_g_equivalent / total_flour_g) * 100) : null,
-      fat_equivalent_pct: hasFlour ? r2((total_fat_g_equivalent / total_flour_g) * 100) : null,
-      yeast_pct: hasFlour ? r2((yeast_grams / total_flour_g) * 100) : null,
+      fat_equivalent_pct:   hasFlour ? r2((total_fat_g_equivalent   / total_flour_g) * 100) : null,
+      yeast_pct:            hasFlour ? r2((yeast_grams / total_flour_g) * 100) : null,
     },
     ddt_water_absorption_pct: ddt_water_absorption_pct === null ? null : r2(ddt_water_absorption_pct),
     warnings: [],
-    water_breakdown, salt_breakdown, sugar_breakdown, fat_breakdown,
+    breakdowns,
   };
 
   // 3. Construct ctx and emit solver warnings (now that partial is available for fixes()).
