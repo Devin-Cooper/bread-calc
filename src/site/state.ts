@@ -64,7 +64,12 @@ export function createStore(initial: Recipe): Store {
   const subs = new Set<() => void>();
   return {
     getState: () => state,
-    dispatch: (a) => { state = reduce(state, a); subs.forEach((f) => f()); },
+    dispatch: (a) => {
+      state = reduce(state, a);
+      for (const f of subs) {
+        try { f(); } catch (e) { console.error("state subscriber threw:", e); }
+      }
+    },
     subscribe: (f) => { subs.add(f); return () => subs.delete(f); },
   };
 }

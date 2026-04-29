@@ -30,4 +30,26 @@ describe("createStore", () => {
     s.dispatch({ type: "set_grams", index: 0, grams: 500 });
     expect(calls).toBe(2);
   });
+  it("set_target_loaf_g(undefined) deletes the key", () => {
+    const s = createStore({ schema_version: "1.0", items: [], target_loaf_g: 900 });
+    s.dispatch({ type: "set_target_loaf_g", grams: undefined });
+    expect("target_loaf_g" in s.getState()).toBe(false);
+  });
+  it("set_role(undefined) deletes the key from the targeted item", () => {
+    const s = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500, role: "flour" }] });
+    s.dispatch({ type: "set_role", index: 0, role: undefined });
+    expect("role" in s.getState().items[0]!).toBe(false);
+  });
+  it("set_free_water_factor_override sets and clears entries", () => {
+    const s = createStore({ schema_version: "1.0", items: [] });
+    s.dispatch({ type: "set_free_water_factor_override", ingredient_id: "honey", factor: 0.85 });
+    expect(s.getState().free_water_factor_overrides).toEqual({ honey: 0.85 });
+    s.dispatch({ type: "set_free_water_factor_override", ingredient_id: "honey", factor: undefined });
+    expect(s.getState().free_water_factor_overrides).toEqual({});
+  });
+  it("load replaces the entire recipe", () => {
+    const s = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "load", recipe: { schema_version: "1.0", name: "fresh", items: [] } });
+    expect(s.getState()).toEqual({ schema_version: "1.0", name: "fresh", items: [] });
+  });
 });
