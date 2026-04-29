@@ -1,0 +1,14 @@
+// src/core/index.ts — public library API
+export { computeRecipe } from "./compute.js";
+export { solveRecipe } from "./solve.js";
+export { validateRecipe } from "./validate.js";
+export { classifyZone, HYDRATION_ZONES } from "./zones.js";
+export { inferRole, CATEGORY_ROLE_MAP } from "./role.js";
+export { escapeXml, escapeHtml } from "./escape.js";
+export { computeWeightedDdtWa } from "./flour.js";
+export type {
+  Recipe, RecipeItem, ComputedRecipe, Ingredient, Flour, Database, Defaults, Machine,
+  Warning, WarningCode, IngredientFlag, Role, Category, ZoneId, BBPDC20Recipe,
+  RecipeValidationResult,
+} from "./types.js";
+export { RecipeValidationError } from "./types.js";
