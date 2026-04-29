@@ -1,0 +1,148 @@
+/* OKLCH-defined design tokens with hex sRGB fallbacks.
+ * Light mode is the default; dark mode applies on either
+ * `prefers-color-scheme: dark` OR `[data-theme="dark"]` on <html>.
+ * Manual override: `[data-theme="light"]` forces light even when system prefers dark.
+ */
+
+:root {
+  /* Neutrals — warm paper-toned (light) */
+  --paper-50:  oklch(0.985 0.004 80);
+  --paper-100: oklch(0.97  0.006 80);
+  --paper-200: oklch(0.93  0.008 80);
+  --paper-300: oklch(0.86  0.01  80);
+  --ink-400:   oklch(0.62  0.012 80);
+  --ink-500:   oklch(0.54  0.013 80);  /* added for icon contrast on paper-100 */
+  --ink-600:   oklch(0.45  0.014 80);
+  --ink-800:   oklch(0.27  0.014 80);
+  --ink-900:   oklch(0.18  0.012 80);
+
+  /* Brand accent — terracotta */
+  --crust-50:  oklch(0.96 0.02 40);
+  --crust-100: oklch(0.92 0.04 38);
+  --crust-600: oklch(0.58 0.16 36);
+  --crust-700: oklch(0.50 0.15 34);
+
+  /* Functional */
+  --success-600: oklch(0.58 0.13 145);
+  --warn-600:    oklch(0.72 0.15 75);
+  --danger-600:  oklch(0.55 0.17 25);
+  --info-600:    oklch(0.55 0.10 230);
+
+  /* Semantic aliases (use these in components, not raw palette names) */
+  --color-bg-canvas:   var(--paper-50);
+  --color-bg-surface:  var(--paper-100);
+  --color-bg-muted:    var(--paper-200);
+  --color-fg-default:  var(--ink-800);
+  --color-fg-muted:    var(--ink-600);
+  --color-fg-subtle:   var(--ink-400);
+  --color-fg-icon:     var(--ink-500);
+  --color-border:      var(--paper-300);
+  --color-accent-fg:   var(--crust-600);
+  --color-accent-bg:   var(--crust-50);
+  --color-focus-ring:  var(--crust-600);
+  --color-emphasis:    var(--ink-900);
+
+  /* Spacing scale (4-pt baseline) */
+  --space-0:    0;
+  --space-0\.5: 2px;
+  --space-1:    4px;
+  --space-2:    8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-8:   32px;
+  --space-10:  40px;
+  --space-12:  48px;
+  --space-16:  64px;
+  --space-20:  80px;
+  --space-24:  96px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-overlay: 0 1px 2px rgba(31, 28, 22, 0.04), 0 8px 24px rgba(31, 28, 22, 0.10);
+
+  /* Motion */
+  --duration-fast:     80ms;
+  --duration-standard: 160ms;
+  --duration-slow:     280ms;
+  --easing-standard:   cubic-bezier(0.2, 0, 0, 1);
+  --easing-overlay:    cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Z-index */
+  --z-tooltip: 1000;
+  --z-popover: 1100;
+  --z-drawer:  1200;
+
+  /* Layout */
+  --calc-max-width: 880px;
+
+  color-scheme: light dark;
+}
+
+/* Dark mode — applies on prefers-color-scheme OR [data-theme="dark"] */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper-50:  oklch(0.18 0.008 80);
+    --paper-100: oklch(0.22 0.010 80);
+    --paper-200: oklch(0.27 0.010 80);
+    --paper-300: oklch(0.34 0.012 80);
+    --ink-400:   oklch(0.68 0.012 80);
+    --ink-500:   oklch(0.78 0.012 80);
+    --ink-600:   oklch(0.82 0.010 80);
+    --ink-800:   oklch(0.94 0.006 80);
+    --ink-900:   oklch(0.98 0.004 80);
+
+    --crust-50:  oklch(0.30 0.06 40);
+    --crust-100: oklch(0.35 0.08 38);
+    --crust-600: oklch(0.72 0.13 40);
+    --crust-700: oklch(0.78 0.14 40);
+
+    --success-600: oklch(0.70 0.13 145);
+    --warn-600:    oklch(0.80 0.15 75);
+    --danger-600:  oklch(0.70 0.17 25);
+    --info-600:    oklch(0.72 0.10 230);
+  }
+}
+
+[data-theme="dark"] {
+  --paper-50:  oklch(0.18 0.008 80);
+  --paper-100: oklch(0.22 0.010 80);
+  --paper-200: oklch(0.27 0.010 80);
+  --paper-300: oklch(0.34 0.012 80);
+  --ink-400:   oklch(0.68 0.012 80);
+  --ink-500:   oklch(0.78 0.012 80);
+  --ink-600:   oklch(0.82 0.010 80);
+  --ink-800:   oklch(0.94 0.006 80);
+  --ink-900:   oklch(0.98 0.004 80);
+
+  --crust-50:  oklch(0.30 0.06 40);
+  --crust-100: oklch(0.35 0.08 38);
+  --crust-600: oklch(0.72 0.13 40);
+  --crust-700: oklch(0.78 0.14 40);
+
+  --success-600: oklch(0.70 0.13 145);
+  --warn-600:    oklch(0.80 0.15 75);
+  --danger-600:  oklch(0.70 0.17 25);
+  --info-600:    oklch(0.72 0.10 230);
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --color-border:     CanvasText;
+    --color-fg-default: CanvasText;
+    --color-bg-canvas:  Canvas;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:     0ms;
+    --duration-standard: 0ms;
+    --duration-slow:     0ms;
+  }
+}
