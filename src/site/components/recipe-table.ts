@@ -56,7 +56,11 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
                  data-field="grams" data-index="${i}" value="${item.grams ?? ""}"
                  aria-label="grams for ${escapeHtml(item.ingredient_id)}" />`;
       const derivedPct = derivedPcts[item.ingredient_id];
-      const pctPlaceholder = item.bakers_pct == null && derivedPct != null ? derivedPct.toFixed(1) : "";
+      const pctIsDerived = item.bakers_pct == null;
+      const pctValue = pctIsDerived
+        ? (derivedPct != null ? derivedPct.toFixed(1) : "")
+        : `${item.bakers_pct}`;
+      const pctClass = pctIsDerived ? "pct-derived" : "";
       const meta = lookupCategoryAndLiquid(item.ingredient_id);
       const displayRole = item.role ?? (meta ? inferRole(meta.category as never, meta.isLiquid) : "");
       const roleClass = item.role ? "role" : "role role-derived";
@@ -64,7 +68,8 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         <span role="cell">${escapeHtml(item.ingredient_id)}</span>
         ${gramsCell}
         <input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
-               data-field="bakers_pct" data-index="${i}" value="${item.bakers_pct ?? ""}" placeholder="${pctPlaceholder}"
+               data-field="bakers_pct" data-index="${i}" value="${pctValue}" class="${pctClass}"
+               title="${pctIsDerived ? "Derived from grams. Type to override." : "User-set baker's percent."}"
                aria-label="bakers percent for ${escapeHtml(item.ingredient_id)}" />
         <span role="cell" class="${roleClass}">${escapeHtml(displayRole)}</span>
         <button role="cell" data-action="remove" data-index="${i}" aria-label="remove ${escapeHtml(item.ingredient_id)}">✕</button>
