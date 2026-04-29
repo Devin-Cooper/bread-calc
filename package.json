@@ -7,11 +7,15 @@
     "node": ">=22.0.0"
   },
   "main": "./dist/lib/index.js",
-  "types": "./dist/lib/index.d.ts",
+  "types": "./dist/lib/core/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/lib/index.js",
-      "types": "./dist/lib/index.d.ts"
+      "types": "./dist/lib/core/index.d.ts"
+    },
+    "./agent": {
+      "import": "./dist/lib/agent.js",
+      "types": "./dist/lib/agent/index.d.ts"
     },
     "./data": {
       "import": "./dist/lib/data/index.js",
@@ -46,7 +50,7 @@
     "update-goldens": "UPDATE_GOLDENS=1 vitest run test/golden",
     "update-contract": "UPDATE_CONTRACT=1 vitest run test/contract",
     "build:examples": "node --experimental-strip-types scripts/build-examples.mjs",
-    "build:lib": "vite build --config vite.lib.config.ts && tsc --emitDeclarationOnly --declaration --outDir dist/lib --rootDir src/core src/core/index.ts",
+    "build:lib": "vite build --config vite.lib.config.ts",
     "build:cli": "vite build --config vite.cli.config.ts && node scripts/add-shebang.mjs",
     "build:site": "vite build --config vite.site.config.ts",
     "build": "npm run compile:validator && npm run build:lib && npm run transform:data && npm run build:cli && npm run build:site",
@@ -67,6 +71,7 @@
     "prettier": "^3.4.0",
     "typescript": "^5.7.0",
     "vite": "^5.4.0",
+    "vite-plugin-dts": "^4.5.4",
     "vitest": "^2.1.0"
   }
 }
