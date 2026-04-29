@@ -8,10 +8,10 @@ interface ZoneRow extends HydrationZone {
 }
 
 export const HYDRATION_ZONES: readonly ZoneRow[] = [
-  { id: "dry",      label: "Dry",                   range: [0, 55],   note: "butter rolls; enriched",            color: "#e8e6e1" },
-  { id: "sandwich", label: "Sandwich-loaf comfort", range: [55, 67],  note: "BB-PDC20 sweet spot",               color: "#d8e6d3" },
-  { id: "wet",      label: "Wet",                   range: [67, 75],  note: "requires gluten support",           color: "#f3ecc6" },
-  { id: "very_wet", label: "Very wet",              range: [75, 100], note: "GF / hi-hydration WW only",         color: "#f0d4cf" },
+  { id: "dry",      label: "Dry",                   range: [0, 55]   as const, note: "butter rolls; enriched",            color: "#e8e6e1" },
+  { id: "sandwich", label: "Sandwich-loaf comfort", range: [55, 67]  as const, note: "BB-PDC20 sweet spot",               color: "#d8e6d3" },
+  { id: "wet",      label: "Wet",                   range: [67, 75]  as const, note: "requires gluten support",           color: "#f3ecc6" },
+  { id: "very_wet", label: "Very wet",              range: [75, 100] as const, note: "GF / hi-hydration WW only",         color: "#f0d4cf" },
 ];
 
 export function classifyZone(pct: number): HydrationZone {

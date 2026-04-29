@@ -15,7 +15,7 @@ export type ZoneId = "dry" | "sandwich" | "wet" | "very_wet";
 export interface HydrationZone {
   id: ZoneId;
   label: string;
-  range: [number, number];
+  range: readonly [number, number];
   note: string;
 }
 
