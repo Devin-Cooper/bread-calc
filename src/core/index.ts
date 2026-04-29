@@ -7,6 +7,8 @@ export { classifyZone, HYDRATION_ZONES } from "./zones.js";
 export { inferRole, CATEGORY_ROLE_MAP } from "./role.js";
 export { escapeXml, escapeHtml } from "./escape.js";
 export { computeWeightedDdtWa } from "./flour.js";
+export { renderHydrationChart } from "./plot.js";
+export type { ChartOptions } from "./plot.js";
 export type {
   Recipe, RecipeItem, ComputedRecipe, Ingredient, Flour, Database, Defaults, Machine,
   Warning, WarningCode, IngredientFlag, Role, Category, ZoneId, BBPDC20Recipe,
