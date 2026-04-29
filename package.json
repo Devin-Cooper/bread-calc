@@ -24,7 +24,7 @@
     "./schema": "./dist/lib/schema.json"
   },
   "bin": {
-    "bread-calc": "./dist/cli/bin.js"
+    "bread-calc": "dist/cli/bin.js"
   },
   "files": [
     "dist/lib",
