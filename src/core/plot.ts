@@ -85,8 +85,10 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
       return [`${cx + 12 * Math.cos(a)},${cy - 12 * Math.sin(a)}`, `${cx + 5 * Math.cos(ai)},${cy - 5 * Math.sin(ai)}`];
     }).join(" ");
     const label = `${escapeXml(computed.recipe.name ?? "Your recipe")} — ${computed.hydration.nominal_pct!.toFixed(1)}% · ${computed.totals.total_flour_g} g flour`;
-    star = `<polygon class="user-star" points="${points}" fill="${t.starFill}" stroke="${t.starStroke}" stroke-width="1.5"><title>${label}</title></polygon>
-            <text x="${cx + 18}" y="${cy + 4}" font-family="system-ui, sans-serif" font-size="12" fill="${t.starFill}">${label}</text>`;
+    // Label sits on pastel zone bands, which stay light in both themes —
+    // use fixed dark text with a light halo so it stays readable.
+    star = `<polygon class="user-star" points="${points}" fill="#000" stroke="#fff" stroke-width="1.5"><title>${label}</title></polygon>
+            <text x="${cx + 18}" y="${cy + 4}" font-family="system-ui, sans-serif" font-size="12" fill="#111" stroke="#fff" stroke-width="3" stroke-linejoin="round" paint-order="stroke">${label}</text>`;
   } else {
     userTitle = `<title>no flour — not plotted</title>`;
   }
@@ -94,15 +96,15 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
   const xTicks = [400, 450, 500, 550, 600, 650, 700, 750];
   const yTicks = [50, 55, 60, 65, 70, 75, 80, 85, 90];
   const axes = `
-    <g class="axes" font-family="system-ui, sans-serif" font-size="11" fill="#333">
-      ${xTicks.map((g) => `<text x="${x(g)}" y="${H - M.bottom + 16}" text-anchor="middle">${g}</text><line x1="${x(g)}" x2="${x(g)}" y1="${H - M.bottom}" y2="${H - M.bottom + 4}" stroke="#333" />`).join("")}
-      ${yTicks.map((h) => `<text x="${M.left - 8}" y="${y(h) + 4}" text-anchor="end">${h}%</text><line x1="${M.left - 4}" x2="${M.left}" y1="${y(h)}" y2="${y(h)}" stroke="#333" />`).join("")}
+    <g class="axes" font-family="system-ui, sans-serif" font-size="11" fill="${t.text}">
+      ${xTicks.map((g) => `<text x="${x(g)}" y="${H - M.bottom + 16}" text-anchor="middle">${g}</text><line x1="${x(g)}" x2="${x(g)}" y1="${H - M.bottom}" y2="${H - M.bottom + 4}" stroke="${t.axis}" />`).join("")}
+      ${yTicks.map((h) => `<text x="${M.left - 8}" y="${y(h) + 4}" text-anchor="end">${h}%</text><line x1="${M.left - 4}" x2="${M.left}" y1="${y(h)}" y2="${y(h)}" stroke="${t.axis}" />`).join("")}
       <text x="${M.left + plotW / 2}" y="${H - 12}" text-anchor="middle" font-size="13">Total flour (g)</text>
       <text transform="translate(${16},${M.top + plotH / 2}) rotate(-90)" text-anchor="middle" font-size="13">Hydration % (total water / flour)</text>
     </g>`;
 
-  const legendItems = HYDRATION_ZONES.map((z, i) => `<rect x="0" y="${i * 18}" width="14" height="14" fill="${z.color}" stroke="#999" /><text x="20" y="${i * 18 + 11}" font-size="11">${escapeXml(z.label)}</text>`).join("");
-  const legend = `<g class="legend" transform="translate(${W - M.right + 8},${M.top})">${legendItems}<text x="0" y="${HYDRATION_ZONES.length * 18 + 16}" font-size="11" fill="#555">★ Your recipe</text></g>`;
+  const legendItems = HYDRATION_ZONES.map((z, i) => `<rect x="0" y="${i * 18}" width="14" height="14" fill="${z.color}" stroke="${t.legendStroke}" /><text x="20" y="${i * 18 + 11}" font-size="11" fill="${t.text}">${escapeXml(z.label)}</text>`).join("");
+  const legend = `<g class="legend" transform="translate(${W - M.right + 8},${M.top})">${legendItems}<text x="0" y="${HYDRATION_ZONES.length * 18 + 16}" font-size="11" fill="${t.legendCaption}">★ Your recipe</text></g>`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="BB-PDC20 hydration map">
     <title>${escapeXml(computed.recipe.name ?? "Recipe")} placement on the BB-PDC20 hydration map</title>
