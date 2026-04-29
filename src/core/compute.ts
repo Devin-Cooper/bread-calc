@@ -5,6 +5,7 @@ import { inferRole } from "./role.js";
 import { computeWeightedDdtWa, type FlourComponent } from "./flour.js";
 import { classifyZone } from "./zones.js";
 import { solveWithError } from "./solve.js";
+import { runWarnings } from "./warnings.js";
 
 interface ResolvedItem {
   item: RecipeItem;
@@ -116,28 +117,17 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
     fat_g_contribution: r2((r.grams * r.fat_pct) / 100),
   }));
 
-  return {
+  const machine = db.machines.find((m) => m.id === (solvedRecipe.machine ?? db.defaults.default_machine_id))
+                ?? db.machines[0]!;
+  const partial: ComputedRecipe = {
     recipe: solvedRecipe,
-    totals: {
-      total_mass_g: r2(total_mass_g),
-      total_flour_g: r2(total_flour_g),
-      total_inclusions_g: r2(total_inclusions_g),
-      total_water_g_nominal: r2(total_water_g_nominal),
-      total_water_g_effective: r2(total_water_g_effective),
-      total_salt_g_equivalent: r2(total_salt_g_equivalent),
-      total_sugar_g_equivalent: r2(total_sugar_g_equivalent),
-      total_fat_g_equivalent: r2(total_fat_g_equivalent),
-      total_alcohol_g: r2(total_alcohol_g),
-      predicted_loaf_g: r2(predicted_loaf_g),
-    },
-    hydration: {
-      effective_pct: effective_pct === null ? null : r2(effective_pct),
-      nominal_pct: nominal_pct === null ? null : r2(nominal_pct),
-      total_liquid_pct: total_liquid_pct === null ? null : r2(total_liquid_pct),
-      zone,
-    },
-    bakers_pcts: {
-      by_ingredient,
+    totals: { total_mass_g: r2(total_mass_g), total_flour_g: r2(total_flour_g), total_inclusions_g: r2(total_inclusions_g),
+      total_water_g_nominal: r2(total_water_g_nominal), total_water_g_effective: r2(total_water_g_effective),
+      total_salt_g_equivalent: r2(total_salt_g_equivalent), total_sugar_g_equivalent: r2(total_sugar_g_equivalent),
+      total_fat_g_equivalent: r2(total_fat_g_equivalent), total_alcohol_g: r2(total_alcohol_g),
+      predicted_loaf_g: r2(predicted_loaf_g) },
+    hydration: { effective_pct: effective_pct === null ? null : r2(effective_pct), nominal_pct: nominal_pct === null ? null : r2(nominal_pct), total_liquid_pct: total_liquid_pct === null ? null : r2(total_liquid_pct), zone },
+    bakers_pcts: { by_ingredient,
       salt_equivalent_pct: hasFlour ? r2((total_salt_g_equivalent / total_flour_g) * 100) : null,
       sugar_equivalent_pct: hasFlour ? r2((total_sugar_g_equivalent / total_flour_g) * 100) : null,
       fat_equivalent_pct: hasFlour ? r2((total_fat_g_equivalent / total_flour_g) * 100) : null,
@@ -145,9 +135,8 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
     },
     ddt_water_absorption_pct: ddt_water_absorption_pct === null ? null : r2(ddt_water_absorption_pct),
     warnings: [...warnings],
-    water_breakdown,
-    salt_breakdown,
-    sugar_breakdown,
-    fat_breakdown,
+    water_breakdown, salt_breakdown, sugar_breakdown, fat_breakdown,
   };
+  const ruleWarnings = runWarnings({ computed: partial, db, resolved: resolved.map((r) => ({ item: r.item, ingredient: r.ingredient, role: r.role, grams: r.grams })), machine });
+  return { ...partial, warnings: [...partial.warnings, ...ruleWarnings] };
 }
