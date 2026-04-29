@@ -15,9 +15,6 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm test
-      - run: npm run build:lib
-      - run: npm run transform:data
-      - run: npm run build:cli
       - run: npm run pack:check 2>&1 | tee pack.log
       - name: assert tarball contents
         run: |

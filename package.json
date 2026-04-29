@@ -22,6 +22,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "eslint --no-error-on-unmatched-pattern src test",
     "format": "prettier --write src test",
+    "pretest": "npm run compile:validator && npm run build:lib && npm run transform:data && npm run build:cli",
     "test": "vitest run",
     "test:watch": "vitest",
     "update-goldens": "UPDATE_GOLDENS=1 vitest run test/golden",
