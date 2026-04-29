@@ -61,7 +61,7 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
   const y = (h: number) => M.top + (1 - (h - yMin) / (yMax - yMin)) * plotH;
 
   const refs = (options.reference ?? []).filter((r) => !r.excluded_from_chart);
-  const userPlotted = computed.hydration.nominal_pct != null && computed.totals.total_flour_g > 0;
+  const userPlotted = computed.hydration.nominal_pct != null && computed.metrics.total_flour_g > 0;
 
   const bands = HYDRATION_ZONES.map((z) => {
     const yTop = y(Math.min(z.range[1], yMax));
@@ -78,13 +78,13 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
   let star = "";
   let userTitle = "";
   if (userPlotted) {
-    const cx = x(computed.totals.total_flour_g), cy = y(computed.hydration.nominal_pct!);
+    const cx = x(computed.metrics.total_flour_g), cy = y(computed.hydration.nominal_pct!);
     const points = [0, 1, 2, 3, 4].flatMap((i) => {
       const a = (Math.PI / 2) - (i * 2 * Math.PI / 5);
       const ai = a - Math.PI / 5;
       return [`${cx + 12 * Math.cos(a)},${cy - 12 * Math.sin(a)}`, `${cx + 5 * Math.cos(ai)},${cy - 5 * Math.sin(ai)}`];
     }).join(" ");
-    const label = `${escapeXml(computed.recipe.name ?? "Your recipe")} — ${computed.hydration.nominal_pct!.toFixed(1)}% · ${computed.totals.total_flour_g} g flour`;
+    const label = `${escapeXml(computed.recipe.name ?? "Your recipe")} — ${computed.hydration.nominal_pct!.toFixed(1)}% · ${computed.metrics.total_flour_g} g flour`;
     // Label sits on pastel zone bands, which stay light in both themes —
     // use fixed dark text with a light halo so it stays readable.
     star = `<polygon class="user-star" points="${points}" fill="#000" stroke="#fff" stroke-width="1.5"><title>${label}</title></polygon>

@@ -7,13 +7,14 @@ const refs: BBPDC20Recipe[] = JSON.parse(readFileSync("src/data/bb_pdc20_recipes
 
 const baseComputed: ComputedRecipe = {
   recipe: { schema_version: "2.0", name: "Test", items: [] },
-  totals: { total_mass_g: 800, total_flour_g: 500, total_inclusions_g: 0,
+  tree: { type: "Constant", id: "stub", label: "stub", value: 0 },
+  metrics: { total_mass_g: 800, total_flour_g: 500, total_inclusions_g: 0,
     total_water_g_nominal: 400, total_water_g_effective: 320,
     total_salt_g_equivalent: 9, total_sugar_g_equivalent: 30,
     total_fat_g_equivalent: 28, total_alcohol_g: 0, predicted_loaf_g: 700 },
   hydration: { effective_pct: 64, nominal_pct: 80, total_liquid_pct: 80, zone: { id: "sandwich", label: "Sandwich-loaf comfort", range: [55, 67], note: "BB-PDC20 sweet spot" } },
-  bakers_pcts: { by_ingredient: {}, salt_equivalent_pct: 1.8, sugar_equivalent_pct: 6, fat_equivalent_pct: 5.6, yeast_pct: 1 },
-  ddt_water_absorption_pct: 62, warnings: [], water_breakdown: [], salt_breakdown: [], sugar_breakdown: [], fat_breakdown: [],
+  bakers_percents: { by_uid: {}, by_ingredient_id: {}, salt_equivalent_pct: 1.8, sugar_equivalent_pct: 6, fat_equivalent_pct: 5.6, yeast_pct: 1 },
+  ddt_water_absorption_pct: 62, warnings: [], breakdowns: { water: [], salt: [], sugar: [], fat: [] },
 };
 
 describe("renderHydrationChart", () => {
