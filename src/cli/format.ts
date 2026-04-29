@@ -23,7 +23,7 @@ export function formatComputed(c: ComputedRecipe, headline: "effective" | "nomin
   lines.push(headline === "effective" ? bold(hLabel("Effective hydration", h.effective_pct)) : hLabel("Effective hydration", h.effective_pct));
   lines.push(headline === "nominal" ? bold(hLabel("Nominal water", h.nominal_pct)) : hLabel("Nominal water", h.nominal_pct));
   lines.push(headline === "total_liquid" ? bold(hLabel("Total liquid", h.total_liquid_pct)) : hLabel("Total liquid", h.total_liquid_pct));
-  lines.push(`${"Zone".padEnd(18)} ${h.zone ?? "—"}`);
+  lines.push(`${"Zone".padEnd(18)} ${h.zone?.label ?? "—"}`);
   lines.push("");
   lines.push(bold("Composition"));
   lines.push(hLabel("Salt-equivalent", c.bakers_pcts.salt_equivalent_pct));

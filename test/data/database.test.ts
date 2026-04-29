@@ -2,7 +2,7 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { validateIngredientsFile, validateFloursFile, validateBBPDC20RecipesFile, validateMachinesFile, validateDefaults } from "../../src/core/validator.generated.js";
-import { classifyZone } from "../../src/core/zones.js";
+import { classifyZoneId } from "../../src/core/zones.js";
 
 const ingredients = JSON.parse(readFileSync("src/data/ingredients.json", "utf8"));
 const flours = JSON.parse(readFileSync("src/data/flours.json", "utf8"));
@@ -47,7 +47,7 @@ describe("bb_pdc20_recipes zone consistency", () => {
   it("zone matches classifyZone(hydration_pct_nominal)", () => {
     for (const r of refs.entries) {
       if (r.excluded_from_chart) continue;
-      expect(r.zone).toBe(classifyZone(r.hydration_pct_nominal));
+      expect(r.zone).toBe(classifyZoneId(r.hydration_pct_nominal));
     }
   });
   it("hydration_pct in [0, 200]", () => {

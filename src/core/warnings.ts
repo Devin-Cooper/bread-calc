@@ -91,13 +91,13 @@ const rules: Rule[] = [
   },
   // wet zone
   (ctx) => {
-    if (ctx.computed.hydration.zone !== "wet") return null;
+    if (ctx.computed.hydration.zone?.id !== "wet") return null;
     if (hasFlag(ctx, "gluten_strengthener")) return null;
     return { code: "wet_zone_needs_gluten_support", severity: "warn", message: "Hydration is in the 'Wet' zone (67–75%); add vital wheat gluten or a high-protein flour for structure." };
   },
   // very wet zone
   (ctx) => {
-    if (ctx.computed.hydration.zone !== "very_wet") return null;
+    if (ctx.computed.hydration.zone?.id !== "very_wet") return null;
     if (hasFlag(ctx, "gf_stabilizer")) return null;
     if (gramsByCategory(ctx, "eggs") > 0) return null;
     return { code: "very_wet_zone", severity: "warn", message: "Hydration is in the 'Very wet' zone (≥75%); add a GF stabilizer (xanthan/psyllium) or eggs." };

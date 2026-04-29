@@ -1,5 +1,5 @@
 import type {
-  Recipe, RecipeItem, Database, Ingredient, Flour, ComputedRecipe, Role, ZoneId, Warning,
+  Recipe, RecipeItem, Database, Ingredient, Flour, ComputedRecipe, Role, Warning,
 } from "./types.js";
 import { inferRole } from "./role.js";
 import { computeWeightedDdtWa, type FlourComponent } from "./flour.js";
@@ -90,7 +90,7 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   const effective_pct = hasFlour ? (total_water_g_effective / total_flour_g) * 100 : null;
   const nominal_pct = hasFlour ? (total_water_g_nominal / total_flour_g) * 100 : null;
   const total_liquid_pct = hasFlour ? (total_liquid_g / total_flour_g) * 100 : null;
-  const zone: ZoneId | null = effective_pct === null ? null : classifyZone(effective_pct);
+  const zone = effective_pct === null ? null : classifyZone(effective_pct);
 
   const yeast_grams = resolved.filter((r) => r.role === "yeast").reduce((s, r) => s + r.grams, 0);
   const by_ingredient: Record<string, number | null> = {};

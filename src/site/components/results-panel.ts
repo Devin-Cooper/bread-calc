@@ -22,7 +22,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         <dt class="${cls("effective")}">Effective</dt><dd class="${cls("effective")}">${fmt(c.hydration.effective_pct)}</dd>
         <dt class="${cls("nominal")}">Nominal water</dt><dd class="${cls("nominal")}">${fmt(c.hydration.nominal_pct)}</dd>
         <dt class="${cls("total_liquid")}">Total liquid</dt><dd class="${cls("total_liquid")}">${fmt(c.hydration.total_liquid_pct)}</dd>
-        <dt>Zone</dt><dd>${escapeHtml(c.hydration.zone ?? "—")}</dd>
+        <dt>Zone</dt><dd>${escapeHtml(c.hydration.zone?.label ?? "—")}</dd>
       </dl>
       <h2>Composition</h2>
       <dl class="metrics">

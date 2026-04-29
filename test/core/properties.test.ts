@@ -12,28 +12,10 @@ const machines = JSON.parse(readFileSync("src/data/machines.json", "utf8")).entr
 const defaults = JSON.parse(readFileSync("src/data/defaults.json", "utf8"));
 const db: Database = { ingredients, flours, references: refs, machines, defaults };
 
-const flourIds = flours.map((f: any) => f.id);
-const wetIds = ingredients.filter((i: any) => i.is_liquid).map((i: any) => i.id);
+const flourIds = flours.map((f: { id: string }) => f.id);
+const wetIds = ingredients.filter((i: { is_liquid: boolean }) => i.is_liquid).map((i: { id: string }) => i.id);
 
-const uidArb = fc.string({ minLength: 8, maxLength: 16 })
-  .filter((s) => /^[A-Za-z0-9_-]{8,16}$/.test(s));
-
-// Build arbitraries that produce unique uids within each record
-const arbRecipe = fc.tuple(uidArb, uidArb, uidArb, uidArb, uidArb, uidArb).chain(
-  ([u1, u2, u3, u4, u5, u6]) => {
-    // Ensure uniqueness by using distinct positions
-    const uids = [u1, u2, u3, u4, u5, u6];
-    return fc.record({
-      schema_version: fc.constant("2.0" as const),
-      items: fc.array(fc.oneof(
-        fc.record({ uid: fc.constantFrom(...uids), ingredient_id: fc.constantFrom(...flourIds), grams: fc.float({ min: 100, max: 800, noNaN: true }) }),
-        fc.record({ uid: fc.constantFrom(...uids), ingredient_id: fc.constantFrom(...wetIds), grams: fc.float({ min: 50, max: 500, noNaN: true }) }),
-      ), { minLength: 2, maxLength: 6 }),
-    });
-  }
-) as fc.Arbitrary<Recipe>;
-
-// Simpler approach: generate items with pre-assigned uids based on index
+// Generate items with pre-assigned uids based on index
 const arbRecipeWithUniqueUids = fc.array(
   fc.oneof(
     fc.record({ ingredient_id: fc.constantFrom(...flourIds), grams: fc.float({ min: 100, max: 800, noNaN: true }) }),

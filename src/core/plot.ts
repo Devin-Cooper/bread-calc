@@ -64,9 +64,9 @@ export function renderHydrationChart(computed: ComputedRecipe, options: ChartOpt
   const userPlotted = computed.hydration.nominal_pct != null && computed.totals.total_flour_g > 0;
 
   const bands = HYDRATION_ZONES.map((z) => {
-    const yTop = y(Math.min(z.max, yMax));
-    const yBot = y(Math.max(z.min, yMin));
-    return `<rect class="zone-band ${z.id}" x="${M.left}" y="${yTop}" width="${plotW}" height="${yBot - yTop}" fill="${z.color}" stroke="none"><title>${escapeXml(z.label)} (${z.min}–${z.max}%)</title></rect>`;
+    const yTop = y(Math.min(z.range[1], yMax));
+    const yBot = y(Math.max(z.range[0], yMin));
+    return `<rect class="zone-band ${z.id}" x="${M.left}" y="${yTop}" width="${plotW}" height="${yBot - yTop}" fill="${z.color}" stroke="none"><title>${escapeXml(z.label)} (${z.range[0]}–${z.range[1]}%)</title></rect>`;
   }).join("");
 
   const dots = refs.map((r) => {

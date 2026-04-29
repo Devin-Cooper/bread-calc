@@ -1,42 +1,51 @@
 {
   "recipe": {
-    "schema_version": "1.0",
+    "schema_version": "2.0",
     "name": "Vegan banana walnut (v4 just-ripe)",
     "machine": "zojirushi_bb_pdc20",
     "items": [
       {
+        "uid": "u_brdfl001",
         "ingredient_id": "bread_flour",
         "grams": 530
       },
       {
+        "uid": "u_almnd001",
         "ingredient_id": "almond_milk_unsweetened",
         "grams": 160
       },
       {
+        "uid": "u_water001",
         "ingredient_id": "water_tap",
         "grams": 60
       },
       {
+        "uid": "u_banan001",
         "ingredient_id": "banana_ripe",
         "grams": 200
       },
       {
+        "uid": "u_oilca001",
         "ingredient_id": "oil_canola",
         "grams": 18
       },
       {
+        "uid": "u_honey001",
         "ingredient_id": "honey",
         "grams": 25
       },
       {
+        "uid": "u_salt0001",
         "ingredient_id": "salt_table",
         "grams": 9
       },
       {
+        "uid": "u_yeast001",
         "ingredient_id": "yeast_instant",
         "grams": 7
       },
       {
+        "uid": "u_walnt001",
         "ingredient_id": "walnut_english",
         "grams": 80,
         "role": "inclusion"
@@ -59,7 +68,15 @@
     "effective_pct": 60.94,
     "nominal_pct": 70.52,
     "total_liquid_pct": 41.51,
-    "zone": "sandwich"
+    "zone": {
+      "id": "sandwich",
+      "label": "Sandwich-loaf comfort",
+      "range": [
+        55,
+        67
+      ],
+      "note": "BB-PDC20 sweet spot"
+    }
   },
   "bakers_pcts": {
     "by_ingredient": {
