@@ -12,6 +12,13 @@ export type Role =
 
 export type ZoneId = "dry" | "sandwich" | "wet" | "very_wet";
 
+export interface HydrationZone {
+  id: ZoneId;
+  label: string;
+  range: [number, number];
+  note: string;
+}
+
 export type IngredientFlag =
   | "enzymatic_protease" | "late_water_release" | "humectant_bound_water"
   | "alcohol_yeast_inhibitor" | "high_salt" | "acidic" | "leavener_consumed"
@@ -85,6 +92,7 @@ export interface Database {
 }
 
 export interface RecipeItem {
+  uid: string;
   ingredient_id: string;
   grams?: number;
   bakers_pct?: number;
@@ -92,7 +100,7 @@ export interface RecipeItem {
 }
 
 export interface Recipe {
-  schema_version: "1.0";
+  schema_version: "2.0";
   name?: string;
   notes?: string;
   machine?: string;
@@ -138,7 +146,7 @@ export interface ComputedRecipe {
     effective_pct: number | null;
     nominal_pct: number | null;
     total_liquid_pct: number | null;
-    zone: ZoneId | null;
+    zone: HydrationZone | null;
   };
   bakers_pcts: {
     by_ingredient: Record<string, number | null>;
