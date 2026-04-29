@@ -20,7 +20,7 @@
     "compile:validator": "node scripts/compile-validator.mjs",
     "transform:data": "node scripts/transform-data.mjs",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src test",
+    "lint": "eslint --no-error-on-unmatched-pattern src test",
     "format": "prettier --write src test",
     "test": "vitest run",
     "test:watch": "vitest",
