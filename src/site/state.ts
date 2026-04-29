@@ -10,6 +10,7 @@ export type Action =
   | { type: "set_target_loaf_g"; grams: number | undefined }
   | { type: "set_bake_loss_pct"; pct: number }
   | { type: "set_name"; name: string }
+  | { type: "set_notes"; notes: string }
   | { type: "set_headline_metric"; metric: "effective" | "nominal" | "total_liquid" }
   | { type: "set_free_water_factor_override"; ingredient_id: string; factor: number | undefined }
   | { type: "load"; recipe: Recipe };
@@ -43,6 +44,15 @@ function reduce(state: Recipe, action: Action): Recipe {
     }
     case "set_bake_loss_pct": return { ...state, bake_loss_pct: action.pct };
     case "set_name": return { ...state, name: action.name };
+    case "set_notes": {
+      // Empty string clears the optional field (delete to satisfy exactOptionalPropertyTypes).
+      if (action.notes === "") {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { notes: _notes, ...rest } = state;
+        return rest;
+      }
+      return { ...state, notes: action.notes };
+    }
     case "set_headline_metric": return { ...state, headline_metric: action.metric };
     case "set_free_water_factor_override": {
       const overrides = { ...(state.free_water_factor_overrides ?? {}) };
