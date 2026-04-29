@@ -412,11 +412,23 @@ function dispatchApply(positionals: string[]) {
   const fixPath = positionals[2];
   if (!recipePath) { process.stderr.write("bread-calc apply <recipe.json> [<fix.json>] [--fix=- | --fix-id=...]\n"); process.exit(64); }
 
+  // Reject empty string for --fix-id explicitly (parseArgs accepts it).
+  const fixIdValue = values["fix-id"] as string | undefined;
+  if (fixIdValue !== undefined && fixIdValue.length === 0) {
+    process.stderr.write("bread-calc apply: --fix-id requires a value (e.g. --fix-id=salt_too_high.0)\n");
+    process.exit(64);
+  }
+  const fixStdin = values.fix as string | undefined;
+  if (fixStdin !== undefined && fixStdin !== "-") {
+    process.stderr.write("bread-calc apply: --fix only accepts '-' (stdin); pass a path positionally instead\n");
+    process.exit(64);
+  }
+
   // Mutual exclusion: exactly one of fixPath / --fix=- / --fix-id must be supplied.
   const modes = [
     fixPath !== undefined,
-    values.fix !== undefined,
-    values["fix-id"] !== undefined,
+    fixStdin !== undefined,
+    fixIdValue !== undefined,
   ];
   if (modes.filter(Boolean).length !== 1) {
     process.stderr.write("bread-calc apply: supply exactly one of <fix.json> | --fix=- | --fix-id=<code>.<n>\n");
@@ -426,11 +438,11 @@ function dispatchApply(positionals: string[]) {
   const recipeRaw = recipePath === "-" ? readFileSync(0, "utf8") : readFileSync(recipePath, "utf8");
   const recipe = JSON.parse(recipeRaw);
   let fix: Fix;
-  if (values["fix-id"]) {
+  if (fixIdValue) {
     // Selector grammar (per spec §4.2): split on the LAST `.`. <code> matches
     // [a-z_]+; <index> matches \d+. Malformed input → exit 64 (bad usage),
     // distinct from exit 5 (fix didn't apply to a real warning on this recipe).
-    const sel = values["fix-id"] as string;
+    const sel = fixIdValue;
     const lastDot = sel.lastIndexOf(".");
     if (lastDot <= 0 || lastDot === sel.length - 1) {
       process.stderr.write(`apply: malformed --fix-id "${sel}"; expected <code>.<index>\n`);
@@ -451,7 +463,7 @@ function dispatchApply(positionals: string[]) {
       process.exit(5);
     }
     fix = w.suggested_fixes[idx]!;
-  } else if (values.fix === "-") {
+  } else if (fixStdin === "-") {
     fix = JSON.parse(readFileSync(0, "utf8"));
   } else {
     fix = JSON.parse(readFileSync(fixPath!, "utf8"));
@@ -462,9 +474,17 @@ function dispatchApply(positionals: string[]) {
     process.stderr.write(`apply: ${result.error.code}: ${result.error.message}\n`);
     process.exit(5);
   }
-  const out = JSON.stringify(result.recipe, null, 2);
-  if (values.out) writeFileSync(values.out as string, out);
-  else console.log(out);
+
+  if (values.out) {
+    // Raw recipe to file — chains into compute/solve/etc.
+    writeFileSync(values.out as string, JSON.stringify(result.recipe, null, 2));
+  } else if (values.json || !process.stdout.isTTY) {
+    // Envelope to stdout when piped or JSON requested.
+    console.log(JSON.stringify(wrap("apply", readPkg().version, result.recipe), null, 2));
+  } else {
+    // Human TTY: also envelope-wrap for consistency. (No bespoke human formatter for apply yet.)
+    console.log(JSON.stringify(wrap("apply", readPkg().version, result.recipe), null, 2));
+  }
   process.exit(0);
 }
 

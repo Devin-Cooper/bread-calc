@@ -42,8 +42,9 @@ describe("bread-calc apply", () => {
 
     try {
       const out = execFileSync("node", [BIN, "apply", recipePath, fixPath], { encoding: "utf8" });
-      const result = JSON.parse(out);
-      // Should have added salt_table
+      const envelope = JSON.parse(out);
+      // Success path now emits envelope; drill into payload for the recipe
+      const result = envelope.payload ?? envelope;
       expect(result.items.some((i: { ingredient_id: string }) => i.ingredient_id === "salt_table")).toBe(true);
     } catch (e: unknown) {
       const err = e as { status?: number; stderr?: Buffer };
@@ -58,7 +59,9 @@ describe("bread-calc apply", () => {
 
     const r = run(["apply", recipePath, "--fix=-"], { input: JSON.stringify(SALT_FIX) });
     expect(r.code).toBe(0);
-    const result = JSON.parse(r.stdout);
+    const envelope = JSON.parse(r.stdout);
+    // Success path now emits envelope; drill into payload for the recipe
+    const result = envelope.payload ?? envelope;
     expect(result.items.some((i: { ingredient_id: string }) => i.ingredient_id === "salt_table")).toBe(true);
   });
 
@@ -69,8 +72,9 @@ describe("bread-calc apply", () => {
 
     const r = run(["apply", recipePath, "--fix-id=no_salt.0"]);
     expect(r.code).toBe(0);
-    const result = JSON.parse(r.stdout);
-    // The fix should add salt_table
+    const envelope = JSON.parse(r.stdout);
+    // Success path now emits envelope; drill into payload for the recipe
+    const result = envelope.payload ?? envelope;
     expect(result.items.some((i: { ingredient_id: string }) => i.ingredient_id === "salt_table")).toBe(true);
   });
 
