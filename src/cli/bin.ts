@@ -1,13 +1,14 @@
 import { parseArgs } from "node:util";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { computeRecipe, validateRecipe, type Recipe, type Database } from "../core/index.js";
+import { computeRecipe, solveRecipe, validateRecipe, type Recipe, type Database } from "../core/index.js";
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
 import refsFile from "../data/bb_pdc20_recipes.json" with { type: "json" };
 import machinesFile from "../data/machines.json" with { type: "json" };
 import defaultsRaw from "../data/defaults.json" with { type: "json" };
+import schemaJson from "../data/schema.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -95,7 +96,7 @@ function readInput(arg: string | undefined): string {
   return readFileSync(arg, "utf8");
 }
 
-function dispatchCompute() {
+function dispatchCompute(positionals: string[]) {
   const file = positionals[1];
   const raw = readInput(file);
   let parsed: unknown;
@@ -127,5 +128,90 @@ function dispatchCompute() {
   process.exit(0);
 }
 
-if (sub === "compute") dispatchCompute();
-else { console.error(`bread-calc: '${sub}' not yet implemented`); process.exit(64); }
+function dispatchValidate(positionals: string[]) {
+  const raw = readInput(positionals[1]);
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); }
+  catch { process.stderr.write("bread-calc: invalid JSON\n"); process.exit(2); }
+
+  const v = validateRecipe(parsed, db);
+  if (values.json) {
+    console.log(JSON.stringify(v, null, 2));
+    if (v.valid) process.exit(0);
+    process.exit(v.issues.some((i) => i.code === "unknown_ingredient_id") ? 3 : 2);
+  }
+  if (v.valid) { console.log("OK"); process.exit(0); }
+  for (const i of v.issues) process.stderr.write(`${i.path}: ${i.code}: ${i.message}\n`);
+  process.exit(v.issues.some((i) => i.code === "unknown_ingredient_id") ? 3 : 2);
+}
+
+function dispatchSolve(positionals: string[]) {
+  const raw = readInput(positionals[1]);
+  let parsed: Recipe;
+  try { parsed = JSON.parse(raw) as Recipe; }
+  catch { process.stderr.write("bread-calc: invalid JSON\n"); process.exit(2); }
+
+  if (values["target-g"]) parsed.target_loaf_g = parseFloat(values["target-g"] as string);
+
+  const v = validateRecipe(parsed, db);
+  if (!v.valid) {
+    if (values.json) console.log(JSON.stringify({ ok: false, issues: v.issues }, null, 2));
+    else for (const i of v.issues) process.stderr.write(`${i.path}: ${i.code}: ${i.message}\n`);
+    process.exit(v.issues.some((i) => i.code === "unknown_ingredient_id") ? 3 : 2);
+  }
+
+  const solved = solveRecipe(parsed, db);
+  const out = JSON.stringify(solved, null, 2);
+  if (values.out) writeFileSync(values.out as string, out);
+  else console.log(out);
+  process.exit(0);
+}
+
+function dispatchIngredients(_positionals: string[]) {
+  let list = [...db.ingredients];
+  if (values.category) list = list.filter((i) => i.category === values.category);
+  if (values.search) {
+    const q = (values.search as string).toLowerCase();
+    list = list.filter((i) => (i.id + " " + i.name).toLowerCase().includes(q));
+  }
+  if (values.json || !process.stdout.isTTY) {
+    console.log(JSON.stringify(list, null, 2));
+  } else {
+    for (const i of list) console.log(`${i.id.padEnd(30)} ${i.category.padEnd(15)} water=${i.water_pct}%`);
+  }
+  process.exit(0);
+}
+
+function dispatchReference(_positionals: string[]) {
+  let list = [...db.references];
+  if (values.course) {
+    const q = (values.course as string).toLowerCase();
+    list = list.filter((r) => r.course.toLowerCase().includes(q));
+  }
+  if (values.zone) list = list.filter((r) => r.zone === values.zone);
+  if (values.json || !process.stdout.isTTY) {
+    console.log(JSON.stringify(list, null, 2));
+  } else {
+    for (const r of list) console.log(`${r.name.padEnd(35)} ${r.course.padEnd(25)} ${r.hydration_pct_nominal}%  [${r.zone}]`);
+  }
+  process.exit(0);
+}
+
+function dispatchSchema(_positionals: string[]) {
+  console.log(JSON.stringify(schemaJson, null, 2));
+  process.exit(0);
+}
+
+type Handler = (positionals: string[]) => void;
+const HANDLERS: Record<string, Handler> = {
+  compute:     dispatchCompute,
+  validate:    dispatchValidate,
+  solve:       dispatchSolve,
+  ingredients: dispatchIngredients,
+  reference:   dispatchReference,
+  schema:      dispatchSchema,
+  plot:        () => { process.stderr.write("bread-calc: 'plot' is added in v0.6.0\n"); process.exit(64); },
+};
+const handler = HANDLERS[sub];
+if (handler) handler(positionals);
+else { process.stderr.write(`bread-calc: '${sub}' not yet implemented\n`); process.exit(64); }
