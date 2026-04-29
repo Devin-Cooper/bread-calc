@@ -1,6 +1,6 @@
 {
   "name": "bread-calc",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0",
   "description": "Hydration and loaf-weight calculator for the Zojirushi BB-PDC20 (and similar 2-lb bread machines), with an LLM-agent-friendly API.",
   "type": "module",
   "engines": {
