@@ -3,18 +3,36 @@
   "version": "1.0.1",
   "description": "Hydration and loaf-weight calculator for the Zojirushi BB-PDC20 (and similar 2-lb bread machines), with an LLM-agent-friendly API.",
   "type": "module",
-  "engines": { "node": ">=22.0.0" },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
   "exports": {
-    ".":         { "import": "./dist/lib/index.js", "types": "./dist/lib/index.d.ts" },
-    "./data":    { "import": "./dist/lib/data/index.js", "types": "./dist/lib/data/index.d.ts" },
-    "./schema":  "./dist/lib/schema.json"
+    ".": {
+      "import": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
+    },
+    "./data": {
+      "import": "./dist/lib/data/index.js",
+      "types": "./dist/lib/data/index.d.ts"
+    },
+    "./schema": "./dist/lib/schema.json"
   },
-  "bin": { "bread-calc": "./dist/cli/bin.js" },
-  "files": ["dist/lib", "dist/cli", "README.md", "LICENSE"],
+  "bin": {
+    "bread-calc": "./dist/cli/bin.js"
+  },
+  "files": [
+    "dist/lib",
+    "dist/cli",
+    "README.md",
+    "LICENSE"
+  ],
   "homepage": "https://breadmachine.io/",
-  "repository": { "type": "git", "url": "git+https://github.com/Devin-Cooper/bread-calc.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Devin-Cooper/bread-calc.git"
+  },
   "license": "MIT",
   "scripts": {
     "compile:validator": "node scripts/compile-validator.mjs",
@@ -40,6 +58,7 @@
     "@typescript-eslint/parser": "^8.20.0",
     "ajv": "^8.17.0",
     "eslint": "^9.18.0",
+    "eslint-plugin-import": "^2.32.0",
     "fast-check": "^3.23.0",
     "happy-dom": "^16.0.0",
     "prettier": "^3.4.0",
