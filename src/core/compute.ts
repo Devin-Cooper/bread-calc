@@ -6,6 +6,7 @@ import { computeWeightedDdtWa, type FlourComponent } from "./flour.js";
 import { classifyZone } from "./zones.js";
 import { solveWithError } from "./solve.js";
 import { runWarnings } from "./warnings.js";
+import { buildTree, projectByLabel } from "./explain-tree.js";
 
 interface ResolvedItem {
   item: RecipeItem;
@@ -68,18 +69,19 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   }
   const resolved = solvedRecipe.items.map((it) => resolveItem(it, db, solvedRecipe));
 
-  const total_mass_g = resolved.reduce((s, r) => s + r.grams, 0);
-  const total_flour_g = resolved.filter((r) => r.role === "flour").reduce((s, r) => s + r.grams, 0);
-  const total_inclusions_g = resolved.filter((r) => r.role === "inclusion").reduce((s, r) => s + r.grams, 0);
+  const tree = buildTree(solvedRecipe, db);
+  const total_mass_g            = projectByLabel(tree, "total_mass_g")            ?? 0;
+  const total_flour_g           = projectByLabel(tree, "total_flour_g")           ?? 0;
+  const total_inclusions_g      = projectByLabel(tree, "total_inclusions_g")      ?? 0;
+  const total_water_g_nominal   = projectByLabel(tree, "total_water_g_nominal")   ?? 0;
+  const total_water_g_effective = projectByLabel(tree, "total_water_g_effective") ?? 0;
+  const total_salt_g_equivalent = projectByLabel(tree, "total_salt_g_equivalent") ?? 0;
+  const total_sugar_g_equivalent= projectByLabel(tree, "total_sugar_g_equivalent")?? 0;
+  const total_fat_g_equivalent  = projectByLabel(tree, "total_fat_g_equivalent")  ?? 0;
+  const total_alcohol_g         = projectByLabel(tree, "total_alcohol_g")         ?? 0;
+  const predicted_loaf_g        = projectByLabel(tree, "predicted_loaf_g")        ?? 0;
+  // total_liquid_g is not in the tree yet (added in Phase 4); compute locally from resolved.
   const total_liquid_g = resolved.filter((r) => r.is_liquid).reduce((s, r) => s + r.grams, 0);
-  const total_alcohol_g = resolved.reduce((s, r) => s + (r.grams * r.alcohol_pct) / 100, 0);
-  const total_water_g_nominal = resolved.reduce((s, r) => s + (r.grams * r.water_pct) / 100, 0);
-  const total_water_g_effective = resolved.reduce((s, r) => s + (r.grams * r.water_pct * r.freeWaterFactor) / 100, 0);
-  const total_salt_g_equivalent = resolved.reduce((s, r) => s + (r.grams * r.salt_pct) / 100, 0);
-  const total_sugar_g_equivalent = resolved.reduce((s, r) => s + (r.grams * r.sugar_pct) / 100, 0);
-  const total_fat_g_equivalent = resolved.reduce((s, r) => s + (r.grams * r.fat_pct) / 100, 0);
-  const bake_loss_pct = recipe.bake_loss_pct ?? db.defaults.default_bake_loss_pct;
-  const predicted_loaf_g = total_mass_g * (1 - bake_loss_pct / 100);
 
   const flourComponents: FlourComponent[] = resolved
     .filter((r) => r.role === "flour" && r.flour)
@@ -87,8 +89,8 @@ export function computeRecipe(recipe: Recipe, db: Database): ComputedRecipe {
   const ddt_water_absorption_pct = computeWeightedDdtWa(flourComponents);
 
   const hasFlour = total_flour_g > 0;
-  const effective_pct = hasFlour ? (total_water_g_effective / total_flour_g) * 100 : null;
-  const nominal_pct = hasFlour ? (total_water_g_nominal / total_flour_g) * 100 : null;
+  const effective_pct = projectByLabel(tree, "effective_pct");
+  const nominal_pct   = projectByLabel(tree, "nominal_pct");
   const total_liquid_pct = hasFlour ? (total_liquid_g / total_flour_g) * 100 : null;
   const zone = effective_pct === null ? null : classifyZone(effective_pct);
 
