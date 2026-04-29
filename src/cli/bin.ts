@@ -2,7 +2,7 @@ import { parseArgs } from "node:util";
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { computeRecipe, solveRecipe, validateRecipe, type Recipe, type Database } from "../core/index.js";
+import { computeRecipe, solveWithError, validateRecipe, type Recipe, type Database } from "../core/index.js";
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
 import refsFile from "../data/bb_pdc20_recipes.json" with { type: "json" };
@@ -31,7 +31,7 @@ Usage:
   bread-calc plot         <recipe.bread.json> [--out=plot.svg] [--theme=light|dark]
   bread-calc ingredients  [--category=<cat>] [--search=<q>] [--json]
   bread-calc reference    [--course=<n>] [--zone=<id>] [--json]
-  bread-calc schema       [--type=ingredient|recipe|computed]
+  bread-calc schema
   bread-calc --version
   bread-calc --help
 
@@ -58,7 +58,6 @@ const { values, positionals } = parseArgs({
     search: { type: "string" },
     course: { type: "string" },
     zone: { type: "string" },
-    type: { type: "string" },
   },
 });
 
@@ -147,11 +146,22 @@ function dispatchValidate(positionals: string[]) {
 
 function dispatchSolve(positionals: string[]) {
   const raw = readInput(positionals[1]);
-  let parsed: Recipe;
-  try { parsed = JSON.parse(raw) as Recipe; }
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); }
   catch { process.stderr.write("bread-calc: invalid JSON\n"); process.exit(2); }
 
-  if (values["target-g"]) parsed.target_loaf_g = parseFloat(values["target-g"] as string);
+  if (values["target-g"] != null) {
+    const target = parseFloat(values["target-g"] as string);
+    if (!Number.isFinite(target) || target <= 0) {
+      process.stderr.write(`bread-calc: --target-g must be a positive number (got '${values["target-g"]}')\n`);
+      process.exit(64);
+    }
+    if (typeof parsed !== "object" || parsed === null) {
+      process.stderr.write("bread-calc: recipe must be a JSON object\n");
+      process.exit(2);
+    }
+    (parsed as Record<string, unknown>).target_loaf_g = target;
+  }
 
   const v = validateRecipe(parsed, db);
   if (!v.valid) {
@@ -160,10 +170,23 @@ function dispatchSolve(positionals: string[]) {
     process.exit(v.issues.some((i) => i.code === "unknown_ingredient_id") ? 3 : 2);
   }
 
-  const solved = solveRecipe(parsed, db);
-  const out = JSON.stringify(solved, null, 2);
-  if (values.out) writeFileSync(values.out as string, out);
-  else console.log(out);
+  const result = solveWithError(parsed as Recipe, db);
+  if (result.error) {
+    if (values.json) console.log(JSON.stringify({ ok: false, error: result.error }, null, 2));
+    else process.stderr.write(`bread-calc: solver error: ${result.error}\n`);
+    process.exit(2);
+  }
+
+  const out = JSON.stringify(result.recipe, null, 2);
+  if (values.out) {
+    try { writeFileSync(values.out as string, out); }
+    catch (e) {
+      process.stderr.write(`bread-calc: cannot write '${values.out}': ${(e as Error).message}\n`);
+      process.exit(2);
+    }
+  } else {
+    console.log(out);
+  }
   process.exit(0);
 }
 

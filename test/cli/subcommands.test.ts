@@ -20,6 +20,19 @@ describe("bread-calc validate", () => {
   it("exits 2 on an invalid recipe", () => {
     expect(run(["validate", "-"], { input: '{"items":[]}' }).code).toBe(2);
   });
+  it("exits 2 on an invalid recipe with --json output", () => {
+    const r = run(["validate", "-", "--json"], { input: '{"items":[]}' });
+    expect(r.code).toBe(2);
+    const out = JSON.parse(r.stdout);
+    expect(out.valid).toBe(false);
+    expect(out.issues.length).toBeGreaterThan(0);
+  });
+  it("exits 3 on unknown ingredient_id", () => {
+    const r = run(["validate", "-"], {
+      input: JSON.stringify({ schema_version: "1.0", items: [{ ingredient_id: "doesnotexist", grams: 500 }] }),
+    });
+    expect(r.code).toBe(3);
+  });
 });
 
 describe("bread-calc solve", () => {
@@ -36,6 +49,27 @@ describe("bread-calc solve", () => {
     expect(r.code).toBe(0);
     const out = JSON.parse(r.stdout);
     expect(out.items[0].grams).toBeGreaterThan(0);
+  });
+  it("exits 2 with solver error on ambiguous flour (fixed-grams flour + pct items)", () => {
+    // Both fixed-grams flour AND pct items with a target → solver_ambiguous_flour
+    const r = run(["solve", "-", "--target-g=800", "--json"], {
+      input: JSON.stringify({
+        schema_version: "1.0",
+        items: [
+          { ingredient_id: "bread_flour", grams: 500 },
+          { ingredient_id: "water_tap", bakers_pct: 65 },
+        ],
+      }),
+    });
+    expect(r.code).toBe(2);
+    const out = JSON.parse(r.stdout);
+    expect(out.error).toBe("solver_ambiguous_flour");
+  });
+  it("exits 64 on invalid --target-g (non-numeric)", () => {
+    const r = run(["solve", "-", "--target-g=abc"], {
+      input: JSON.stringify({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", bakers_pct: 100 }] }),
+    });
+    expect(r.code).toBe(64);
   });
 });
 

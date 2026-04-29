@@ -1,6 +1,7 @@
 // src/core/index.ts — public library API
 export { computeRecipe } from "./compute.js";
-export { solveRecipe } from "./solve.js";
+export { solveRecipe, solveWithError } from "./solve.js";
+export type { SolverError, SolveResult } from "./solve.js";
 export { validateRecipe } from "./validate.js";
 export { classifyZone, HYDRATION_ZONES } from "./zones.js";
 export { inferRole, CATEGORY_ROLE_MAP } from "./role.js";
