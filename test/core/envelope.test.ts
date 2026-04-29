@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { wrap, type OutputEnvelope, type Meta } from "../../src/core/envelope.js";
+import type { SubcommandName } from "../../src/core/envelope.js";
 
 describe("envelope wrap", () => {
   beforeEach(() => {
@@ -27,3 +28,13 @@ describe("envelope wrap", () => {
     expect(meta.output_schema_version).toBe("2.0");
   });
 });
+
+// Compile-time exhaustiveness gate: any drift in SubcommandName breaks tsc
+// instead of silently expanding the union without test coverage.
+const _allSubcommands: ReadonlyArray<SubcommandName> = [
+  "compute","solve","validate","ingredients","reference","schema",
+  "describe","examples","parse","convert","lookup","apply","verify",
+];
+type _Exhaust = Exclude<SubcommandName, typeof _allSubcommands[number]>;
+const _exhaust: _Exhaust extends never ? true : false = true;
+void _allSubcommands; void _exhaust;

@@ -11,7 +11,7 @@ export function generateUid(): string {
   // one ALPHABET char (alphabet length is exactly 64 so the mapping is unbiased).
   // 10 chars × 6 bits = 60 bits of entropy.
   const bytes = new Uint8Array(10);
-  // globalThis.crypto exists in Node ≥19 and all modern browsers.
+  // globalThis.crypto exists in Node 22+ (project engines requirement) and all modern browsers.
   globalThis.crypto.getRandomValues(bytes);
   let out = "";
   for (let i = 0; i < bytes.length; i++) {
