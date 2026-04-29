@@ -5,11 +5,8 @@ import { mount as mountPicker } from "./components/ingredient-picker.js";
 import { mount as mountTable } from "./components/recipe-table.js";
 import { mount as mountResults } from "./components/results-panel.js";
 import { mount as mountWarnings } from "./components/warnings-panel.js";
-import { mount as mountChart } from "./components/chart-card.js";
-import { mount as mountMode } from "./components/mode-toggle.js";
 import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
-import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -68,38 +65,8 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
   mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
-  mountResults(document.querySelector("#results-panel") as HTMLElement, store, db);
+  mountResults(document.querySelector("#snapshot-card") as HTMLElement, store, db);
   mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
-  mountChart(document.querySelector("#chart-card") as HTMLElement, store, db);
-  mountMode(document.querySelector("#mode-toggle") as HTMLSelectElement, store);
-
-  const actionBar = document.querySelector("#action-bar") as HTMLElement;
-  actionBar.innerHTML = `
-    <button id="btn-save">Save .bread.json</button>
-    <button id="btn-load">Open recipe…</button>
-    <input type="file" id="file-input" accept=".bread.json,application/json" hidden />
-    <button id="btn-share">Copy share URL</button>
-    <button id="btn-pdf">Export PDF</button>
-  `;
-  const fileInput = document.querySelector("#file-input") as HTMLInputElement;
-  (document.querySelector("#btn-save") as HTMLButtonElement).addEventListener("click", () => {
-    saveRecipeAsFile(store.getState(), store.getState().name ?? "recipe");
-  });
-  (document.querySelector("#btn-load") as HTMLButtonElement).addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", async () => {
-    const f = fileInput.files?.[0];
-    if (!f) return;
-    try {
-      store.dispatch({ type: "load", recipe: await readRecipeFile(f) });
-    } catch (e) {
-      alert(`Could not load recipe: ${(e as Error).message}`);
-    }
-    fileInput.value = "";
-  });
-  (document.querySelector("#btn-share") as HTMLButtonElement).addEventListener("click", async () => {
-    await navigator.clipboard.writeText(location.href);
-  });
-  (document.querySelector("#btn-pdf") as HTMLButtonElement).addEventListener("click", () => window.print());
 
   let timer: number | undefined;
   store.subscribe(() => {

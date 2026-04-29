@@ -3,37 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>breadmachine.io — Bread machine hydration calculator</title>
-  <meta name="description" content="Bread machine recipe calculator with free-water-factor hydration model. Calibrated for the Zojirushi BB-PDC20." />
+  <title>breadmachine.io — Hydration calculator for bread machines</title>
+  <meta name="description" content="Hydration calculator for bread machines. Calibrated for the Zojirushi BB-PDC20." />
   <link rel="canonical" href="https://breadmachine.io/" />
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta property="og:title" content="breadmachine.io" />
   <meta property="og:description" content="Bread machine hydration calculator" />
   <meta property="og:url" content="https://breadmachine.io/" />
+
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-variable.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-variable.woff2" crossorigin />
+
   <link rel="stylesheet" href="/src/site/styles.css" />
   <link rel="stylesheet" href="/src/site/pdf/print.css" media="print" />
 </head>
 <body>
-  <header role="banner">
-    <h1>breadmachine.io</h1>
-    <div class="header-controls">
-      <label>Mode <select id="mode-toggle"><option value="ingredients">Build by ingredients</option><option value="target">Build by target weight</option></select></label>
-    </div>
-  </header>
+  <header id="site-header" role="banner"></header>
+  <div id="tip-strip"></div>
   <main>
-    <section id="recipe-pane" aria-label="Recipe editor">
-      <div id="recipe-meta"></div>
+    <section id="recipe-pane" aria-label="Recipe editor" class="card">
+      <div id="recipe-headline"></div>
       <div id="ingredient-picker"></div>
       <div id="recipe-table" role="table" aria-label="Recipe ingredients"></div>
+      <div id="recipe-meta"></div>
     </section>
     <section id="results-pane" aria-label="Recipe results">
-      <div id="results-panel"></div>
-      <div id="chart-card"></div>
-      <div id="warnings-panel"></div>
-      <div id="action-bar"></div>
+      <div id="snapshot-card" class="card"></div>
+      <div id="zone-band" class="card"></div>
+      <div id="warnings-panel" class="card"></div>
+      <div id="show-math-section" class="card"></div>
     </section>
   </main>
+  <footer id="site-footer"></footer>
+  <section id="kitchen-card" hidden></section>
+  <dialog id="settings-drawer"></dialog>
   <script type="module" src="/src/site/main.ts"></script>
 </body>
 </html>
