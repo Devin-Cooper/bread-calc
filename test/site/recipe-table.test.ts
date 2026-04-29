@@ -33,4 +33,35 @@ describe("recipe-table", () => {
     store.dispatch({ type: "add_item", ingredient_id: "water_tap" });
     expect(root.querySelectorAll('[role="row"]').length).toBe(2);
   });
+
+  it("renders empty-state placeholder when items list is empty", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "1.0", items: [] });
+    mountTable(root, store);
+    expect(root.querySelectorAll('[role="row"]').length).toBe(0);
+    expect(root.querySelector(".placeholder")?.textContent).toMatch(/No ingredients/);
+  });
+
+  it("dispatches set_bakers_pct on bakers-pct input change", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
+    mountTable(root, store);
+    const input = root.querySelector('input[data-field="bakers_pct"]') as HTMLInputElement;
+    input.value = "100";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    expect(store.getState().items[0]!.bakers_pct).toBe(100);
+  });
+
+  it("dispatches remove_item on click of remove button", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "1.0", items: [
+      { ingredient_id: "bread_flour", grams: 500 },
+      { ingredient_id: "water_tap", grams: 320 },
+    ]});
+    mountTable(root, store);
+    const button = root.querySelector('button[data-action="remove"][data-index="0"]') as HTMLButtonElement;
+    button.click();
+    expect(store.getState().items.length).toBe(1);
+    expect(store.getState().items[0]!.ingredient_id).toBe("water_tap");
+  });
 });
