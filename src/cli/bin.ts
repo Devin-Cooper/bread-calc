@@ -2,6 +2,12 @@ import { parseArgs } from "node:util";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { computeRecipe, validateRecipe, type Recipe, type Database } from "../core/index.js";
+import ingredientsFile from "../data/ingredients.json" with { type: "json" };
+import floursFile from "../data/flours.json" with { type: "json" };
+import refsFile from "../data/bb_pdc20_recipes.json" with { type: "json" };
+import machinesFile from "../data/machines.json" with { type: "json" };
+import defaultsRaw from "../data/defaults.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -71,6 +77,55 @@ if (!SUBCOMMANDS.includes(sub)) {
   process.exit(64);
 }
 
-// Stub — real handlers wired in later tasks
-console.error(`bread-calc: '${sub}' not yet implemented`);
-process.exit(64);
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Bundle-time JSON imports lose their declared shape; the cast is intentional and
+// the data is schema-validated at compile-time by scripts/transform-data.mjs.
+const db: Database = {
+  ingredients: (ingredientsFile as any).entries,
+  flours:      (floursFile as any).entries,
+  references:  (refsFile as any).entries,
+  machines:    (machinesFile as any).entries,
+  defaults:    defaultsRaw as any,
+};
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+function readInput(arg: string | undefined): string {
+  if (!arg) { process.stderr.write("bread-calc: missing argument\n"); process.exit(64); }
+  if (arg === "-") return readFileSync(0, "utf8");
+  return readFileSync(arg, "utf8");
+}
+
+function dispatchCompute() {
+  const file = positionals[1];
+  const raw = readInput(file);
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); }
+  catch { process.stderr.write("bread-calc: invalid JSON\n"); process.exit(2); }
+
+  const v = validateRecipe(parsed, db);
+  if (!v.valid) {
+    if (v.issues.some((i) => i.code === "unknown_ingredient_id")) {
+      if (values.json) console.log(JSON.stringify({ ok: false, issues: v.issues }, null, 2));
+      else process.stderr.write(`Unknown ingredient_id\n`);
+      process.exit(3);
+    }
+    if (values.json) console.log(JSON.stringify({ ok: false, issues: v.issues }, null, 2));
+    else process.stderr.write(`Schema validation failed: ${v.issues.length} issue(s)\n`);
+    process.exit(2);
+  }
+
+  const computed = computeRecipe(parsed as Recipe, db);
+  if (values.json || !process.stdout.isTTY) {
+    console.log(JSON.stringify(computed, null, 2));
+  } else {
+    // Human-readable summary deferred to Task 2.5
+    console.log(`Effective hydration: ${computed.hydration.effective_pct ?? "—"}%`);
+    console.log(`Predicted loaf:      ${computed.totals.predicted_loaf_g} g`);
+    for (const w of computed.warnings) console.log(`[${w.severity}] ${w.code}: ${w.message}`);
+  }
+  if (computed.warnings.some((w) => w.severity === "error")) process.exit(1);
+  process.exit(0);
+}
+
+if (sub === "compute") dispatchCompute();
+else { console.error(`bread-calc: '${sub}' not yet implemented`); process.exit(64); }
