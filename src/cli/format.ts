@@ -1,4 +1,3 @@
-// src/cli/format.ts — colorized human-readable summary, no chalk dep
 import type { ComputedRecipe } from "../core/index.js";
 
 const noColor = process.env.NO_COLOR != null && process.env.NO_COLOR !== "";
@@ -19,24 +18,46 @@ export function formatComputed(c: ComputedRecipe, headline: "effective" | "nomin
   const h = c.hydration;
   const lines: string[] = [];
   lines.push(bold(`${c.recipe.name ?? "Recipe"}`));
-  const hLabel = (k: string, v: number | null | undefined) => `${k.padEnd(18)} ${v == null ? "—" : `${v.toFixed(1)}%`}`;
-  lines.push(headline === "effective" ? bold(hLabel("Effective hydration", h.effective_pct)) : hLabel("Effective hydration", h.effective_pct));
-  lines.push(headline === "nominal" ? bold(hLabel("Nominal water", h.nominal_pct)) : hLabel("Nominal water", h.nominal_pct));
-  lines.push(headline === "total_liquid" ? bold(hLabel("Total liquid", h.total_liquid_pct)) : hLabel("Total liquid", h.total_liquid_pct));
-  lines.push(`${"Zone".padEnd(18)} ${h.zone?.label ?? "—"}`);
   lines.push("");
-  lines.push(bold("Composition"));
-  lines.push(hLabel("Salt-equivalent", c.bakers_pcts.salt_equivalent_pct));
-  lines.push(hLabel("Sugar-equivalent", c.bakers_pcts.sugar_equivalent_pct));
-  lines.push(hLabel("Fat-equivalent", c.bakers_pcts.fat_equivalent_pct));
+  lines.push(bold("  Hydration"));
+  const fmt = (n: number | null) => n == null ? "—" : `${n.toFixed(1)}%`;
+  const lbl = (k: string, v: string, isHl = false) =>
+    isHl ? bold(`    ${k.padEnd(20)} ${v}`) : `    ${k.padEnd(20)} ${v}`;
+  lines.push(lbl("Effective hydration", fmt(h.effective_pct), headline === "effective"));
+  lines.push(lbl("Nominal water",       fmt(h.nominal_pct),   headline === "nominal"));
+  lines.push(lbl("Total liquid",        fmt(h.total_liquid_pct), headline === "total_liquid"));
+  lines.push(`    ${"Zone".padEnd(20)} ${h.zone?.label ?? "—"}`);
   lines.push("");
-  lines.push(`${"Predicted loaf".padEnd(18)} ${c.totals.predicted_loaf_g} g`);
+  lines.push(bold("  Composition"));
+  lines.push(`    ${"Salt-equivalent".padEnd(20)} ${fmt(c.bakers_percents.salt_equivalent_pct)}`);
+  lines.push(`    ${"Sugar-equivalent".padEnd(20)} ${fmt(c.bakers_percents.sugar_equivalent_pct)}`);
+  lines.push(`    ${"Fat-equivalent".padEnd(20)} ${fmt(c.bakers_percents.fat_equivalent_pct)}`);
+  lines.push("");
+  lines.push(`  ${"Predicted loaf".padEnd(22)} ${c.metrics.predicted_loaf_g} g`);
   lines.push("");
   if (c.warnings.length > 0) {
-    lines.push(bold("Warnings"));
-    for (const w of c.warnings) lines.push(SEV[w.severity]!(`[${w.severity}] ${w.code}: ${w.message}`));
+    lines.push(bold(`  Warnings (${c.warnings.length})`));
+    for (const w of c.warnings) {
+      lines.push(`    ${SEV[w.severity]!(`[${w.severity}]`)} ${w.code}: ${w.message}`);
+      for (const f of w.suggested_fixes) {
+        const desc =
+          f.kind === "set_grams"        ? `set_grams uid=${f.uid} to ${f.grams} g` :
+          f.kind === "increase_grams"   ? `increase_grams uid=${f.uid} by +${f.delta_g} g` :
+          f.kind === "decrease_grams"   ? `decrease_grams uid=${f.uid} by ${f.delta_g} g` :
+          f.kind === "set_bakers_pct"   ? `set_bakers_pct uid=${f.uid} to ${f.bakers_pct}%` :
+          f.kind === "add_ingredient"   ? `add_ingredient ${f.ingredient_id}` :
+          f.kind === "remove_ingredient"? `remove_ingredient uid=${f.uid}` :
+          f.kind === "set_field"        ? `set_field ${f.field}=${JSON.stringify(f.value)}` :
+          f.kind === "set_role"         ? `set_role uid=${f.uid} to ${f.role}` :
+          (f as { kind: string }).kind;
+        lines.push(`      → ${desc}  — ${(f as { rationale: string }).rationale}`);
+      }
+    }
+    if (c.warnings.every((w) => w.suggested_fixes.length === 0)) {
+      lines.push(`  No fixes suggested.`);
+    }
   } else {
-    lines.push(green("No warnings"));
+    lines.push(green("  No warnings."));
   }
   return lines.join("\n");
 }
