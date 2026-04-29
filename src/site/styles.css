@@ -69,6 +69,8 @@ details td, details th { padding: 2px 6px; border-bottom: 1px solid var(--border
 .hint { color: var(--muted); font-size: 13px; margin: 4px 0 12px; }
 [role="row"].row-header { font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border-soft); padding-bottom: 4px; margin-bottom: 4px; }
 .solved-grams { color: var(--muted); font-variant-numeric: tabular-nums; }
+.role-derived { color: var(--muted); font-style: italic; }
+input::placeholder { color: var(--muted); opacity: 0.7; }
 #ing-results { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; list-style: none; padding: 4px 0; margin: 4px 0 0; }
 #ing-results li { padding: 4px 8px; cursor: pointer; }
 #ing-results li:hover { background: var(--border-soft); }

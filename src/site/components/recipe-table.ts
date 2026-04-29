@@ -1,5 +1,6 @@
 import type { Database } from "../../core/index.js";
 import type { Store } from "../state.js";
+import { computeRecipe, inferRole } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { effectiveRecipe } from "../effective-recipe.js";
 
@@ -10,6 +11,19 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     // In target mode, show the solver's grams as a hint but keep the user's
     // raw inputs editable; in ingredients mode, the raw recipe IS the source.
     const solved = targetMode ? effectiveRecipe(state, db) : state;
+    // Derive bakers_pct + role for items that don't have them set, so the
+    // columns aren't blank for hand-entered grams-only recipes. The user can
+    // still type a baker's % to override the derived value.
+    let derivedPcts: Record<string, number | null> = {};
+    try { derivedPcts = computeRecipe(solved, db).bakers_pcts.by_ingredient; }
+    catch { /* invalid recipe — leave derived empty */ }
+    const lookupCategoryAndLiquid = (ingredient_id: string): { category: string; isLiquid: boolean } | null => {
+      const flour = db.flours.find((f) => f.id === ingredient_id);
+      if (flour) return { category: "flour", isLiquid: false };
+      const ing = db.ingredients.find((i) => i.id === ingredient_id);
+      if (ing) return { category: ing.category, isLiquid: ing.is_liquid ?? false };
+      return null;
+    };
     // Focus restoration: capture active element BEFORE clearing,
     // restore at end of render() if the focused element was inside a row.
     const active = document.activeElement as HTMLElement | null;
@@ -41,13 +55,18 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         : `<input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
                  data-field="grams" data-index="${i}" value="${item.grams ?? ""}"
                  aria-label="grams for ${escapeHtml(item.ingredient_id)}" />`;
+      const derivedPct = derivedPcts[item.ingredient_id];
+      const pctPlaceholder = item.bakers_pct == null && derivedPct != null ? derivedPct.toFixed(1) : "";
+      const meta = lookupCategoryAndLiquid(item.ingredient_id);
+      const displayRole = item.role ?? (meta ? inferRole(meta.category as never, meta.isLiquid) : "");
+      const roleClass = item.role ? "role" : "role role-derived";
       row.innerHTML = `
         <span role="cell">${escapeHtml(item.ingredient_id)}</span>
         ${gramsCell}
         <input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
-               data-field="bakers_pct" data-index="${i}" value="${item.bakers_pct ?? ""}"
+               data-field="bakers_pct" data-index="${i}" value="${item.bakers_pct ?? ""}" placeholder="${pctPlaceholder}"
                aria-label="bakers percent for ${escapeHtml(item.ingredient_id)}" />
-        <span role="cell">${escapeHtml(item.role ?? "")}</span>
+        <span role="cell" class="${roleClass}">${escapeHtml(displayRole)}</span>
         <button role="cell" data-action="remove" data-index="${i}" aria-label="remove ${escapeHtml(item.ingredient_id)}">✕</button>
       `;
       parent.appendChild(row);
