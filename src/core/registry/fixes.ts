@@ -1,6 +1,13 @@
 import { createRegistry, type Registry } from "./base.js";
-import type { Recipe, RecipeItem } from "../types.js";
+import type { ApplyFixErrorCode, Recipe, RecipeItem } from "../types.js";
 import { generateUid, isValidUid } from "../uid.js";
+
+export class FixApplyError extends Error {
+  constructor(public readonly code: ApplyFixErrorCode, message: string) {
+    super(message);
+    this.name = "FixApplyError";
+  }
+}
 
 export interface FixKind {
   kind: string;
@@ -30,7 +37,7 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
-    if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
+    if (idx < 0) throw new FixApplyError("unknown_uid", `unknown uid: ${payload["uid"]}`);
     const items = recipe.items.map((it, i) => i === idx ? { ...it, grams: payload["grams"] as number } : it);
     return { ...recipe, items };
   },
@@ -51,10 +58,10 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
-    if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
+    if (idx < 0) throw new FixApplyError("unknown_uid", `unknown uid: ${payload["uid"]}`);
     const cur = recipe.items[idx]!.grams ?? 0;
     const next = cur + (payload["delta_g"] as number);
-    if (next < 0) throw new Error(`negative_grams: ${cur}+${payload["delta_g"]}=${next}`);
+    if (next < 0) throw new FixApplyError("negative_grams", `negative_grams: ${cur}+${payload["delta_g"]}=${next}`);
     return { ...recipe, items: recipe.items.map((it, i) => i === idx ? { ...it, grams: next } : it) };
   },
 });
@@ -74,10 +81,10 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
-    if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
+    if (idx < 0) throw new FixApplyError("unknown_uid", `unknown uid: ${payload["uid"]}`);
     const cur = recipe.items[idx]!.grams ?? 0;
     const next = cur - (payload["delta_g"] as number);
-    if (next < 0) throw new Error(`negative_grams: ${cur}-${payload["delta_g"]}=${next}`);
+    if (next < 0) throw new FixApplyError("negative_grams", `negative_grams: ${cur}-${payload["delta_g"]}=${next}`);
     return { ...recipe, items: recipe.items.map((it, i) => i === idx ? { ...it, grams: next } : it) };
   },
 });
@@ -97,7 +104,7 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
-    if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
+    if (idx < 0) throw new FixApplyError("unknown_uid", `unknown uid: ${payload["uid"]}`);
     return { ...recipe, items: recipe.items.map((it, i) => i === idx ? { ...it, bakers_pct: payload["bakers_pct"] as number } : it) };
   },
 });
@@ -120,8 +127,8 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const uid = (payload["uid"] as string | undefined) ?? generateUid();
-    if (!isValidUid(uid)) throw new Error(`invalid_payload: bad uid format`);
-    if (recipe.items.some((it) => it.uid === uid)) throw new Error(`invalid_payload: duplicate uid ${uid}`);
+    if (!isValidUid(uid)) throw new FixApplyError("invalid_payload", `invalid_payload: bad uid format`);
+    if (recipe.items.some((it) => it.uid === uid)) throw new FixApplyError("invalid_payload", `invalid_payload: duplicate uid ${uid}`);
     const item: RecipeItem = { uid, ingredient_id: payload["ingredient_id"] as string };
     if (payload["grams"]      !== undefined) item.grams      = payload["grams"]      as number;
     if (payload["bakers_pct"] !== undefined) item.bakers_pct = payload["bakers_pct"] as number;
@@ -144,7 +151,7 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
-    if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
+    if (idx < 0) throw new FixApplyError("unknown_uid", `unknown uid: ${payload["uid"]}`);
     return { ...recipe, items: recipe.items.filter((_, i) => i !== idx) };
   },
 });
@@ -166,7 +173,7 @@ fixKinds.register({
     const field = payload["field"] as string;
     const value = payload["value"];
     if (field === "bake_loss_pct") {
-      if (typeof value !== "number") throw new Error(`value_type_mismatch: bake_loss_pct expects number`);
+      if (typeof value !== "number") throw new FixApplyError("value_type_mismatch", `value_type_mismatch: bake_loss_pct expects number`);
       return { ...recipe, bake_loss_pct: value };
     }
     if (field === "target_loaf_g") {
@@ -175,14 +182,14 @@ fixKinds.register({
         const { target_loaf_g: _drop, ...rest } = recipe;
         return rest as Recipe;
       }
-      if (typeof value !== "number") throw new Error(`value_type_mismatch: target_loaf_g expects number|null`);
+      if (typeof value !== "number") throw new FixApplyError("value_type_mismatch", `value_type_mismatch: target_loaf_g expects number|null`);
       return { ...recipe, target_loaf_g: value };
     }
     if (field === "machine") {
-      if (typeof value !== "string") throw new Error(`value_type_mismatch: machine expects string`);
+      if (typeof value !== "string") throw new FixApplyError("value_type_mismatch", `value_type_mismatch: machine expects string`);
       return { ...recipe, machine: value };
     }
-    throw new Error(`invalid_payload: unknown field "${field}"`);
+    throw new FixApplyError("invalid_payload", `invalid_payload: unknown field "${field}"`);
   },
 });
 
@@ -201,7 +208,7 @@ fixKinds.register({
   },
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
-    if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
+    if (idx < 0) throw new FixApplyError("unknown_uid", `unknown uid: ${payload["uid"]}`);
     const newRole = payload["role"] as import("../types.js").Role;
     return { ...recipe, items: recipe.items.map((it, i): RecipeItem => i === idx ? { ...it, role: newRole } : it) };
   },
