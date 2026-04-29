@@ -2,7 +2,7 @@ import { parseArgs } from "node:util";
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { computeRecipe, solveWithError, validateRecipe, type Recipe, type Database } from "../core/index.js";
+import { computeRecipe, renderHydrationChart, solveWithError, validateRecipe, type Recipe, type Database } from "../core/index.js";
 import { formatComputed } from "./format.js";
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -195,6 +195,35 @@ function dispatchSolve(positionals: string[]) {
   process.exit(0);
 }
 
+function dispatchPlot(positionals: string[]) {
+  const raw = readInput(positionals[1]);
+  let parsed: unknown;
+  try { parsed = JSON.parse(raw); }
+  catch { process.stderr.write("bread-calc: invalid JSON\n"); process.exit(2); }
+
+  const v = validateRecipe(parsed, db);
+  if (!v.valid) {
+    if (values.json) console.log(JSON.stringify({ ok: false, issues: v.issues }, null, 2));
+    else for (const i of v.issues) process.stderr.write(`${i.path}: ${i.code}: ${i.message}\n`);
+    process.exit(v.issues.some((i) => i.code === "unknown_ingredient_id") ? 3 : 2);
+  }
+
+  const computed = computeRecipe(parsed as Recipe, db);
+  const theme: "light" | "dark" = values.theme === "dark" ? "dark" : "light";
+  const svg = renderHydrationChart(computed, { reference: db.references, theme });
+
+  if (values.out) {
+    try { writeFileSync(values.out as string, svg); }
+    catch (e) {
+      process.stderr.write(`bread-calc: cannot write '${values.out}': ${(e as Error).message}\n`);
+      process.exit(2);
+    }
+  } else {
+    process.stdout.write(svg);
+  }
+  process.exit(0);
+}
+
 function dispatchIngredients(_positionals: string[]) {
   let list = [...db.ingredients];
   if (values.category) list = list.filter((i) => i.category === values.category);
@@ -238,7 +267,7 @@ const HANDLERS: Record<string, Handler> = {
   ingredients: dispatchIngredients,
   reference:   dispatchReference,
   schema:      dispatchSchema,
-  plot:        () => { process.stderr.write("bread-calc: 'plot' is added in v0.6.0\n"); process.exit(64); },
+  plot:        dispatchPlot,
 };
 const handler = HANDLERS[sub];
 if (handler) handler(positionals);
