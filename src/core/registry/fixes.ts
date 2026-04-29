@@ -125,7 +125,7 @@ fixKinds.register({
     const item: RecipeItem = { uid, ingredient_id: payload["ingredient_id"] as string };
     if (payload["grams"]      !== undefined) item.grams      = payload["grams"]      as number;
     if (payload["bakers_pct"] !== undefined) item.bakers_pct = payload["bakers_pct"] as number;
-    if (payload["role"]       !== undefined) item.role       = payload["role"]       as RecipeItem["role"];
+    if (payload["role"]       !== undefined) item.role       = payload["role"]       as import("../types.js").Role;
     return { ...recipe, items: [...recipe.items, item] };
   },
 });
@@ -171,6 +171,7 @@ fixKinds.register({
     }
     if (field === "target_loaf_g") {
       if (value === null) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { target_loaf_g: _drop, ...rest } = recipe;
         return rest as Recipe;
       }
@@ -201,6 +202,7 @@ fixKinds.register({
   apply(recipe, payload) {
     const idx = findItemIndex(recipe, payload["uid"] as string);
     if (idx < 0) throw new Error(`unknown_uid: ${payload["uid"]}`);
-    return { ...recipe, items: recipe.items.map((it, i) => i === idx ? { ...it, role: payload["role"] as RecipeItem["role"] } : it) };
+    const newRole = payload["role"] as import("../types.js").Role;
+    return { ...recipe, items: recipe.items.map((it, i): RecipeItem => i === idx ? { ...it, role: newRole } : it) };
   },
 });
