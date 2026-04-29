@@ -18,8 +18,10 @@ jobs:
       - run: npm run pack:check 2>&1 | tee pack.log
       - name: assert tarball contents
         run: |
-          grep -q "dist/lib/index.js"     pack.log || { echo "missing dist/lib/index.js";     exit 1; }
-          grep -q "dist/lib/index.d.ts"   pack.log || { echo "missing dist/lib/index.d.ts";   exit 1; }
-          grep -q "dist/lib/data/index.js" pack.log || { echo "missing dist/lib/data/index.js"; exit 1; }
-          grep -q "dist/lib/schema.json"  pack.log || { echo "missing dist/lib/schema.json";  exit 1; }
-          grep -q "dist/cli/bin.js"       pack.log || { echo "missing dist/cli/bin.js";       exit 1; }
+          grep -q "dist/lib/index.js"          pack.log || { echo "missing dist/lib/index.js";          exit 1; }
+          grep -q "dist/lib/agent.js"          pack.log || { echo "missing dist/lib/agent.js";          exit 1; }
+          grep -q "dist/lib/core/index.d.ts"   pack.log || { echo "missing dist/lib/core/index.d.ts";   exit 1; }
+          grep -q "dist/lib/agent/index.d.ts"  pack.log || { echo "missing dist/lib/agent/index.d.ts";  exit 1; }
+          grep -q "dist/lib/data/index.js"     pack.log || { echo "missing dist/lib/data/index.js";     exit 1; }
+          grep -q "dist/lib/schema.json"       pack.log || { echo "missing dist/lib/schema.json";       exit 1; }
+          grep -q "dist/cli/bin.js"            pack.log || { echo "missing dist/cli/bin.js";            exit 1; }
