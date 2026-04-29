@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "entries": [
+    { "id": "ap_flour", "name": "All-Purpose Flour", "category": "flour", "protein_pct": 10.5, "ddt_water_absorption_pct": 60, "density_g_per_cup": 125, "notes": "King Arthur AP." },
+    { "id": "bread_flour", "name": "Bread Flour", "category": "flour", "protein_pct": 12.7, "ddt_water_absorption_pct": 62, "density_g_per_cup": 130, "notes": "King Arthur Bread Flour." },
+    { "id": "high_gluten_flour", "name": "High-Gluten Flour", "category": "flour", "protein_pct": 14.2, "ddt_water_absorption_pct": 64, "density_g_per_cup": 130, "notes": "King Arthur Sir Lancelot." },
+    { "id": "whole_wheat_flour", "name": "Whole Wheat Flour", "category": "flour", "protein_pct": 13.5, "ddt_water_absorption_pct": 67, "density_g_per_cup": 113, "notes": "Stone-ground whole wheat." },
+    { "id": "white_whole_wheat_flour", "name": "White Whole Wheat Flour", "category": "flour", "protein_pct": 13.0, "ddt_water_absorption_pct": 65, "density_g_per_cup": 113, "notes": "Hard white wheat, milled whole." },
+    { "id": "rye_flour_dark", "name": "Rye Flour, Dark", "category": "flour", "protein_pct": 12.0, "ddt_water_absorption_pct": 75, "density_g_per_cup": 102, "notes": "Pumpernickel-style." },
+    { "id": "rye_flour_light", "name": "Rye Flour, Light", "category": "flour", "protein_pct": 9.0, "ddt_water_absorption_pct": 70, "density_g_per_cup": 102, "notes": "Sifted rye." },
+    { "id": "spelt_flour", "name": "Spelt Flour, Whole", "category": "flour", "protein_pct": 14.5, "ddt_water_absorption_pct": 64, "density_g_per_cup": 110 },
+    { "id": "00_flour", "name": "Tipo 00 Flour", "category": "flour", "protein_pct": 12.5, "ddt_water_absorption_pct": 60, "density_g_per_cup": 130, "notes": "Italian fine-ground bread flour." },
+    { "id": "semolina_flour", "name": "Semolina Flour", "category": "flour", "protein_pct": 13.0, "ddt_water_absorption_pct": 62, "density_g_per_cup": 167 },
+    { "id": "einkorn_flour", "name": "Einkorn Flour, Whole", "category": "flour", "protein_pct": 14.0, "ddt_water_absorption_pct": 56, "density_g_per_cup": 96, "notes": "Lower hydration tolerance than common wheat." },
+    { "id": "kamut_flour", "name": "Kamut Flour", "category": "flour", "protein_pct": 14.5, "ddt_water_absorption_pct": 64, "density_g_per_cup": 110 },
+    { "id": "buckwheat_flour", "name": "Buckwheat Flour", "category": "flour", "protein_pct": 13.0, "ddt_water_absorption_pct": 70, "density_g_per_cup": 120, "notes": "Gluten-free; needs binder." },
+    { "id": "gf_flour_blend", "name": "Gluten-Free Flour Blend (1-to-1)", "category": "flour", "protein_pct": 4.0, "ddt_water_absorption_pct": 80, "density_g_per_cup": 140, "notes": "Bob's Red Mill 1-to-1; needs xanthan and eggs." }
+  ]
+}
