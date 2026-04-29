@@ -48,12 +48,53 @@
     {
       "code": "solver_overconstrained",
       "severity": "error",
-      "message": "Fixed-gram items already exceed the target dough mass."
+      "message": "Fixed-gram items already exceed the target dough mass.",
+      "suggested_fixes": [
+        {
+          "kind": "decrease_grams",
+          "uid": "u_salt0001",
+          "delta_g": 86.4,
+          "rationale": "Reduce by 43% to fit 100 g target loaf weight."
+        }
+      ]
     },
     {
       "code": "no_flour",
       "severity": "error",
-      "message": "Recipe has no flour; cannot compute hydration."
+      "message": "Recipe has no flour; cannot compute hydration.",
+      "suggested_fixes": []
+    },
+    {
+      "code": "pan_underfill_predicted",
+      "severity": "info",
+      "message": "Predicted loaf weight 176 g may underfill the pan (typical minimum 600 g).",
+      "suggested_fixes": []
+    },
+    {
+      "code": "no_yeast_or_leavener",
+      "severity": "warn",
+      "message": "No yeast or leavener detected.",
+      "suggested_fixes": [
+        {
+          "kind": "add_ingredient",
+          "ingredient_id": "yeast_instant",
+          "grams": 5,
+          "rationale": "Add a small amount of instant yeast."
+        }
+      ]
+    },
+    {
+      "code": "no_salt",
+      "severity": "info",
+      "message": "Salt equivalent is below 0.5%; bread may taste flat unless intentional.",
+      "suggested_fixes": [
+        {
+          "kind": "set_grams",
+          "uid": "u_salt0001",
+          "grams": 0,
+          "rationale": "Set salt to ~1.8% of flour for balanced flavor."
+        }
+      ]
     }
   ],
   "water_breakdown": [

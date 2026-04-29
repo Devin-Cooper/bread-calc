@@ -451,9 +451,21 @@ warningRules.register({
   has_fixes: true,
   evaluate() { return { fired: false }; },  // not auto-evaluated; emitted from compute on solver error
   fixes(ctx) {
-    return ctx.resolved.filter((r) => r.item.grams != null && r.item.grams > 0).slice(0, 3).map((r) => ({
-      kind: "decrease_grams" as const, uid: r.item.uid, delta_g: Math.max(1, Math.round(r.grams * 0.1)),
-      rationale: "Reduce one fixed-gram item by 10% to fit target loaf weight.",
+    const target = ctx.computed.recipe.target_loaf_g;
+    if (target == null) return [];
+    const fixedItems = ctx.resolved.filter((r) => r.item.grams != null && r.item.grams > 0);
+    const fixedSum = fixedItems.reduce((s, r) => s + r.grams, 0);
+    if (fixedSum <= target) return [];  // shouldn't have fired
+    // Compute the dough mass that fits target_loaf_g (account for bake loss)
+    const bakeLossPct = ctx.computed.recipe.bake_loss_pct ?? ctx.db.defaults.default_bake_loss_pct;
+    const targetDoughMass = target / (1 - bakeLossPct / 100);
+    const k = targetDoughMass / fixedSum;  // 0 < k < 1
+    // For each fixed item, propose decrease_grams of (1 - k) * grams
+    return fixedItems.map((r) => ({
+      kind: "decrease_grams" as const,
+      uid: r.item.uid,
+      delta_g: Math.max(0.1, Math.round((1 - k) * r.grams * 10) / 10),  // round to 0.1g
+      rationale: `Reduce by ${((1 - k) * 100).toFixed(0)}% to fit ${target} g target loaf weight.`,
     }));
   },
 });
@@ -468,10 +480,25 @@ warningRules.register({
   evaluate() { return { fired: false }; },  // emitted from compute
   fixes(ctx) {
     const flourFixed = ctx.resolved.find((r) => r.role === "flour" && r.item.grams != null);
+    const out: Fix[] = [];
     if (flourFixed) {
-      return [{ kind: "set_grams", uid: flourFixed.item.uid, grams: 0, rationale: "Clear fixed grams on flour and let the solver derive it from bakers_pct on other items." }];
+      // Alternative 1: clear flour grams. The solver will derive flour from the
+      // bakers_pct of other items targeting target_loaf_g.
+      out.push({
+        kind: "set_grams",
+        uid: flourFixed.item.uid,
+        grams: 0,
+        rationale: "Clear fixed grams on flour and let the solver derive it from bakers_pct on other items.",
+      });
     }
-    return [];
+    // Alternative 2 ("remove bakers_pct from non-flour items") would require a
+    // FixKind that deletes the bakers_pct field. v2.0's closed 8-kind enum has
+    // set_bakers_pct (number, ≥0) but no clear_bakers_pct. Setting bakers_pct=0
+    // does not match the intent — the solver still treats the item as
+    // percent-mode (since bakers_pct is not null). A future minor version may
+    // add clear_bakers_pct; for now, alternative 1 is the only structured fix.
+    // Agents that prefer the second alternative can manually edit the recipe.
+    return out;
   },
 });
 
