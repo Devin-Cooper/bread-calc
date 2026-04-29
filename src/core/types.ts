@@ -125,8 +125,36 @@ export interface Warning {
   code: WarningCode;
   severity: "info" | "warn" | "error";
   message: string;
-  related_ingredient_ids?: string[];
+  related_uids?: string[];
+  suggested_fixes: Fix[];   // non-optional; empty array for pure-info warnings
 }
+
+export type Fix =
+  | { kind: "set_grams";          uid: string; grams: number;       rationale: string; }
+  | { kind: "increase_grams";     uid: string; delta_g: number;     rationale: string; }
+  | { kind: "decrease_grams";     uid: string; delta_g: number;     rationale: string; }
+  | { kind: "set_bakers_pct";     uid: string; bakers_pct: number;  rationale: string; }
+  | { kind: "add_ingredient";     uid?: string; ingredient_id: string;
+                                  grams?: number; bakers_pct?: number; role?: Role;
+                                  rationale: string; }
+  | { kind: "remove_ingredient";  uid: string; rationale: string; }
+  | { kind: "set_field";          field: "bake_loss_pct" | "target_loaf_g" | "machine";
+                                  value: number | string | null; rationale: string; }
+  | { kind: "set_role";           uid: string; role: Role; rationale: string; };
+
+export type ApplyFixErrorCode =
+  | "unknown_uid" | "unknown_kind" | "invalid_payload" | "post_apply_invalid"
+  | "negative_grams" | "value_type_mismatch";
+
+export interface ApplyFixError {
+  code: ApplyFixErrorCode;
+  message: string;
+  details?: unknown;
+}
+
+export type ApplyFixResult =
+  | { ok: true;  recipe: Recipe }
+  | { ok: false; error: ApplyFixError };
 
 export interface ComputedRecipe {
   recipe: Recipe;
