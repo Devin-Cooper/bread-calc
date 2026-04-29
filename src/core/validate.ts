@@ -24,26 +24,28 @@ export function validateRecipe(input: unknown, db?: Database): RecipeValidationR
     // After collecting schema issues, also run uid checks so that format/uniqueness
     // codes are emitted even when the schema validator catches the pattern violation.
     // Only do this if the input looks structurally like a recipe (has items array).
-    const maybeRecipe = input as { schema_version?: unknown; items?: unknown };
-    if (Array.isArray(maybeRecipe.items)) {
-      const rawItems = maybeRecipe.items as Array<{ uid?: unknown }>;
-      const seenUids = new Map<string, number>();
-      for (let i = 0; i < rawItems.length; i++) {
-        const rawItem = rawItems[i]!;
-        if (typeof rawItem.uid !== "string" || !isValidUid(rawItem.uid)) {
-          issues.push({
-            path: `/items/${i}/uid`,
-            code: "invalid_item_uid_format",
-            message: `Item uid "${typeof rawItem.uid === "string" ? rawItem.uid : ""}" does not match ^[A-Za-z0-9_-]{8,16}$.`,
-          });
-        } else if (seenUids.has(rawItem.uid)) {
-          issues.push({
-            path: `/items/${i}/uid`,
-            code: "duplicate_item_uid",
-            message: `Item uid "${rawItem.uid}" duplicates item at index ${seenUids.get(rawItem.uid)}.`,
-          });
-        } else {
-          seenUids.set(rawItem.uid, i);
+    if (typeof input === "object" && input !== null) {
+      const maybeRecipe = input as { items?: unknown };
+      if (Array.isArray(maybeRecipe.items)) {
+        const rawItems = maybeRecipe.items as Array<{ uid?: unknown }>;
+        const seenUids = new Map<string, number>();
+        for (let i = 0; i < rawItems.length; i++) {
+          const rawItem = rawItems[i]!;
+          if (typeof rawItem.uid !== "string" || !isValidUid(rawItem.uid)) {
+            issues.push({
+              path: `/items/${i}/uid`,
+              code: "invalid_item_uid_format",
+              message: `Item uid "${typeof rawItem.uid === "string" ? rawItem.uid : ""}" does not match ^[A-Za-z0-9_-]{8,16}$.`,
+            });
+          } else if (seenUids.has(rawItem.uid)) {
+            issues.push({
+              path: `/items/${i}/uid`,
+              code: "duplicate_item_uid",
+              message: `Item uid "${rawItem.uid}" duplicates item at index ${seenUids.get(rawItem.uid)}.`,
+            });
+          } else {
+            seenUids.set(rawItem.uid, i);
+          }
         }
       }
     }

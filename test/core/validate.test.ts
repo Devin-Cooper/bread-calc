@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { validateRecipe } from "../../src/core/validate.js";
-import type { Database, Defaults, Flour, Ingredient, Machine } from "../../src/core/types.js";
+import type { Database, Defaults, Flour, Ingredient, Machine, Recipe } from "../../src/core/types.js";
 
 const flour: Flour = { id: "bread_flour", name: "Bread Flour", category: "flour", protein_pct: 12, ddt_water_absorption_pct: 62, density_g_per_cup: 130 };
 const water: Ingredient = { id: "water_tap", name: "Water", category: "liquids", is_liquid: true, water_pct: 100, salt_pct: 0, sugar_pct: 0, fat_pct: 0, free_water_factor: 1, density_g_per_cup: 237 };
@@ -43,6 +43,22 @@ describe("validateRecipe", () => {
     const result = validateRecipe(r1, db);
     expect(result.valid).toBe(false);
     expect(result.issues.some((i) => i.path.includes("schema_version"))).toBe(true);
+  });
+});
+
+describe("null / non-object input guard (B1 regression)", () => {
+  it("returns valid=false on null input (no throw)", () => {
+    const r = validateRecipe(null as unknown as Recipe);
+    expect(r.valid).toBe(false);
+    expect(r.issues.length).toBeGreaterThan(0);
+  });
+  it("returns valid=false on undefined input (no throw)", () => {
+    const r = validateRecipe(undefined as unknown as Recipe);
+    expect(r.valid).toBe(false);
+  });
+  it("returns valid=false on string input (no throw)", () => {
+    const r = validateRecipe("not a recipe" as unknown as Recipe);
+    expect(r.valid).toBe(false);
   });
 });
 
