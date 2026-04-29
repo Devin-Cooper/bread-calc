@@ -10,7 +10,7 @@ const OUT_PATH = "src/core/validator.generated.ts";
 
 const schema = JSON.parse(readFileSync(SCHEMA_PATH, "utf8"));
 
-const ajv = new Ajv({ allErrors: true, code: { source: true, esm: true }, strict: false });
+const ajv = new Ajv({ allErrors: true, code: { source: true, esm: true }, strict: false, ownProperties: true });
 
 const validators = {};
 for (const [name, def] of Object.entries(schema.$defs)) {
