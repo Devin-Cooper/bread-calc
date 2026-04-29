@@ -1,0 +1,11 @@
+@media print {
+  @page { size: letter; margin: 0.6in; }
+  header .header-controls, #ingredient-picker, #action-bar, #toggle-view { display: none !important; }
+  main { display: block !important; }
+  section { border: none !important; padding: 0 !important; page-break-inside: avoid; }
+  #recipe-pane { page-break-after: always; }
+  body { font-size: 11pt; color: #000; background: #fff; }
+  h1, h2, h3 { color: #5b3a29; }
+  .warn-row { background: #fff !important; border-left: 4px solid #999 !important; }
+  table { width: 100%; }
+}
