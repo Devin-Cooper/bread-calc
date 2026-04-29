@@ -54,7 +54,8 @@ async function loadInitialRecipe(): Promise<Recipe> {
     if (saved) {
       const parsed = JSON.parse(saved) as Recipe;
       if (parsed.schema_version === "2.0") return parsed;
-      // Drop v1 saved state silently — no users yet, designed behavior per spec.
+      // v1 saved state — drop it explicitly so it doesn't linger.
+      try { localStorage.removeItem("bread-calc:autosave"); } catch { /* ignore quota errors */ }
     }
   } catch { /* ignore */ }
   return STARTER;
