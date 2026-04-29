@@ -1,0 +1,43 @@
+{
+  "id": "whole_wheat_high_hydration",
+  "name": "Whole Wheat (high hydration)",
+  "course": "Whole Wheat",
+  "zone": "wet",
+  "description": "70% hydration whole wheat with vital wheat gluten for structure.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Whole Wheat (high hydration)",
+    "items": [
+      {
+        "uid": "u_eg0000020",
+        "ingredient_id": "whole_wheat_flour",
+        "grams": 500
+      },
+      {
+        "uid": "u_eg0000021",
+        "ingredient_id": "water_tap",
+        "grams": 350
+      },
+      {
+        "uid": "u_eg0000022",
+        "ingredient_id": "vital_wheat_gluten",
+        "grams": 8
+      },
+      {
+        "uid": "u_eg0000023",
+        "ingredient_id": "salt_table",
+        "grams": 8
+      },
+      {
+        "uid": "u_eg0000024",
+        "ingredient_id": "yeast_instant",
+        "grams": 5
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 70.04,
+    "hydration_zone": "wet",
+    "predicted_loaf_g": 766.48
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "id": "salt_free_low_yeast",
+  "name": "Salt-Free Low-Yeast",
+  "course": "Salt Free",
+  "zone": "sandwich",
+  "description": "Low-salt and low-yeast — fires `no_salt` info warning.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Salt-Free Low-Yeast",
+    "items": [
+      {
+        "uid": "u_eg0000070",
+        "ingredient_id": "bread_flour",
+        "grams": 500
+      },
+      {
+        "uid": "u_eg0000071",
+        "ingredient_id": "water_tap",
+        "grams": 310
+      },
+      {
+        "uid": "u_eg0000072",
+        "ingredient_id": "sugar_granulated",
+        "grams": 25
+      },
+      {
+        "uid": "u_eg0000073",
+        "ingredient_id": "salt_table",
+        "grams": 1
+      },
+      {
+        "uid": "u_eg0000074",
+        "ingredient_id": "butter_unsalted",
+        "grams": 20
+      },
+      {
+        "uid": "u_eg0000075",
+        "ingredient_id": "yeast_instant",
+        "grams": 3
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 62.36,
+    "hydration_zone": "sandwich",
+    "predicted_loaf_g": 755.92
+  }
+}

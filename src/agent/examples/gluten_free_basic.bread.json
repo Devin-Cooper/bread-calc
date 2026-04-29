@@ -1,0 +1,63 @@
+{
+  "id": "gluten_free_basic",
+  "name": "Gluten Free (basic)",
+  "course": "Gluten Free",
+  "zone": "very_wet",
+  "description": "GF flour blend + psyllium husk + xanthan, very-wet hydration with eggs.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Gluten Free (basic)",
+    "items": [
+      {
+        "uid": "u_eg0000040",
+        "ingredient_id": "gf_flour_blend",
+        "grams": 400
+      },
+      {
+        "uid": "u_eg0000041",
+        "ingredient_id": "water_tap",
+        "grams": 340
+      },
+      {
+        "uid": "u_eg0000042",
+        "ingredient_id": "egg_whole_large",
+        "grams": 100
+      },
+      {
+        "uid": "u_eg0000043",
+        "ingredient_id": "xanthan_gum",
+        "grams": 4
+      },
+      {
+        "uid": "u_eg0000044",
+        "ingredient_id": "psyllium_husk",
+        "grams": 15
+      },
+      {
+        "uid": "u_eg0000045",
+        "ingredient_id": "sugar_granulated",
+        "grams": 20
+      },
+      {
+        "uid": "u_eg0000046",
+        "ingredient_id": "salt_table",
+        "grams": 7
+      },
+      {
+        "uid": "u_eg0000047",
+        "ingredient_id": "oil_canola",
+        "grams": 30
+      },
+      {
+        "uid": "u_eg0000048",
+        "ingredient_id": "yeast_instant",
+        "grams": 6
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 101.31,
+    "hydration_zone": "very_wet",
+    "predicted_loaf_g": 811.36
+  }
+}

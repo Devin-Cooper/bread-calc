@@ -1,0 +1,75 @@
+{
+  "schema_version": "2.0",
+  "entries": [
+    {
+      "id": "classic_white",
+      "name": "Classic White (BB-PDC20)",
+      "course": "White",
+      "zone": "sandwich",
+      "description": "The default starter — 553 g bread flour, 326 g water, sandwich-zone hydration."
+    },
+    {
+      "id": "whole_wheat_basic",
+      "name": "Whole Wheat (basic)",
+      "course": "Whole Wheat",
+      "zone": "sandwich",
+      "description": "All whole wheat, sandwich-zone hydration with butter for tenderness."
+    },
+    {
+      "id": "whole_wheat_high_hydration",
+      "name": "Whole Wheat (high hydration)",
+      "course": "Whole Wheat",
+      "zone": "wet",
+      "description": "70% hydration whole wheat with vital wheat gluten for structure."
+    },
+    {
+      "id": "multigrain_seeded",
+      "name": "Multigrain Seeded",
+      "course": "Multigrain",
+      "zone": "sandwich",
+      "description": "Bread flour + sunflower + flax with butter and brown sugar."
+    },
+    {
+      "id": "gluten_free_basic",
+      "name": "Gluten Free (basic)",
+      "course": "Gluten Free",
+      "zone": "very_wet",
+      "description": "GF flour blend + psyllium husk + xanthan, very-wet hydration with eggs."
+    },
+    {
+      "id": "enriched_butter_roll",
+      "name": "Enriched Butter Roll",
+      "course": "White",
+      "zone": "dry",
+      "description": "Low-hydration enriched dough — high butter, sugar, eggs."
+    },
+    {
+      "id": "vegan_olive_oil",
+      "name": "Vegan Olive Oil",
+      "course": "Vegan",
+      "zone": "sandwich",
+      "description": "Vegan-friendly: olive oil instead of butter, no eggs/dairy."
+    },
+    {
+      "id": "salt_free_low_yeast",
+      "name": "Salt-Free Low-Yeast",
+      "course": "Salt Free",
+      "zone": "sandwich",
+      "description": "Low-salt and low-yeast — fires `no_salt` info warning."
+    },
+    {
+      "id": "target_mode_900g",
+      "name": "Target Mode 900g",
+      "course": "White",
+      "zone": "sandwich",
+      "description": "target_loaf_g=900, all items use bakers_pct."
+    },
+    {
+      "id": "with_solver_warning",
+      "name": "With Solver Warning (overconstrained)",
+      "course": "White",
+      "zone": "sandwich",
+      "description": "Deliberately overconstrained — fires `solver_overconstrained` + its fixes."
+    }
+  ]
+}

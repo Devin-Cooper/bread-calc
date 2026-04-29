@@ -1,0 +1,39 @@
+{
+  "id": "with_solver_warning",
+  "name": "With Solver Warning (overconstrained)",
+  "course": "White",
+  "zone": "sandwich",
+  "description": "Deliberately overconstrained — fires `solver_overconstrained` + its fixes.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "With Solver Warning (overconstrained)",
+    "target_loaf_g": 100,
+    "items": [
+      {
+        "uid": "u_eg0000090",
+        "ingredient_id": "bread_flour",
+        "grams": 500
+      },
+      {
+        "uid": "u_eg0000091",
+        "ingredient_id": "water_tap",
+        "bakers_pct": 60
+      },
+      {
+        "uid": "u_eg0000092",
+        "ingredient_id": "salt_table",
+        "bakers_pct": 1.6
+      },
+      {
+        "uid": "u_eg0000093",
+        "ingredient_id": "yeast_instant",
+        "bakers_pct": 0.9
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 0,
+    "hydration_zone": "dry",
+    "predicted_loaf_g": 440
+  }
+}

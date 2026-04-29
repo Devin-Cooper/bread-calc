@@ -1,0 +1,49 @@
+{
+  "id": "target_mode_900g",
+  "name": "Target Mode 900g",
+  "course": "White",
+  "zone": "sandwich",
+  "description": "target_loaf_g=900, all items use bakers_pct.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Target Mode 900g",
+    "target_loaf_g": 900,
+    "items": [
+      {
+        "uid": "u_eg0000080",
+        "ingredient_id": "bread_flour",
+        "bakers_pct": 100
+      },
+      {
+        "uid": "u_eg0000081",
+        "ingredient_id": "water_tap",
+        "bakers_pct": 60
+      },
+      {
+        "uid": "u_eg0000082",
+        "ingredient_id": "sugar_granulated",
+        "bakers_pct": 5.4
+      },
+      {
+        "uid": "u_eg0000083",
+        "ingredient_id": "salt_table",
+        "bakers_pct": 1.6
+      },
+      {
+        "uid": "u_eg0000084",
+        "ingredient_id": "butter_unsalted",
+        "bakers_pct": 5
+      },
+      {
+        "uid": "u_eg0000085",
+        "ingredient_id": "yeast_instant",
+        "bakers_pct": 0.9
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 60.45,
+    "hydration_zone": "sandwich",
+    "predicted_loaf_g": 900
+  }
+}

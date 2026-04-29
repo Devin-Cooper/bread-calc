@@ -1,0 +1,53 @@
+{
+  "id": "enriched_butter_roll",
+  "name": "Enriched Butter Roll",
+  "course": "White",
+  "zone": "dry",
+  "description": "Low-hydration enriched dough — high butter, sugar, eggs.",
+  "recipe": {
+    "schema_version": "2.0",
+    "name": "Enriched Butter Roll",
+    "items": [
+      {
+        "uid": "u_eg0000050",
+        "ingredient_id": "bread_flour",
+        "grams": 500
+      },
+      {
+        "uid": "u_eg0000051",
+        "ingredient_id": "milk_whole",
+        "grams": 220
+      },
+      {
+        "uid": "u_eg0000052",
+        "ingredient_id": "sugar_granulated",
+        "grams": 50
+      },
+      {
+        "uid": "u_eg0000053",
+        "ingredient_id": "salt_table",
+        "grams": 8
+      },
+      {
+        "uid": "u_eg0000054",
+        "ingredient_id": "butter_unsalted",
+        "grams": 60
+      },
+      {
+        "uid": "u_eg0000055",
+        "ingredient_id": "egg_whole_large",
+        "grams": 50
+      },
+      {
+        "uid": "u_eg0000056",
+        "ingredient_id": "yeast_instant",
+        "grams": 6
+      }
+    ]
+  },
+  "expected_metrics": {
+    "hydration_effective_pct": 46.28,
+    "hydration_zone": "dry",
+    "predicted_loaf_g": 786.72
+  }
+}
