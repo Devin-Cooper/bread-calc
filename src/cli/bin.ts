@@ -361,8 +361,11 @@ function dispatchParse(positionals: string[]) {
   const text = path && path !== "-" ? readFileSync(path, "utf8") : readFileSync(0, "utf8");
   const { recipe, unparseable } = parseText(text, db);
   if (values.strict && unparseable.length > 0) {
-    if (values.json) console.log(JSON.stringify({ ok: false, unparseable }, null, 2));
-    else for (const u of unparseable) process.stderr.write(`line ${u.line}: ${u.reason}: ${u.raw}\n`);
+    if (values.json) {
+      console.log(JSON.stringify(wrap("parse", readPkg().version, { ok: false, unparseable }), null, 2));
+    } else {
+      for (const u of unparseable) process.stderr.write(`line ${u.line}: ${u.reason}: ${u.raw}\n`);
+    }
     process.exit(7);
   }
   if (values.json || !process.stdout.isTTY) {
