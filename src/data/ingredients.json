@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "entries": [
+    { "id": "water_tap", "name": "Water (tap)", "category": "liquids", "is_liquid": true, "water_pct": 100.0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 1.0, "density_g_per_cup": 237, "notes": "Pure water reference.", "usda_fdc_id": 174996 },
+    { "id": "milk_whole", "name": "Milk, whole", "category": "liquids", "is_liquid": true, "water_pct": 88.1, "salt_pct": 0.1, "sugar_pct": 4.8, "fat_pct": 3.25, "free_water_factor": 1.0, "density_g_per_cup": 244, "usda_fdc_id": 171265 },
+    { "id": "almond_milk_unsweetened", "name": "Almond milk, unsweetened (carton)", "category": "liquids", "is_liquid": true, "water_pct": 97.0, "salt_pct": 0.07, "sugar_pct": 0, "fat_pct": 1.1, "free_water_factor": 1.0, "density_g_per_cup": 240, "usda_fdc_id": 1097542 },
+    { "id": "buttermilk_cultured_lowfat", "name": "Buttermilk, cultured lowfat", "category": "liquids", "is_liquid": true, "water_pct": 90.1, "salt_pct": 0.1, "sugar_pct": 4.9, "fat_pct": 0.9, "free_water_factor": 0.95, "density_g_per_cup": 245, "usda_fdc_id": 173417 },
+
+    { "id": "honey", "name": "Honey", "category": "sweeteners", "is_liquid": false, "water_pct": 17.1, "salt_pct": 0, "sugar_pct": 82.1, "fat_pct": 0, "free_water_factor": 0.4, "density_g_per_cup": 339, "usda_fdc_id": 169640, "flags": ["humectant_bound_water"] },
+    { "id": "maple_syrup_grade_a_amber", "name": "Maple syrup, Grade A Amber", "category": "sweeteners", "is_liquid": false, "water_pct": 32.4, "salt_pct": 0, "sugar_pct": 60.5, "fat_pct": 0, "free_water_factor": 0.4, "density_g_per_cup": 322, "usda_fdc_id": 169661, "flags": ["humectant_bound_water"] },
+    { "id": "molasses_dark", "name": "Molasses, dark", "category": "sweeteners", "is_liquid": false, "water_pct": 21.0, "salt_pct": 0.04, "sugar_pct": 75, "fat_pct": 0.1, "free_water_factor": 0.4, "density_g_per_cup": 337, "usda_fdc_id": 168820, "flags": ["humectant_bound_water"] },
+    { "id": "sugar_granulated", "name": "Sugar, granulated", "category": "sweeteners", "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 100, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 200, "usda_fdc_id": 169655 },
+    { "id": "sugar_brown", "name": "Sugar, brown", "category": "sweeteners", "is_liquid": false, "water_pct": 1.5, "salt_pct": 0.03, "sugar_pct": 97, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 220, "usda_fdc_id": 169681 },
+
+    { "id": "butter_unsalted", "name": "Butter, unsalted", "category": "fats", "is_liquid": false, "water_pct": 17.9, "salt_pct": 0.05, "sugar_pct": 0, "fat_pct": 81.1, "free_water_factor": 0.5, "density_g_per_cup": 227, "usda_fdc_id": 173430 },
+    { "id": "butter_salted", "name": "Butter, salted", "category": "fats", "is_liquid": false, "water_pct": 16.7, "salt_pct": 1.6, "sugar_pct": 0, "fat_pct": 81.1, "free_water_factor": 0.5, "density_g_per_cup": 227, "usda_fdc_id": 173410 },
+    { "id": "oil_canola", "name": "Canola oil", "category": "fats", "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100, "free_water_factor": 0, "density_g_per_cup": 218, "usda_fdc_id": 172336 },
+    { "id": "oil_olive_extra_virgin", "name": "Olive oil, extra virgin", "category": "fats", "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100, "free_water_factor": 0, "density_g_per_cup": 216 },
+
+    { "id": "banana_ripe", "name": "Banana, ripe", "category": "fresh_fruit", "is_liquid": false, "water_pct": 75.3, "salt_pct": 0, "sugar_pct": 12.2, "fat_pct": 0.3, "free_water_factor": 0.7, "density_g_per_cup": 225, "usda_fdc_id": 173944 },
+    { "id": "banana_freezer_thawed", "name": "Banana, frozen-thawed", "category": "fresh_fruit", "is_liquid": false, "water_pct": 78.0, "salt_pct": 0, "sugar_pct": 14.0, "fat_pct": 0.3, "free_water_factor": 0.7, "density_g_per_cup": 250, "flags": ["late_water_release"] },
+    { "id": "applesauce_unsweetened", "name": "Applesauce, unsweetened", "category": "fresh_fruit", "is_liquid": false, "water_pct": 88.7, "salt_pct": 0, "sugar_pct": 9.4, "fat_pct": 0.2, "free_water_factor": 0.7, "density_g_per_cup": 244, "usda_fdc_id": 173952 },
+    { "id": "blueberry_fresh", "name": "Blueberry, fresh", "category": "fresh_fruit", "is_liquid": false, "water_pct": 84.2, "salt_pct": 0, "sugar_pct": 9.96, "fat_pct": 0.33, "free_water_factor": 0.7, "density_g_per_cup": 148, "usda_fdc_id": 171711 },
+    { "id": "pineapple_fresh", "name": "Pineapple, fresh", "category": "fresh_fruit", "is_liquid": false, "water_pct": 86.0, "salt_pct": 0, "sugar_pct": 9.9, "fat_pct": 0.12, "free_water_factor": 0.7, "density_g_per_cup": 165, "usda_fdc_id": 169124, "flags": ["enzymatic_protease"] },
+    { "id": "lemon_juice_fresh", "name": "Lemon juice, fresh", "category": "fresh_fruit", "is_liquid": true, "water_pct": 92.3, "salt_pct": 0, "sugar_pct": 2.5, "fat_pct": 0.24, "free_water_factor": 1.0, "density_g_per_cup": 244, "usda_fdc_id": 167749 },
+    { "id": "orange_juice_fresh", "name": "Orange juice, fresh", "category": "fresh_fruit", "is_liquid": true, "water_pct": 88.3, "salt_pct": 0, "sugar_pct": 8.4, "fat_pct": 0.2, "free_water_factor": 1.0, "density_g_per_cup": 248, "usda_fdc_id": 169098 },
+
+    { "id": "raisin_regular_seedless", "name": "Raisin, seedless", "category": "dried_fruit", "is_liquid": false, "water_pct": 15.4, "salt_pct": 0, "sugar_pct": 59.2, "fat_pct": 0.46, "free_water_factor": 0.3, "density_g_per_cup": 145, "usda_fdc_id": 168165, "flags": ["humectant_bound_water"] },
+    { "id": "date_medjool_dried", "name": "Date, Medjool (dried)", "category": "dried_fruit", "is_liquid": false, "water_pct": 21.3, "salt_pct": 0, "sugar_pct": 66.5, "fat_pct": 0.15, "free_water_factor": 0.3, "density_g_per_cup": 178, "usda_fdc_id": 168191, "flags": ["humectant_bound_water"] },
+    { "id": "craisin_sweetened", "name": "Cranberries, sweetened (Craisins)", "category": "dried_fruit", "is_liquid": false, "water_pct": 15.8, "salt_pct": 0, "sugar_pct": 65, "fat_pct": 1.1, "free_water_factor": 0.3, "density_g_per_cup": 130, "usda_fdc_id": 173956 },
+
+    { "id": "walnut_english", "name": "Walnut, English (halves)", "category": "nuts_seeds", "is_liquid": false, "water_pct": 4.1, "salt_pct": 0, "sugar_pct": 2.6, "fat_pct": 65.2, "free_water_factor": 0.2, "density_g_per_cup": 117, "usda_fdc_id": 170187 },
+    { "id": "almond_raw", "name": "Almond, raw whole", "category": "nuts_seeds", "is_liquid": false, "water_pct": 4.4, "salt_pct": 0, "sugar_pct": 4.4, "fat_pct": 49.9, "free_water_factor": 0.2, "density_g_per_cup": 143, "usda_fdc_id": 170567 },
+    { "id": "pecan", "name": "Pecan, halves", "category": "nuts_seeds", "is_liquid": false, "water_pct": 3.5, "salt_pct": 0, "sugar_pct": 4.0, "fat_pct": 71.9, "free_water_factor": 0.2, "density_g_per_cup": 109, "usda_fdc_id": 170182 },
+    { "id": "sunflower_seed", "name": "Sunflower seed, hulled", "category": "nuts_seeds", "is_liquid": false, "water_pct": 4.7, "salt_pct": 0, "sugar_pct": 2.6, "fat_pct": 51.5, "free_water_factor": 0.2, "density_g_per_cup": 140, "usda_fdc_id": 170562 },
+    { "id": "flax_seed_ground", "name": "Flax seed, ground", "category": "nuts_seeds", "is_liquid": false, "water_pct": 7.0, "salt_pct": 0, "sugar_pct": 1.55, "fat_pct": 42.2, "free_water_factor": 0.6, "density_g_per_cup": 130, "usda_fdc_id": 169414 },
+    { "id": "chia_seed", "name": "Chia seed", "category": "nuts_seeds", "is_liquid": false, "water_pct": 5.8, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 30.7, "free_water_factor": 0.6, "density_g_per_cup": 170, "usda_fdc_id": 170554 },
+    { "id": "peanut_butter_natural", "name": "Peanut butter, natural", "category": "nuts_seeds", "is_liquid": false, "water_pct": 1.8, "salt_pct": 0.45, "sugar_pct": 9.2, "fat_pct": 50.4, "free_water_factor": 0.2, "density_g_per_cup": 258, "usda_fdc_id": 172470 },
+
+    { "id": "egg_whole_large", "name": "Egg, whole large", "category": "eggs", "is_liquid": true, "water_pct": 75.8, "salt_pct": 0.36, "sugar_pct": 0.37, "fat_pct": 9.51, "free_water_factor": 0.85, "density_g_per_cup": 243, "usda_fdc_id": 173424 },
+    { "id": "egg_white_large", "name": "Egg white, large", "category": "eggs", "is_liquid": true, "water_pct": 87.6, "salt_pct": 0.4, "sugar_pct": 0.71, "fat_pct": 0.17, "free_water_factor": 0.9, "density_g_per_cup": 243, "usda_fdc_id": 173423 },
+    { "id": "aquafaba", "name": "Aquafaba (chickpea brine)", "category": "eggs", "is_liquid": true, "water_pct": 95.0, "salt_pct": 0.7, "sugar_pct": 0, "fat_pct": 0.5, "free_water_factor": 0.9, "density_g_per_cup": 240 },
+
+    { "id": "cream_cheese", "name": "Cream cheese (block)", "category": "cheese", "is_liquid": false, "water_pct": 53.8, "salt_pct": 0.74, "sugar_pct": 5.5, "fat_pct": 34.4, "free_water_factor": 0.5, "density_g_per_cup": 232, "usda_fdc_id": 171236 },
+    { "id": "cheddar_sharp", "name": "Cheddar, sharp", "category": "cheese", "is_liquid": false, "water_pct": 36.0, "salt_pct": 1.79, "sugar_pct": 0.5, "fat_pct": 33.3, "free_water_factor": 0.5, "density_g_per_cup": 113, "usda_fdc_id": 328637 },
+    { "id": "feta", "name": "Feta", "category": "cheese", "is_liquid": false, "water_pct": 55.2, "salt_pct": 3.5, "sugar_pct": 4.1, "fat_pct": 21.3, "free_water_factor": 0.5, "density_g_per_cup": 150, "usda_fdc_id": 171244, "flags": ["high_salt"] },
+
+    { "id": "potato_mashed_cooked", "name": "Potato, mashed (cooked, no dairy)", "category": "vegetables", "is_liquid": false, "water_pct": 76.0, "salt_pct": 0.05, "sugar_pct": 0.7, "fat_pct": 0.1, "free_water_factor": 0.7, "density_g_per_cup": 210, "usda_fdc_id": 170029 },
+    { "id": "pumpkin_canned_puree", "name": "Pumpkin puree, canned", "category": "vegetables", "is_liquid": false, "water_pct": 89.9, "salt_pct": 0.06, "sugar_pct": 3.3, "fat_pct": 0.28, "free_water_factor": 0.7, "density_g_per_cup": 245, "usda_fdc_id": 168448 },
+    { "id": "zucchini_grated_drained_squeezed", "name": "Zucchini, grated, drained, squeezed", "category": "vegetables", "is_liquid": false, "water_pct": 80.0, "salt_pct": 0.6, "sugar_pct": 2.5, "fat_pct": 0.3, "free_water_factor": 0.7, "density_g_per_cup": 130 },
+
+    { "id": "rosemary_dried", "name": "Rosemary, dried", "category": "herbs_spices", "is_liquid": false, "water_pct": 9.3, "salt_pct": 0.05, "sugar_pct": 0, "fat_pct": 15.2, "free_water_factor": 0.5, "density_g_per_cup": 100, "usda_fdc_id": 171327 },
+    { "id": "cinnamon_ground", "name": "Cinnamon, ground", "category": "herbs_spices", "is_liquid": false, "water_pct": 10.6, "salt_pct": 0.025, "sugar_pct": 2.2, "fat_pct": 1.24, "free_water_factor": 0.5, "density_g_per_cup": 124, "usda_fdc_id": 171320 },
+
+    { "id": "vinegar_apple_cider", "name": "Vinegar, apple cider", "category": "acids_alcohols", "is_liquid": true, "water_pct": 93.8, "salt_pct": 0.005, "sugar_pct": 0.4, "fat_pct": 0, "free_water_factor": 0.95, "density_g_per_cup": 240, "usda_fdc_id": 173469, "flags": ["acidic"] },
+    { "id": "vinegar_white_distilled", "name": "Vinegar, distilled white", "category": "acids_alcohols", "is_liquid": true, "water_pct": 94.8, "salt_pct": 0.005, "sugar_pct": 0.04, "fat_pct": 0, "free_water_factor": 0.95, "density_g_per_cup": 240, "usda_fdc_id": 173469, "flags": ["acidic"] },
+    { "id": "beer_stout", "name": "Beer, stout", "category": "acids_alcohols", "is_liquid": true, "water_pct": 89.3, "salt_pct": 0.01, "sugar_pct": 2.5, "fat_pct": 0, "alcohol_pct": 6.0, "free_water_factor": 0.95, "density_g_per_cup": 240, "flags": ["alcohol_yeast_inhibitor"] },
+
+    { "id": "cocoa_powder_natural", "name": "Cocoa powder, natural", "category": "specialty", "is_liquid": false, "water_pct": 3.0, "salt_pct": 0.05, "sugar_pct": 1.75, "fat_pct": 13.7, "free_water_factor": 0.5, "density_g_per_cup": 86, "usda_fdc_id": 169593 },
+    { "id": "chocolate_semisweet_chips", "name": "Chocolate, semisweet chips", "category": "specialty", "is_liquid": false, "water_pct": 0.93, "salt_pct": 0.024, "sugar_pct": 51.5, "fat_pct": 31.0, "free_water_factor": 0.5, "density_g_per_cup": 170, "usda_fdc_id": 169593 },
+    { "id": "vital_wheat_gluten", "name": "Vital wheat gluten", "category": "specialty", "is_liquid": false, "water_pct": 7.0, "salt_pct": 0.029, "sugar_pct": 0, "fat_pct": 1.9, "free_water_factor": 0.4, "density_g_per_cup": 145, "flags": ["gluten_strengthener"] },
+    { "id": "xanthan_gum", "name": "Xanthan gum", "category": "specialty", "is_liquid": false, "water_pct": 10.0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0.5, "density_g_per_cup": 100, "flags": ["gf_stabilizer"] },
+    { "id": "psyllium_husk", "name": "Psyllium husk", "category": "specialty", "is_liquid": false, "water_pct": 8.0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 0.5, "free_water_factor": 0.5, "density_g_per_cup": 80, "flags": ["gf_stabilizer"] },
+
+    { "id": "salt_table", "name": "Salt, table", "category": "salt", "is_liquid": false, "water_pct": 0, "salt_pct": 100, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 273 },
+    { "id": "salt_kosher", "name": "Salt, kosher (Diamond Crystal)", "category": "salt", "is_liquid": false, "water_pct": 0, "salt_pct": 100, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 142 },
+
+    { "id": "yeast_instant", "name": "Yeast, instant (SAF)", "category": "yeast", "is_liquid": false, "water_pct": 6.0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 192 },
+    { "id": "yeast_active_dry", "name": "Yeast, active dry", "category": "yeast", "is_liquid": false, "water_pct": 5.0, "salt_pct": 0.06, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 192 },
+
+    { "id": "baking_soda", "name": "Baking soda", "category": "leavener", "is_liquid": false, "water_pct": 0, "salt_pct": 27.4, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 220, "flags": ["leavener_consumed"] },
+    { "id": "baking_powder", "name": "Baking powder", "category": "leavener", "is_liquid": false, "water_pct": 5.0, "salt_pct": 18.0, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 220, "flags": ["leavener_consumed"] }
+  ]
+}
