@@ -5,7 +5,7 @@ const BIN = "./dist/cli/bin.js";
 
 function run(args: string[], opts: { input?: string } = {}): { code: number; stdout: string; stderr: string } {
   try {
-    const stdout = execFileSync(BIN, args, { input: opts.input, stdio: ["pipe", "pipe", "pipe"] }).toString();
+    const stdout = execFileSync(BIN, args, { input: opts.input, stdio: ["pipe", "pipe", "pipe"], maxBuffer: 10 * 1024 * 1024 }).toString();
     return { code: 0, stdout, stderr: "" };
   } catch (e: unknown) {
     const err = e as { status?: number; stdout?: Buffer; stderr?: Buffer };
@@ -15,10 +15,12 @@ function run(args: string[], opts: { input?: string } = {}): { code: number; std
 
 describe("bread-calc compute", () => {
   it("computes a fixture and exits 0 with --json", () => {
-    const r = run(["compute", "test/golden/fixtures/classic_white.bread.json", "--json"]);
+    // --slim omits the ingredient tree, keeping output well under pipe-buffer limits
+    const r = run(["compute", "test/golden/fixtures/classic_white.bread.json", "--json", "--slim"]);
     expect(r.code).toBe(0);
     const out = JSON.parse(r.stdout);
-    expect(out.hydration.effective_pct).toBeGreaterThan(0);
+    expect(out._meta.subcommand).toBe("compute");
+    expect(out.payload.hydration.effective_pct).toBeGreaterThan(0);
   });
   it("exits 1 when result has an error-severity warning (pan_overflow)", () => {
     // Create a temp recipe inline via stdin

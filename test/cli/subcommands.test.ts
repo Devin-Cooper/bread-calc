@@ -24,8 +24,10 @@ describe("bread-calc validate", () => {
     const r = run(["validate", "-", "--json"], { input: '{"items":[]}' });
     expect(r.code).toBe(2);
     const out = JSON.parse(r.stdout);
-    expect(out.valid).toBe(false);
-    expect(out.issues.length).toBeGreaterThan(0);
+    expect(out._meta.subcommand).toBe("validate");
+    const payload = out.payload;
+    expect(payload.valid).toBe(false);
+    expect(payload.issues.length).toBeGreaterThan(0);
   });
   it("exits 3 on unknown ingredient_id", () => {
     const r = run(["validate", "-"], {
@@ -50,7 +52,7 @@ describe("bread-calc solve", () => {
     const out = JSON.parse(r.stdout);
     expect(out.items[0].grams).toBeGreaterThan(0);
   });
-  it("exits 2 with solver error on ambiguous flour (fixed-grams flour + pct items)", () => {
+  it("exits 4 with solver error on ambiguous flour (fixed-grams flour + pct items)", () => {
     // Both fixed-grams flour AND pct items with a target → solver_ambiguous_flour
     const r = run(["solve", "-", "--target-g=800", "--json"], {
       input: JSON.stringify({
@@ -61,9 +63,9 @@ describe("bread-calc solve", () => {
         ],
       }),
     });
-    expect(r.code).toBe(2);
+    expect(r.code).toBe(4);
     const out = JSON.parse(r.stdout);
-    expect(out.error).toBe("solver_ambiguous_flour");
+    expect(out.payload.error).toBe("solver_ambiguous_flour");
   });
   it("exits 64 on invalid --target-g (non-numeric)", () => {
     const r = run(["solve", "-", "--target-g=abc"], {
@@ -78,14 +80,16 @@ describe("bread-calc ingredients", () => {
     const r = run(["ingredients", "--category=fats", "--json"]);
     expect(r.code).toBe(0);
     const out = JSON.parse(r.stdout);
-    expect(out.length).toBeGreaterThan(0);
-    expect(out.every((i: { category: string }) => i.category === "fats")).toBe(true);
+    expect(out._meta.subcommand).toBe("ingredients");
+    const payload = out.payload;
+    expect(payload.length).toBeGreaterThan(0);
+    expect(payload.every((i: { category: string }) => i.category === "fats")).toBe(true);
   });
   it("searches by substring", () => {
     const r = run(["ingredients", "--search=banana", "--json"]);
     expect(r.code).toBe(0);
     const out = JSON.parse(r.stdout);
-    expect(out.some((i: { id: string }) => i.id.includes("banana"))).toBe(true);
+    expect(out.payload.some((i: { id: string }) => i.id.includes("banana"))).toBe(true);
   });
 });
 
@@ -94,15 +98,19 @@ describe("bread-calc reference", () => {
     const r = run(["reference", "--zone=very_wet", "--json"]);
     expect(r.code).toBe(0);
     const out = JSON.parse(r.stdout);
-    expect(out.length).toBeGreaterThan(0);
-    expect(out.every((x: { zone: string }) => x.zone === "very_wet")).toBe(true);
+    expect(out._meta.subcommand).toBe("reference");
+    const payload = out.payload;
+    expect(payload.length).toBeGreaterThan(0);
+    expect(payload.every((x: { zone: string }) => x.zone === "very_wet")).toBe(true);
   });
 });
 
 describe("bread-calc schema", () => {
-  it("dumps schema JSON", () => {
+  it("dumps schema JSON in envelope", () => {
     const r = run(["schema"]);
     expect(r.code).toBe(0);
-    expect(JSON.parse(r.stdout).$id).toContain("breadmachine.io/schema");
+    const out = JSON.parse(r.stdout);
+    expect(out._meta.subcommand).toBe("schema");
+    expect(out.payload.$id).toContain("breadmachine.io/schema");
   });
 });
