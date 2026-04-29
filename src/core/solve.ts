@@ -18,6 +18,11 @@ function roleOf(item: Recipe["items"][number], db: Database): string {
 }
 
 export function solveWithError(recipe: Recipe, db: Database): SolveResult {
+  for (const item of recipe.items) {
+    if (!item.uid) {
+      throw new Error("solveRecipe: every RecipeItem must have a uid (v2.0 invariant)");
+    }
+  }
   if (recipe.target_loaf_g == null) return { recipe, error: null };
 
   const items = recipe.items;

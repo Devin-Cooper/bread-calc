@@ -16,16 +16,16 @@ const db: Database = { ingredients: [water, salt], flours: [flour], defaults, re
 
 describe("solveRecipe — mode B", () => {
   it("returns the recipe unchanged when target_loaf_g is absent", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }] };
     expect(solveRecipe(r, db)).toEqual(r);
   });
   it("Case 1 — all-percentage: solves grams from total target", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 800, bake_loss_pct: 12,
+      schema_version: "2.0", target_loaf_g: 800, bake_loss_pct: 12,
       items: [
-        { ingredient_id: "bread_flour", bakers_pct: 100 },
-        { ingredient_id: "water_tap", bakers_pct: 65 },
-        { ingredient_id: "salt_table", bakers_pct: 2 },
+        { uid: "u_flour01", ingredient_id: "bread_flour", bakers_pct: 100 },
+        { uid: "u_water01", ingredient_id: "water_tap", bakers_pct: 65 },
+        { uid: "u_salt001", ingredient_id: "salt_table", bakers_pct: 2 },
       ],
     };
     const solved = solveRecipe(r, db);
@@ -36,8 +36,9 @@ describe("solveRecipe — mode B", () => {
     expect(solved.items[2]!.grams).toBeCloseTo(10.89, 1);
   });
   it("scales linearly with target_loaf_g", () => {
-    const base: Recipe = { schema_version: "1.0", target_loaf_g: 800, items: [
-      { ingredient_id: "bread_flour", bakers_pct: 100 }, { ingredient_id: "water_tap", bakers_pct: 65 },
+    const base: Recipe = { schema_version: "2.0", target_loaf_g: 800, items: [
+      { uid: "u_flour01", ingredient_id: "bread_flour", bakers_pct: 100 },
+      { uid: "u_water01", ingredient_id: "water_tap", bakers_pct: 65 },
     ]};
     const half: Recipe = { ...base, target_loaf_g: 400 };
     const a = solveRecipe(base, db);
@@ -46,11 +47,11 @@ describe("solveRecipe — mode B", () => {
   });
   it("Case 2 — non-flour fixed grams: subtracts before partitioning", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 800,
+      schema_version: "2.0", target_loaf_g: 800,
       items: [
-        { ingredient_id: "bread_flour", bakers_pct: 100 },
-        { ingredient_id: "water_tap", bakers_pct: 65 },
-        { ingredient_id: "salt_table", grams: 10 },
+        { uid: "u_flour01", ingredient_id: "bread_flour", bakers_pct: 100 },
+        { uid: "u_water01", ingredient_id: "water_tap", bakers_pct: 65 },
+        { uid: "u_salt001", ingredient_id: "salt_table", grams: 10 },
       ],
     };
     const solved = solveRecipe(r, db);
@@ -62,31 +63,32 @@ describe("solveRecipe — mode B", () => {
   });
   it("emits solver_overconstrained when fixed grams >= target_total_mass", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 100,
-      items: [{ ingredient_id: "bread_flour", bakers_pct: 100 }, { ingredient_id: "salt_table", grams: 200 }],
+      schema_version: "2.0", target_loaf_g: 100,
+      items: [{ uid: "u_flour01", ingredient_id: "bread_flour", bakers_pct: 100 }, { uid: "u_salt001", ingredient_id: "salt_table", grams: 200 }],
     };
     const c = computeRecipe(r, db);
     expect(c.warnings.find((w) => w.code === "solver_overconstrained")).toBeDefined();
   });
   it("emits solver_ambiguous_flour when flour fixed grams + non-flour bakers_pct mixed", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 800,
-      items: [{ ingredient_id: "bread_flour", grams: 200 }, { ingredient_id: "water_tap", bakers_pct: 65 }],
+      schema_version: "2.0", target_loaf_g: 800,
+      items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 200 }, { uid: "u_water01", ingredient_id: "water_tap", bakers_pct: 65 }],
     };
     const c = computeRecipe(r, db);
     expect(c.warnings.find((w) => w.code === "solver_ambiguous_flour")).toBeDefined();
   });
   it("emits target_loaf_g_ignored_no_pcts when no item has bakers_pct", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 800,
-      items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 300 }],
+      schema_version: "2.0", target_loaf_g: 800,
+      items: [{ uid: "u_flour01", ingredient_id: "bread_flour", grams: 500 }, { uid: "u_water01", ingredient_id: "water_tap", grams: 300 }],
     };
     const c = computeRecipe(r, db);
     expect(c.warnings.find((w) => w.code === "target_loaf_g_ignored_no_pcts")).toBeDefined();
   });
   it("solver is idempotent: solve(solve(r)) == solve(r)", () => {
-    const r: Recipe = { schema_version: "1.0", target_loaf_g: 800, items: [
-      { ingredient_id: "bread_flour", bakers_pct: 100 }, { ingredient_id: "water_tap", bakers_pct: 65 },
+    const r: Recipe = { schema_version: "2.0", target_loaf_g: 800, items: [
+      { uid: "u_flour01", ingredient_id: "bread_flour", bakers_pct: 100 },
+      { uid: "u_water01", ingredient_id: "water_tap", bakers_pct: 65 },
     ]};
     const a = solveRecipe(r, db);
     const b = solveRecipe(a, db);
