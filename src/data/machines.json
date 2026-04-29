@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "entries": [
+    {
+      "id": "zojirushi_bb_pdc20",
+      "name": "Zojirushi Home Bakery Virtuoso Plus BB-PDC20",
+      "pan_capacity_g": 907,
+      "pan_overflow_threshold_g": 950,
+      "pan_underfill_threshold_g": 600,
+      "flour_quantity_typical_min_g": 470,
+      "flour_quantity_typical_max_g": 620,
+      "inclusion_max_fraction_of_flour": 0.30
+    }
+  ]
+}
