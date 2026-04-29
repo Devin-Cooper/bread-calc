@@ -23,8 +23,11 @@ describe("bread-calc compute", () => {
   it("exits 1 when result has an error-severity warning (pan_overflow)", () => {
     // Create a temp recipe inline via stdin
     const recipe = JSON.stringify({
-      schema_version: "1.0", machine: "zojirushi_bb_pdc20",
-      items: [{ ingredient_id: "bread_flour", grams: 800 }, { ingredient_id: "water_tap", grams: 500 }],
+      schema_version: "2.0", machine: "zojirushi_bb_pdc20",
+      items: [
+        { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 800 },
+        { uid: "u_water001", ingredient_id: "water_tap", grams: 500 },
+      ],
     });
     const r = run(["compute", "-", "--json"], { input: recipe });
     expect(r.code).toBe(1);
@@ -35,7 +38,7 @@ describe("bread-calc compute", () => {
   });
   it("exits 3 on unknown ingredient_id", () => {
     const r = run(["compute", "-", "--json"], {
-      input: JSON.stringify({ schema_version: "1.0", items: [{ ingredient_id: "doesnotexist", grams: 500 }] }),
+      input: JSON.stringify({ schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "doesnotexist", grams: 500 }] }),
     });
     expect(r.code).toBe(3);
   });

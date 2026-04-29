@@ -29,7 +29,7 @@ describe("bread-calc validate", () => {
   });
   it("exits 3 on unknown ingredient_id", () => {
     const r = run(["validate", "-"], {
-      input: JSON.stringify({ schema_version: "1.0", items: [{ ingredient_id: "doesnotexist", grams: 500 }] }),
+      input: JSON.stringify({ schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "doesnotexist", grams: 500 }] }),
     });
     expect(r.code).toBe(3);
   });
@@ -39,10 +39,10 @@ describe("bread-calc solve", () => {
   it("solves a target-weight recipe and outputs JSON", () => {
     const r = run(["solve", "-", "--target-g=800"], {
       input: JSON.stringify({
-        schema_version: "1.0",
+        schema_version: "2.0",
         items: [
-          { ingredient_id: "bread_flour", bakers_pct: 100 },
-          { ingredient_id: "water_tap", bakers_pct: 65 },
+          { uid: "u_brdfl001", ingredient_id: "bread_flour", bakers_pct: 100 },
+          { uid: "u_water001", ingredient_id: "water_tap", bakers_pct: 65 },
         ],
       }),
     });
@@ -54,10 +54,10 @@ describe("bread-calc solve", () => {
     // Both fixed-grams flour AND pct items with a target → solver_ambiguous_flour
     const r = run(["solve", "-", "--target-g=800", "--json"], {
       input: JSON.stringify({
-        schema_version: "1.0",
+        schema_version: "2.0",
         items: [
-          { ingredient_id: "bread_flour", grams: 500 },
-          { ingredient_id: "water_tap", bakers_pct: 65 },
+          { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+          { uid: "u_water001", ingredient_id: "water_tap", bakers_pct: 65 },
         ],
       }),
     });
@@ -67,7 +67,7 @@ describe("bread-calc solve", () => {
   });
   it("exits 64 on invalid --target-g (non-numeric)", () => {
     const r = run(["solve", "-", "--target-g=abc"], {
-      input: JSON.stringify({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", bakers_pct: 100 }] }),
+      input: JSON.stringify({ schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", bakers_pct: 100 }] }),
     });
     expect(r.code).toBe(64);
   });
