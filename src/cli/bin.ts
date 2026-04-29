@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { computeRecipe, solveWithError, validateRecipe, type Recipe, type Database } from "../core/index.js";
+import { formatComputed } from "./format.js";
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
 import refsFile from "../data/bb_pdc20_recipes.json" with { type: "json" };
@@ -118,10 +119,14 @@ function dispatchCompute(positionals: string[]) {
   if (values.json || !process.stdout.isTTY) {
     console.log(JSON.stringify(computed, null, 2));
   } else {
-    // Human-readable summary deferred to Task 2.5
-    console.log(`Effective hydration: ${computed.hydration.effective_pct ?? "—"}%`);
-    console.log(`Predicted loaf:      ${computed.totals.predicted_loaf_g} g`);
-    for (const w of computed.warnings) console.log(`[${w.severity}] ${w.code}: ${w.message}`);
+    const VALID_METRICS = ["effective", "nominal", "total_liquid"] as const;
+    type Metric = typeof VALID_METRICS[number];
+    const cliMetric = values.metric;
+    const recipeMetric = (parsed as Recipe).headline_metric;
+    const headlinePref: Metric = (VALID_METRICS as readonly string[]).includes(cliMetric ?? "")
+      ? (cliMetric as Metric)
+      : (recipeMetric ?? "effective");
+    console.log(formatComputed(computed, headlinePref));
   }
   if (computed.warnings.some((w) => w.severity === "error")) process.exit(1);
   process.exit(0);
