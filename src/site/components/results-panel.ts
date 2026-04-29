@@ -2,11 +2,12 @@ import type { Store } from "../state.js";
 import type { Database, ComputedRecipe } from "../../core/index.js";
 import { computeRecipe } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
+import { effectiveRecipe } from "../effective-recipe.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   function fmt(n: number | null, suffix = "%") { return n == null ? "—" : `${n.toFixed(1)}${suffix}`; }
   function render() {
-    const r = store.getState();
+    const r = effectiveRecipe(store.getState(), db);
     const headline = r.headline_metric ?? "effective";
     let c: ComputedRecipe;
     try { c = computeRecipe(r, db); }

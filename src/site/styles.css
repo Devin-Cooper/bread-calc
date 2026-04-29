@@ -64,6 +64,11 @@ details td, details th { padding: 2px 6px; border-bottom: 1px solid var(--border
 .chart-table th, .chart-table td { padding: 4px 8px; border-bottom: 1px solid var(--border-soft); text-align: left; }
 .chart-table tr.user-row { background: var(--user-row-bg); }
 .chart-controls { margin-bottom: 8px; }
+.target-input { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: 600; }
+.target-input input { width: 120px; }
+.hint { color: var(--muted); font-size: 13px; margin: 4px 0 12px; }
+[role="row"].row-header { font-weight: 600; color: var(--muted); border-bottom: 1px solid var(--border-soft); padding-bottom: 4px; margin-bottom: 4px; }
+.solved-grams { color: var(--muted); font-variant-numeric: tabular-nums; }
 #ing-results { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; list-style: none; padding: 4px 0; margin: 4px 0 0; }
 #ing-results li { padding: 4px 8px; cursor: pointer; }
 #ing-results li:hover { background: var(--border-soft); }

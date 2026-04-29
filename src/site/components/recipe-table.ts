@@ -1,21 +1,35 @@
+import type { Database } from "../../core/index.js";
 import type { Store } from "../state.js";
 import { escapeHtml } from "../../core/escape.js";
+import { effectiveRecipe } from "../effective-recipe.js";
 
-export function mount(parent: HTMLElement, store: Store): void {
+export function mount(parent: HTMLElement, store: Store, db: Database): void {
   function render() {
-    const r = store.getState();
+    const state = store.getState();
+    const targetMode = state.target_loaf_g != null;
+    // In target mode, show the solver's grams as a hint but keep the user's
+    // raw inputs editable; in ingredients mode, the raw recipe IS the source.
+    const solved = targetMode ? effectiveRecipe(state, db) : state;
     // Focus restoration: capture active element BEFORE clearing,
     // restore at end of render() if the focused element was inside a row.
     const active = document.activeElement as HTMLElement | null;
     const activeKey = active?.closest("[data-focus-key]")?.getAttribute("data-focus-key");
     const cursorPos = active instanceof HTMLInputElement ? active.selectionStart : null;
     parent.innerHTML = "";
-    if (r.items.length === 0) {
+    if (state.items.length === 0) {
       parent.innerHTML = `<p class="placeholder">No ingredients yet — use the picker above to add some.</p>`;
       return;
     }
-    for (let i = 0; i < r.items.length; i++) {
-      const item = r.items[i]!;
+    if (targetMode) {
+      const header = document.createElement("div");
+      header.className = "row-header";
+      header.setAttribute("role", "row");
+      header.innerHTML = `<span role="columnheader">Ingredient</span><span role="columnheader">Solved g</span><span role="columnheader">Baker's %</span><span role="columnheader">Role</span><span role="columnheader" aria-label="actions"></span>`;
+      parent.appendChild(header);
+    }
+    for (let i = 0; i < state.items.length; i++) {
+      const item = state.items[i]!;
+      const solvedItem = solved.items[i]!;
       const row = document.createElement("div");
       row.setAttribute("role", "row");
       row.dataset["focusKey"] = `row-${i}`;
@@ -23,11 +37,14 @@ export function mount(parent: HTMLElement, store: Store): void {
       // interpolation below is XSS-safe today because numbers stringify
       // to digits/decimals only. If the type ever widens to `string`,
       // wrap value-rendering in escapeHtml.
+      const gramsCell = targetMode
+        ? `<span role="cell" class="solved-grams" aria-label="solved grams for ${escapeHtml(item.ingredient_id)}">${solvedItem.grams != null ? `${Math.round(solvedItem.grams)} g` : "—"}</span>`
+        : `<input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
+                 data-field="grams" data-index="${i}" value="${item.grams ?? ""}"
+                 aria-label="grams for ${escapeHtml(item.ingredient_id)}" />`;
       row.innerHTML = `
         <span role="cell">${escapeHtml(item.ingredient_id)}</span>
-        <input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
-               data-field="grams" data-index="${i}" value="${item.grams ?? ""}"
-               aria-label="grams for ${escapeHtml(item.ingredient_id)}" />
+        ${gramsCell}
         <input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
                data-field="bakers_pct" data-index="${i}" value="${item.bakers_pct ?? ""}"
                aria-label="bakers percent for ${escapeHtml(item.ingredient_id)}" />

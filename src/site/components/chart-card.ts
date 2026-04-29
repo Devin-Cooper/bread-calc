@@ -2,12 +2,13 @@ import type { Store } from "../state.js";
 import type { Database } from "../../core/index.js";
 import { computeRecipe, renderHydrationChart } from "../../core/index.js";
 import { mount as mountTableView } from "./chart-table-view.js";
+import { effectiveRecipe } from "../effective-recipe.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let viewMode: "chart" | "table" = "chart";
   const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
   function render() {
-    let computed; try { computed = computeRecipe(store.getState(), db); } catch { parent.innerHTML = ""; return; }
+    let computed; try { computed = computeRecipe(effectiveRecipe(store.getState(), db), db); } catch { parent.innerHTML = ""; return; }
     parent.innerHTML = `
       <div class="chart-controls"><button id="toggle-view" aria-pressed="${viewMode === "table"}">${viewMode === "chart" ? "View as table" : "View as chart"}</button></div>
       <div id="chart-content"></div>`;

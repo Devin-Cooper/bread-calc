@@ -2,13 +2,14 @@ import type { Store } from "../state.js";
 import type { Database, Warning } from "../../core/index.js";
 import { computeRecipe } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
+import { effectiveRecipe } from "../effective-recipe.js";
 
 const ORDER: Warning["severity"][] = ["error", "warn", "info"];
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   function render() {
     let warnings: Warning[] = [];
-    try { warnings = computeRecipe(store.getState(), db).warnings; } catch { /* validation upstream */ }
+    try { warnings = computeRecipe(effectiveRecipe(store.getState(), db), db).warnings; } catch { /* validation upstream */ }
     if (warnings.length === 0) { parent.innerHTML = `<p class="placeholder">No warnings.</p>`; return; }
     const groups = ORDER.map((sev) => warnings.filter((w) => w.severity === sev)).filter((g) => g.length > 0);
     parent.innerHTML = groups.map((g) => `

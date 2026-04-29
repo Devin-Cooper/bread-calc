@@ -6,7 +6,7 @@ import { mount as mountResults } from "./components/results-panel.js";
 import { mount as mountWarnings } from "./components/warnings-panel.js";
 import { mount as mountChart } from "./components/chart-card.js";
 import { mount as mountMode } from "./components/mode-toggle.js";
-import { mount as mountHeadline } from "./components/headline-toggle.js";
+import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
@@ -56,13 +56,13 @@ async function loadInitialRecipe(): Promise<Recipe> {
   const initial = await loadInitialRecipe();
   const store = createStore(initial);
 
+  mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
-  mountTable(document.querySelector("#recipe-table") as HTMLElement, store);
+  mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
   mountResults(document.querySelector("#results-panel") as HTMLElement, store, db);
   mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
   mountChart(document.querySelector("#chart-card") as HTMLElement, store, db);
   mountMode(document.querySelector("#mode-toggle") as HTMLSelectElement, store);
-  mountHeadline(document.querySelector("#headline-toggle") as HTMLSelectElement, store);
 
   const actionBar = document.querySelector("#action-bar") as HTMLElement;
   actionBar.innerHTML = `

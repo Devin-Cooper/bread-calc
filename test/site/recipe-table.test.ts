@@ -2,6 +2,12 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { mount as mountTable } from "../../src/site/components/recipe-table.js";
 import { createStore } from "../../src/site/state.js";
+import type { Database } from "../../src/core/index.js";
+
+// Minimal db stub: the recipe-table only consults effectiveRecipe, which only
+// dereferences the db when target_loaf_g is set. None of the existing tests
+// use target mode, so an empty stub is sufficient.
+const db = { ingredients: [], flours: [], references: [], machines: [], defaults: {} } as unknown as Database;
 
 describe("recipe-table", () => {
   beforeEach(() => { document.body.innerHTML = ""; });
@@ -12,14 +18,14 @@ describe("recipe-table", () => {
       { ingredient_id: "bread_flour", grams: 500 },
       { ingredient_id: "water_tap", grams: 320 },
     ]});
-    mountTable(root, store);
+    mountTable(root, store, db);
     expect(root.querySelectorAll('[role="row"]').length).toBe(2);
   });
 
   it("dispatches set_grams on input change", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
     const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
-    mountTable(root, store);
+    mountTable(root, store, db);
     const input = root.querySelector('input[data-field="grams"]') as HTMLInputElement;
     input.value = "600";
     input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -29,7 +35,7 @@ describe("recipe-table", () => {
   it("re-renders on store changes", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
     const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
-    mountTable(root, store);
+    mountTable(root, store, db);
     store.dispatch({ type: "add_item", ingredient_id: "water_tap" });
     expect(root.querySelectorAll('[role="row"]').length).toBe(2);
   });
@@ -37,7 +43,7 @@ describe("recipe-table", () => {
   it("renders empty-state placeholder when items list is empty", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
     const store = createStore({ schema_version: "1.0", items: [] });
-    mountTable(root, store);
+    mountTable(root, store, db);
     expect(root.querySelectorAll('[role="row"]').length).toBe(0);
     expect(root.querySelector(".placeholder")?.textContent).toMatch(/No ingredients/);
   });
@@ -45,7 +51,7 @@ describe("recipe-table", () => {
   it("dispatches set_bakers_pct on bakers-pct input change", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
     const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
-    mountTable(root, store);
+    mountTable(root, store, db);
     const input = root.querySelector('input[data-field="bakers_pct"]') as HTMLInputElement;
     input.value = "100";
     input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -58,7 +64,7 @@ describe("recipe-table", () => {
       { ingredient_id: "bread_flour", grams: 500 },
       { ingredient_id: "water_tap", grams: 320 },
     ]});
-    mountTable(root, store);
+    mountTable(root, store, db);
     const button = root.querySelector('button[data-action="remove"][data-index="0"]') as HTMLButtonElement;
     button.click();
     expect(store.getState().items.length).toBe(1);
