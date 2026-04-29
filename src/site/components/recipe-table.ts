@@ -4,10 +4,11 @@ import { escapeHtml } from "../../core/escape.js";
 export function mount(parent: HTMLElement, store: Store): void {
   function render() {
     const r = store.getState();
-    // Focus restoration is deferred to Task 6.x — see [data-focus-key].
-    // Today, every dispatch destroys the focused input; user keystrokes
-    // beyond the first land on <body>. Acceptable for v0.3.0; revisit
-    // when the focus-restore step lands.
+    // Focus restoration: capture active element BEFORE clearing,
+    // restore at end of render() if the focused element was inside a row.
+    const active = document.activeElement as HTMLElement | null;
+    const activeKey = active?.closest("[data-focus-key]")?.getAttribute("data-focus-key");
+    const cursorPos = active instanceof HTMLInputElement ? active.selectionStart : null;
     parent.innerHTML = "";
     if (r.items.length === 0) {
       parent.innerHTML = `<p class="placeholder">No ingredients yet — use the picker above to add some.</p>`;
@@ -34,6 +35,17 @@ export function mount(parent: HTMLElement, store: Store): void {
         <button role="cell" data-action="remove" data-index="${i}" aria-label="remove ${escapeHtml(item.ingredient_id)}">✕</button>
       `;
       parent.appendChild(row);
+    }
+    if (activeKey) {
+      const restored = parent.querySelector(`[data-focus-key="${activeKey}"]`) as HTMLElement | null;
+      if (restored) {
+        // Prefer focusing an inner input (the typical case during editing);
+        // fall back to the row itself if no input survived (e.g. focus was
+        // on the remove button — rare, but harmless).
+        const input = restored.querySelector("input") as HTMLInputElement | null;
+        (input ?? restored).focus();
+        if (input && cursorPos != null) input.setSelectionRange(cursorPos, cursorPos);
+      }
     }
   }
 
