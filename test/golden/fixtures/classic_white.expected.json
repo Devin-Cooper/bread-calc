@@ -1,0 +1,207 @@
+{
+  "recipe": {
+    "schema_version": "1.0",
+    "name": "Classic White (BB-PDC20)",
+    "machine": "zojirushi_bb_pdc20",
+    "items": [
+      {
+        "ingredient_id": "bread_flour",
+        "grams": 553
+      },
+      {
+        "ingredient_id": "water_tap",
+        "grams": 326
+      },
+      {
+        "ingredient_id": "sugar_granulated",
+        "grams": 30
+      },
+      {
+        "ingredient_id": "salt_table",
+        "grams": 9
+      },
+      {
+        "ingredient_id": "butter_unsalted",
+        "grams": 28
+      },
+      {
+        "ingredient_id": "yeast_instant",
+        "grams": 5
+      }
+    ]
+  },
+  "totals": {
+    "total_mass_g": 951,
+    "total_flour_g": 553,
+    "total_inclusions_g": 0,
+    "total_water_g_nominal": 331.31,
+    "total_water_g_effective": 328.51,
+    "total_salt_g_equivalent": 9.01,
+    "total_sugar_g_equivalent": 30,
+    "total_fat_g_equivalent": 22.71,
+    "total_alcohol_g": 0,
+    "predicted_loaf_g": 836.88
+  },
+  "hydration": {
+    "effective_pct": 59.4,
+    "nominal_pct": 59.91,
+    "total_liquid_pct": 58.95,
+    "zone": "sandwich"
+  },
+  "bakers_pcts": {
+    "by_ingredient": {
+      "bread_flour": 100,
+      "water_tap": 58.95,
+      "sugar_granulated": 5.42,
+      "salt_table": 1.63,
+      "butter_unsalted": 5.06,
+      "yeast_instant": 0.9
+    },
+    "salt_equivalent_pct": 1.63,
+    "sugar_equivalent_pct": 5.42,
+    "fat_equivalent_pct": 4.11,
+    "yeast_pct": 0.9
+  },
+  "ddt_water_absorption_pct": 62,
+  "warnings": [
+    {
+      "code": "under_developed_gluten",
+      "severity": "warn",
+      "message": "Effective hydration 59.4% is below this flour's DDT-WA of 62%; gluten may not develop fully."
+    }
+  ],
+  "water_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 553,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 326,
+      "nominal_water_g": 326,
+      "effective_water_g": 326
+    },
+    {
+      "ingredient_id": "sugar_granulated",
+      "grams": 30,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "butter_unsalted",
+      "grams": 28,
+      "nominal_water_g": 5.01,
+      "effective_water_g": 2.51
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 5,
+      "nominal_water_g": 0.3,
+      "effective_water_g": 0
+    }
+  ],
+  "salt_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 553,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 326,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "sugar_granulated",
+      "grams": 30,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "salt_g_contribution": 9
+    },
+    {
+      "ingredient_id": "butter_unsalted",
+      "grams": 28,
+      "salt_g_contribution": 0.01
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 5,
+      "salt_g_contribution": 0
+    }
+  ],
+  "sugar_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 553,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 326,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "sugar_granulated",
+      "grams": 30,
+      "sugar_g_contribution": 30
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "butter_unsalted",
+      "grams": 28,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 5,
+      "sugar_g_contribution": 0
+    }
+  ],
+  "fat_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 553,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 326,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "sugar_granulated",
+      "grams": 30,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "butter_unsalted",
+      "grams": 28,
+      "fat_g_contribution": 22.71
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 5,
+      "fat_g_contribution": 0
+    }
+  ]
+}

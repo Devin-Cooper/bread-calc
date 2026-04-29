@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "target_loaf_g": 100,
+  "items": [
+    { "ingredient_id": "bread_flour", "bakers_pct": 100 },
+    { "ingredient_id": "salt_table", "grams": 200 }
+  ]
+}

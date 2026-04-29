@@ -1,0 +1,107 @@
+{
+  "recipe": {
+    "schema_version": "1.0",
+    "target_loaf_g": 100,
+    "items": [
+      {
+        "ingredient_id": "bread_flour",
+        "bakers_pct": 100
+      },
+      {
+        "ingredient_id": "salt_table",
+        "grams": 200
+      }
+    ]
+  },
+  "totals": {
+    "total_mass_g": 200,
+    "total_flour_g": 0,
+    "total_inclusions_g": 0,
+    "total_water_g_nominal": 0,
+    "total_water_g_effective": 0,
+    "total_salt_g_equivalent": 200,
+    "total_sugar_g_equivalent": 0,
+    "total_fat_g_equivalent": 0,
+    "total_alcohol_g": 0,
+    "predicted_loaf_g": 176
+  },
+  "hydration": {
+    "effective_pct": null,
+    "nominal_pct": null,
+    "total_liquid_pct": null,
+    "zone": null
+  },
+  "bakers_pcts": {
+    "by_ingredient": {
+      "bread_flour": null,
+      "salt_table": null
+    },
+    "salt_equivalent_pct": null,
+    "sugar_equivalent_pct": null,
+    "fat_equivalent_pct": null,
+    "yeast_pct": null
+  },
+  "ddt_water_absorption_pct": null,
+  "warnings": [
+    {
+      "code": "solver_overconstrained",
+      "severity": "error",
+      "message": "Fixed-gram items already exceed the target dough mass."
+    },
+    {
+      "code": "no_flour",
+      "severity": "error",
+      "message": "Recipe has no flour; cannot compute hydration."
+    }
+  ],
+  "water_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 0,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 200,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    }
+  ],
+  "salt_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 0,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 200,
+      "salt_g_contribution": 200
+    }
+  ],
+  "sugar_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 0,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 200,
+      "sugar_g_contribution": 0
+    }
+  ],
+  "fat_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 0,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 200,
+      "fat_g_contribution": 0
+    }
+  ]
+}

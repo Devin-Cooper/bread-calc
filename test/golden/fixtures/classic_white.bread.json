@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "name": "Classic White (BB-PDC20)",
+  "machine": "zojirushi_bb_pdc20",
+  "items": [
+    { "ingredient_id": "bread_flour", "grams": 553 },
+    { "ingredient_id": "water_tap", "grams": 326 },
+    { "ingredient_id": "sugar_granulated", "grams": 30 },
+    { "ingredient_id": "salt_table", "grams": 9 },
+    { "ingredient_id": "butter_unsalted", "grams": 28 },
+    { "ingredient_id": "yeast_instant", "grams": 5 }
+  ]
+}

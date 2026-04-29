@@ -1,0 +1,301 @@
+{
+  "recipe": {
+    "schema_version": "1.0",
+    "name": "Vegan banana walnut (v4 just-ripe)",
+    "machine": "zojirushi_bb_pdc20",
+    "items": [
+      {
+        "ingredient_id": "bread_flour",
+        "grams": 530
+      },
+      {
+        "ingredient_id": "almond_milk_unsweetened",
+        "grams": 160
+      },
+      {
+        "ingredient_id": "water_tap",
+        "grams": 60
+      },
+      {
+        "ingredient_id": "banana_ripe",
+        "grams": 200
+      },
+      {
+        "ingredient_id": "oil_canola",
+        "grams": 18
+      },
+      {
+        "ingredient_id": "honey",
+        "grams": 25
+      },
+      {
+        "ingredient_id": "salt_table",
+        "grams": 9
+      },
+      {
+        "ingredient_id": "yeast_instant",
+        "grams": 7
+      },
+      {
+        "ingredient_id": "walnut_english",
+        "grams": 80,
+        "role": "inclusion"
+      }
+    ]
+  },
+  "totals": {
+    "total_mass_g": 1089,
+    "total_flour_g": 530,
+    "total_inclusions_g": 280,
+    "total_water_g_nominal": 373.77,
+    "total_water_g_effective": 322.99,
+    "total_salt_g_equivalent": 9.11,
+    "total_sugar_g_equivalent": 47.01,
+    "total_fat_g_equivalent": 72.52,
+    "total_alcohol_g": 0,
+    "predicted_loaf_g": 958.32
+  },
+  "hydration": {
+    "effective_pct": 60.94,
+    "nominal_pct": 70.52,
+    "total_liquid_pct": 41.51,
+    "zone": "sandwich"
+  },
+  "bakers_pcts": {
+    "by_ingredient": {
+      "bread_flour": 100,
+      "almond_milk_unsweetened": 30.19,
+      "water_tap": 11.32,
+      "banana_ripe": 37.74,
+      "oil_canola": 3.4,
+      "honey": 4.72,
+      "salt_table": 1.7,
+      "yeast_instant": 1.32,
+      "walnut_english": 15.09
+    },
+    "salt_equivalent_pct": 1.72,
+    "sugar_equivalent_pct": 8.87,
+    "fat_equivalent_pct": 13.68,
+    "yeast_pct": 1.32
+  },
+  "ddt_water_absorption_pct": 62,
+  "warnings": [
+    {
+      "code": "pan_overflow_predicted",
+      "severity": "error",
+      "message": "Predicted loaf weight 958.32 g exceeds pan threshold 950 g."
+    },
+    {
+      "code": "under_developed_gluten",
+      "severity": "warn",
+      "message": "Effective hydration 60.94% is below this flour's DDT-WA of 62%; gluten may not develop fully."
+    },
+    {
+      "code": "fat_too_high",
+      "severity": "warn",
+      "message": "Fat equivalent 13.68% > 12% may interfere with gluten."
+    },
+    {
+      "code": "inclusions_exceed_pan",
+      "severity": "warn",
+      "message": "Inclusions are 53% of flour, above the 30% recommended maximum."
+    }
+  ],
+  "water_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 530,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "almond_milk_unsweetened",
+      "grams": 160,
+      "nominal_water_g": 155.2,
+      "effective_water_g": 155.2
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 60,
+      "nominal_water_g": 60,
+      "effective_water_g": 60
+    },
+    {
+      "ingredient_id": "banana_ripe",
+      "grams": 200,
+      "nominal_water_g": 150.6,
+      "effective_water_g": 105.42
+    },
+    {
+      "ingredient_id": "oil_canola",
+      "grams": 18,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "honey",
+      "grams": 25,
+      "nominal_water_g": 4.28,
+      "effective_water_g": 1.71
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "nominal_water_g": 0,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 7,
+      "nominal_water_g": 0.42,
+      "effective_water_g": 0
+    },
+    {
+      "ingredient_id": "walnut_english",
+      "grams": 80,
+      "nominal_water_g": 3.28,
+      "effective_water_g": 0.66
+    }
+  ],
+  "salt_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 530,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "almond_milk_unsweetened",
+      "grams": 160,
+      "salt_g_contribution": 0.11
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 60,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "banana_ripe",
+      "grams": 200,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "oil_canola",
+      "grams": 18,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "honey",
+      "grams": 25,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "salt_g_contribution": 9
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 7,
+      "salt_g_contribution": 0
+    },
+    {
+      "ingredient_id": "walnut_english",
+      "grams": 80,
+      "salt_g_contribution": 0
+    }
+  ],
+  "sugar_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 530,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "almond_milk_unsweetened",
+      "grams": 160,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 60,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "banana_ripe",
+      "grams": 200,
+      "sugar_g_contribution": 24.4
+    },
+    {
+      "ingredient_id": "oil_canola",
+      "grams": 18,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "honey",
+      "grams": 25,
+      "sugar_g_contribution": 20.53
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 7,
+      "sugar_g_contribution": 0
+    },
+    {
+      "ingredient_id": "walnut_english",
+      "grams": 80,
+      "sugar_g_contribution": 2.08
+    }
+  ],
+  "fat_breakdown": [
+    {
+      "ingredient_id": "bread_flour",
+      "grams": 530,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "almond_milk_unsweetened",
+      "grams": 160,
+      "fat_g_contribution": 1.76
+    },
+    {
+      "ingredient_id": "water_tap",
+      "grams": 60,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "banana_ripe",
+      "grams": 200,
+      "fat_g_contribution": 0.6
+    },
+    {
+      "ingredient_id": "oil_canola",
+      "grams": 18,
+      "fat_g_contribution": 18
+    },
+    {
+      "ingredient_id": "honey",
+      "grams": 25,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "salt_table",
+      "grams": 9,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "yeast_instant",
+      "grams": 7,
+      "fat_g_contribution": 0
+    },
+    {
+      "ingredient_id": "walnut_english",
+      "grams": 80,
+      "fat_g_contribution": 52.16
+    }
+  ]
+}
