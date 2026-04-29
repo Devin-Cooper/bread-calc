@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>breadmachine.io — Bread machine hydration calculator</title>
+  <meta name="description" content="Bread machine recipe calculator with free-water-factor hydration model. Calibrated for the Zojirushi BB-PDC20." />
+  <link rel="canonical" href="https://breadmachine.io/" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta property="og:title" content="breadmachine.io" />
+  <meta property="og:description" content="Bread machine hydration calculator" />
+  <meta property="og:url" content="https://breadmachine.io/" />
+  <link rel="stylesheet" href="/src/site/styles.css" />
+</head>
+<body>
+  <header role="banner">
+    <h1>breadmachine.io</h1>
+    <div class="header-controls">
+      <label>Mode <select id="mode-toggle"><option value="ingredients">Build by ingredients</option><option value="target">Build by target weight</option></select></label>
+      <label>Headline <select id="headline-toggle">
+        <option value="effective">Effective hydration</option>
+        <option value="nominal">Nominal water</option>
+        <option value="total_liquid">Total liquid</option>
+      </select></label>
+    </div>
+  </header>
+  <main>
+    <section id="recipe-pane" aria-label="Recipe editor">
+      <div id="recipe-meta"></div>
+      <div id="ingredient-picker"></div>
+      <div id="recipe-table" role="table" aria-label="Recipe ingredients"></div>
+    </section>
+    <section id="results-pane" aria-label="Recipe results">
+      <div id="results-panel"></div>
+      <div id="chart-card"><p class="placeholder">Chart added in v0.5</p></div>
+      <div id="warnings-panel"></div>
+      <div id="action-bar"></div>
+    </section>
+  </main>
+  <script type="module" src="/src/site/main.ts"></script>
+</body>
+</html>
