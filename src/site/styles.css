@@ -1,6 +1,7 @@
 @import url("./styles/tokens.css");
 @import url("./styles/typography.css");
 @import url("./styles/header.css");
+@import url("./styles/tip-strip.css");
 
 * { box-sizing: border-box; }
 
