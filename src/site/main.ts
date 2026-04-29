@@ -1,4 +1,5 @@
 import type { Database, Recipe } from "../core/index.js";
+import { generateUid } from "../core/uid.js";
 import { createStore } from "./state.js";
 import { mount as mountPicker } from "./components/ingredient-picker.js";
 import { mount as mountTable } from "./components/recipe-table.js";
@@ -29,25 +30,32 @@ const db: Database = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const STARTER: Recipe = {
-  schema_version: "1.0", name: "Classic White (BB-PDC20)", machine: "zojirushi_bb_pdc20",
+  schema_version: "2.0", name: "Classic White (BB-PDC20)", machine: "zojirushi_bb_pdc20",
   items: [
-    { ingredient_id: "bread_flour", grams: 553 },
-    { ingredient_id: "water_tap", grams: 326 },
-    { ingredient_id: "sugar_granulated", grams: 30 },
-    { ingredient_id: "salt_table", grams: 9 },
-    { ingredient_id: "butter_unsalted", grams: 28 },
-    { ingredient_id: "yeast_instant", grams: 5 },
+    { uid: generateUid(), ingredient_id: "bread_flour",      grams: 553 },
+    { uid: generateUid(), ingredient_id: "water_tap",        grams: 326 },
+    { uid: generateUid(), ingredient_id: "sugar_granulated", grams: 30  },
+    { uid: generateUid(), ingredient_id: "salt_table",       grams: 9   },
+    { uid: generateUid(), ingredient_id: "butter_unsalted",  grams: 28  },
+    { uid: generateUid(), ingredient_id: "yeast_instant",    grams: 5   },
   ],
 };
 
 async function loadInitialRecipe(): Promise<Recipe> {
   const hash = location.hash;
   if (hash.startsWith("#r=")) {
-    try { return await decodeRecipeHash(hash.slice(3)); } catch { /* fall through */ }
+    try {
+      const decoded = await decodeRecipeHash(hash.slice(3));
+      if (decoded.schema_version === "2.0") return decoded;
+    } catch { /* fall through */ }
   }
   try {
     const saved = localStorage.getItem("bread-calc:autosave");
-    if (saved) return JSON.parse(saved) as Recipe;
+    if (saved) {
+      const parsed = JSON.parse(saved) as Recipe;
+      if (parsed.schema_version === "2.0") return parsed;
+      // Drop v1 saved state silently — no users yet, designed behavior per spec.
+    }
   } catch { /* ignore */ }
   return STARTER;
 }

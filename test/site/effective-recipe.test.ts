@@ -14,24 +14,24 @@ const db: Database = {
 
 describe("effectiveRecipe", () => {
   it("returns the input recipe unchanged when target_loaf_g is unset", () => {
-    const r: Recipe = { schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] };
+    const r: Recipe = { schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 }] };
     expect(effectiveRecipe(r, db)).toBe(r);
   });
 
   it("returns the input recipe unchanged when no item has bakers_pct", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 900,
-      items: [{ ingredient_id: "bread_flour", grams: 500 }],
+      schema_version: "2.0", target_loaf_g: 900,
+      items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 }],
     };
     expect(effectiveRecipe(r, db)).toBe(r);
   });
 
   it("solves grams from bakers_pct when target_loaf_g is set", () => {
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 900,
+      schema_version: "2.0", target_loaf_g: 900,
       items: [
-        { ingredient_id: "bread_flour", bakers_pct: 100 },
-        { ingredient_id: "water_tap", bakers_pct: 65 },
+        { uid: "u_brdfl001", ingredient_id: "bread_flour", bakers_pct: 100 },
+        { uid: "u_water001", ingredient_id: "water_tap", bakers_pct: 65 },
       ],
     };
     const solved = effectiveRecipe(r, db);
@@ -45,10 +45,10 @@ describe("effectiveRecipe", () => {
   it("falls back to the input recipe on solver error (ambiguous flour)", () => {
     // Fixed-grams flour mixed with a bakers_pct item triggers solver_ambiguous_flour.
     const r: Recipe = {
-      schema_version: "1.0", target_loaf_g: 900,
+      schema_version: "2.0", target_loaf_g: 900,
       items: [
-        { ingredient_id: "bread_flour", grams: 500 },
-        { ingredient_id: "water_tap", bakers_pct: 65 },
+        { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_water001", ingredient_id: "water_tap", bakers_pct: 65 },
       ],
     };
     expect(effectiveRecipe(r, db)).toBe(r);

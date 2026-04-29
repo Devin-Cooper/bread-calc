@@ -14,9 +14,9 @@ describe("recipe-table", () => {
 
   it("renders one row per item", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "1.0", items: [
-      { ingredient_id: "bread_flour", grams: 500 },
-      { ingredient_id: "water_tap", grams: 320 },
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+      { uid: "u_water001", ingredient_id: "water_tap", grams: 320 },
     ]});
     mountTable(root, store, db);
     expect(root.querySelectorAll('[role="row"]:not(.row-header)').length).toBe(2);
@@ -24,7 +24,7 @@ describe("recipe-table", () => {
 
   it("dispatches set_grams on input change", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
+    const store = createStore({ schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 }] });
     mountTable(root, store, db);
     const input = root.querySelector('input[data-field="grams"]') as HTMLInputElement;
     input.value = "600";
@@ -34,7 +34,7 @@ describe("recipe-table", () => {
 
   it("re-renders on store changes", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
+    const store = createStore({ schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 }] });
     mountTable(root, store, db);
     store.dispatch({ type: "add_item", ingredient_id: "water_tap" });
     expect(root.querySelectorAll('[role="row"]:not(.row-header)').length).toBe(2);
@@ -42,7 +42,7 @@ describe("recipe-table", () => {
 
   it("renders empty-state placeholder when items list is empty", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "1.0", items: [] });
+    const store = createStore({ schema_version: "2.0", items: [] });
     mountTable(root, store, db);
     expect(root.querySelectorAll('[role="row"]:not(.row-header)').length).toBe(0);
     expect(root.querySelector(".placeholder")?.textContent).toMatch(/No ingredients/);
@@ -50,7 +50,7 @@ describe("recipe-table", () => {
 
   it("dispatches set_bakers_pct on bakers-pct input change", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "1.0", items: [{ ingredient_id: "bread_flour", grams: 500 }] });
+    const store = createStore({ schema_version: "2.0", items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 }] });
     mountTable(root, store, db);
     const input = root.querySelector('input[data-field="bakers_pct"]') as HTMLInputElement;
     input.value = "100";
@@ -60,9 +60,9 @@ describe("recipe-table", () => {
 
   it("dispatches remove_item on click of remove button", () => {
     const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "1.0", items: [
-      { ingredient_id: "bread_flour", grams: 500 },
-      { ingredient_id: "water_tap", grams: 320 },
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+      { uid: "u_water001", ingredient_id: "water_tap", grams: 320 },
     ]});
     mountTable(root, store, db);
     const button = root.querySelector('button[data-action="remove"][data-index="0"]') as HTMLButtonElement;

@@ -3,8 +3,11 @@ import { encodeRecipeHash, decodeRecipeHash } from "../../src/site/persistence/u
 import type { Recipe } from "../../src/core/index.js";
 
 const recipe: Recipe = {
-  schema_version: "1.0", name: "Test loaf",
-  items: [{ ingredient_id: "bread_flour", grams: 500 }, { ingredient_id: "water_tap", grams: 320 }],
+  schema_version: "2.0", name: "Test loaf",
+  items: [
+    { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+    { uid: "u_water001", ingredient_id: "water_tap", grams: 320 },
+  ],
 };
 
 describe("URL hash codec", () => {
@@ -18,7 +21,7 @@ describe("URL hash codec", () => {
     expect(encoded).not.toMatch(/[/+=]/);
   });
   it("rejects payload exceeding 16 KB after decompression", async () => {
-    const huge: Recipe = { schema_version: "1.0", items: [], name: "x".repeat(20_000) };
+    const huge: Recipe = { schema_version: "2.0", items: [], name: "x".repeat(20_000) };
     const encoded = await encodeRecipeHash(huge);
     await expect(decodeRecipeHash(encoded)).rejects.toThrow(/16 KB/);
   });
