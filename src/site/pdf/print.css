@@ -1,11 +1,86 @@
 @media print {
   @page { size: letter; margin: 0.6in; }
-  header .header-controls, #ingredient-picker, #action-bar, #toggle-view { display: none !important; }
-  main { display: block !important; }
-  section { border: none !important; padding: 0 !important; page-break-inside: avoid; }
-  #recipe-pane { page-break-after: always; }
-  body { font-size: 11pt; color: #000; background: #fff; }
-  h1, h2, h3 { color: #5b3a29; }
-  .warn-row { background: #fff !important; border-left: 4px solid #999 !important; }
-  table { width: 100%; }
+
+  /* Hide everything except the kitchen card */
+  body > *:not(#kitchen-card) { display: none !important; }
+
+  body {
+    font-family: "Inter", system-ui, sans-serif;
+    color: #000;
+    background: #fff;
+    margin: 0;
+    padding: 0;
+    font-size: 11pt;
+  }
+
+  #kitchen-card {
+    display: block !important;
+    padding: 0;
+  }
+
+  .kc-name {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 32pt;
+    font-weight: 500;
+    margin: 0 0 4pt;
+    color: #000;
+  }
+  .kc-notes {
+    font-style: italic;
+    color: #555;
+    margin: 0 0 12pt;
+    font-size: 11pt;
+  }
+  .kc-header {
+    border-bottom: 1pt solid #000;
+    padding-bottom: 8pt;
+    margin-bottom: 12pt;
+  }
+
+  .kc-metric-strip {
+    display: flex;
+    justify-content: space-between;
+    gap: 24pt;
+    border-bottom: 1pt solid #000;
+    padding-bottom: 12pt;
+    margin-bottom: 16pt;
+    page-break-inside: avoid;
+  }
+  .kc-metric { display: flex; flex-direction: column; }
+  .kc-metric-label {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #444;
+    margin-bottom: 2pt;
+  }
+  .kc-metric-value {
+    font-size: 18pt;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #000;
+  }
+
+  .kc-table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+  .kc-table th {
+    text-align: left;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+    color: #444;
+    padding: 4pt 6pt;
+    border-bottom: 0.5pt solid #888;
+  }
+  .kc-th-num, .kc-td-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kc-table td {
+    padding: 6pt;
+    font-size: 11pt;
+    border-bottom: 0.25pt solid #ccc;
+  }
+  .kc-table tr:last-child td { border-bottom: none; }
 }

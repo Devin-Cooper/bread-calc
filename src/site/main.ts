@@ -14,6 +14,7 @@ import { mount as mountHeadline } from "./components/recipe-headline.js";
 import { mount as mountZoneBand } from "./components/zone-band.js";
 import { mount as mountShowMath } from "./components/show-math.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
+import { mount as mountKitchenCard } from "./pdf/kitchen-card.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -114,6 +115,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountZoneBand(document.querySelector("#zone-band") as HTMLElement, store, db);
   mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
   mountShowMath(document.querySelector("#show-math-section") as HTMLElement, store, db);
+  mountKitchenCard(document.querySelector("#kitchen-card") as HTMLElement, store, db);
 
   let timer: number | undefined;
   store.subscribe(() => {
