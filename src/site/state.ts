@@ -12,6 +12,7 @@ export type Action =
   | { type: "set_name"; name: string }
   | { type: "set_notes"; notes: string }
   | { type: "set_course"; course: string | undefined }
+  | { type: "set_crust_shade"; crust_shade: CrustShade | undefined }
   | { type: "set_headline_metric"; metric: "effective" | "nominal" | "total_liquid" }
   | { type: "set_free_water_factor_override"; ingredient_id: string; factor: number | undefined }
   | { type: "load"; recipe: Recipe };
@@ -61,6 +62,14 @@ function reduce(state: Recipe, action: Action): Recipe {
         return rest;
       }
       return { ...state, course: action.course };
+    }
+    case "set_crust_shade": {
+      if (action.crust_shade === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { crust_shade: _crust_shade, ...rest } = state;
+        return rest;
+      }
+      return { ...state, crust_shade: action.crust_shade };
     }
     case "set_headline_metric": return { ...state, headline_metric: action.metric };
     case "set_free_water_factor_override": {
