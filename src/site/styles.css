@@ -28,11 +28,20 @@ html, body {
 
 body {
   font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 22px;
   color: var(--color-fg-default);
-  background: var(--color-bg-canvas);
+  background-color: var(--color-bg-canvas);
+  /* Subtle printed-paper texture: faint dot overlay, 6px grid */
+  background-image: radial-gradient(
+    circle, color-mix(in oklab, var(--color-accent-fg) 4%, transparent) 0.6px,
+    transparent 1.2px
+  );
+  background-size: 6px 6px;
+  background-attachment: fixed;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  margin: 0;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -397,4 +406,20 @@ input[type="text"]:focus-visible {
     border: none;
     vertical-align: middle;
   }
+}
+
+/* Section divider — 1px black + 0.5px accent offset under-rule */
+.section-divider {
+  position: relative;
+  height: 0;
+  border-top: var(--border-hairline) solid var(--color-fg-strong);
+  margin: var(--space-6) 0 calc(var(--space-6) + 2px);
+}
+.section-divider::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 1px;
+  height: 0.5px;
+  background: var(--color-accent-fg);
 }

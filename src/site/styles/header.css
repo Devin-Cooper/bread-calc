@@ -1,12 +1,25 @@
+/* Header — masthead with art-pop double-rule.
+ * Per spec C §5 (header.css row).
+ */
+
 #site-header {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-4) calc(var(--space-3) + 2px);
   background: var(--color-bg-canvas);
   position: sticky; top: 0;
   z-index: 100;
+  border-bottom: var(--border-rule) solid var(--color-fg-strong);
+}
+#site-header::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: var(--color-accent-fg);
+  pointer-events: none;
 }
 
 .header-row {
@@ -18,8 +31,16 @@
 
 .header-wordmark {
   text-decoration: none;
-  color: var(--color-emphasis);
-  font-variation-settings: "opsz" 96;
+  color: var(--color-accent-fg);
+  font-family: var(--font-display);
+  font-weight: var(--weight-black);
+  font-size: var(--type-masthead-size);
+  line-height: var(--type-masthead-lh);
+  letter-spacing: var(--type-masthead-tracking);
+  text-transform: uppercase;
+}
+.header-wordmark:hover {
+  color: var(--color-accent-deep);
 }
 
 .header-nav {
@@ -31,50 +52,97 @@
 .header-learn {
   color: var(--color-fg-default);
   text-decoration: none;
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-small-size);
+  text-transform: uppercase;
+  letter-spacing: var(--type-eyebrow-tracking);
 }
-.header-learn:hover { color: var(--color-accent-fg); text-decoration: underline; }
+.header-learn:hover {
+  color: var(--color-accent-fg);
+  text-decoration: underline;
+}
 
 .header-overflow {
-  width: 44px; height: 44px;
+  width: 36px; height: 36px;
   display: inline-flex; align-items: center; justify-content: center;
-  background: transparent;
-  border: 1px solid transparent;
+  background: var(--color-bg-canvas);
+  border: var(--border-hairline) solid var(--color-border-strong);
   border-radius: var(--radius-sm);
-  font-size: 22px;
+  font-size: 18px;
   color: var(--color-fg-default);
+  cursor: pointer;
+  transition: box-shadow var(--duration-fast) var(--easing-standard);
 }
-.header-overflow:hover { background: var(--color-bg-muted); border-color: var(--color-border); }
+.header-overflow:hover {
+  background: var(--color-bg-muted);
+  box-shadow: var(--shadow-stamp);
+}
+.header-overflow:focus-visible {
+  outline: var(--border-rule) solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
 
 .header-tagline {
   margin: 0;
   color: var(--color-fg-muted);
-}
-@media (max-width: 767px) {
-  .header-tagline { display: none; }
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--type-small-size);
 }
 
+/* Overflow menu (dropdown from .header-overflow button) */
 .header-menu {
   position: absolute;
+  top: calc(100% + var(--space-1));
   right: var(--space-4);
-  top: 56px;
-  background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-overlay);
+  min-width: 180px;
+  background-color: var(--color-bg-canvas);
+  background-image: var(--pattern-benday-soft);
+  background-size: var(--pattern-benday-size);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-stamp);
   padding: var(--space-1);
+  z-index: 200;
   display: flex;
   flex-direction: column;
-  min-width: 200px;
-  z-index: var(--z-popover);
 }
-
 .header-menu-item {
-  text-align: left;
-  padding: var(--space-2) var(--space-3);
   background: transparent;
   border: none;
-  border-radius: var(--radius-sm);
+  text-align: left;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--type-small-size);
   color: var(--color-fg-default);
   cursor: pointer;
+  border-radius: var(--radius-sm);
 }
-.header-menu-item:hover { background: var(--color-bg-muted); }
+.header-menu-item:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-fg-strong);
+}
+.header-menu-item:focus-visible {
+  outline: var(--border-rule) solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Skip-link — small uppercase pill on focus */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-accent-fg);
+  color: var(--color-fg-on-accent);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  border-radius: var(--radius-sm);
+  z-index: 1000;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: var(--space-2);
+}
