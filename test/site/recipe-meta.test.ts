@@ -38,4 +38,22 @@ describe("recipe-meta component", () => {
     expect(options).toContain("1 — White");
     expect(options).toContain("2 — Whole Wheat");
   });
+  it("dispatches set_course when user picks a course", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, minimalDb);
+    const select = parent.querySelector("select.recipe-meta-course") as HTMLSelectElement;
+    select.value = "white";
+    select.dispatchEvent(new Event("change"));
+    expect(store.getState().course).toBe("white");
+  });
+  it("dispatches set_course(undefined) when '— none —' is picked", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "white" });
+    mount(parent, store, minimalDb);
+    const select = parent.querySelector("select.recipe-meta-course") as HTMLSelectElement;
+    select.value = "";
+    select.dispatchEvent(new Event("change"));
+    expect("course" in store.getState()).toBe(false);
+  });
 });
