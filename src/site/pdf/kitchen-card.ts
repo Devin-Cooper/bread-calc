@@ -4,7 +4,7 @@ import { computeRecipe, inferRole } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { effectiveRecipe } from "../effective-recipe.js";
 import { sortItemsForPrint } from "./load-order.js";
-import { recommendCourse } from "../../core/recommend.js";
+import { resolveCourse } from "../../core/recommend.js";
 
 const PRINT_ROLE_KEY = "bread-calc:print-show-role";
 
@@ -74,6 +74,11 @@ function formatLoafSize(s: string): string {
   return s.replace(/lb$/, " lb");
 }
 
+// The card cannot visually distinguish "user explicitly picked Medium"
+// from "course defaulted to Medium because crust_shade was unset". The two
+// produce identical text. Acceptable trade-off given limited print real
+// estate; signaling defaults with an asterisk would clutter the card
+// without solving the underlying ambiguity. (Documented in spec D §10.)
 function resolveCrustLabel(recipe: Recipe, course: BBPDC20Course): string | null {
   if (recipe.crust_shade) return capitalize(recipe.crust_shade);
   if (course.crust_shades.length === 0) return null;
@@ -125,28 +130,9 @@ function renderNotesBlock(recipe: Recipe): string | null {
 }
 
 function renderCourseBlock(recipe: Recipe, db: Database): string | null {
-  let cardCourse: BBPDC20Course | null = null;
-  let courseSource: "user" | "recommended" | null = null;
-
-  if (recipe.course !== undefined) {
-    const found = db.courses.find((c) => c.id === recipe.course);
-    if (found) {
-      cardCourse = found;
-      courseSource = "user";
-    }
-  } else {
-    const recs = recommendCourse(recipe, db);
-    const top = recs.find((r) => r.eligible);
-    if (top) {
-      const found = db.courses.find((c) => c.id === top.course_id);
-      if (found) {
-        cardCourse = found;
-        courseSource = "recommended";
-      }
-    }
-  }
-
-  if (cardCourse === null || courseSource === null) return null;
+  const resolved = resolveCourse(recipe, db);
+  if (!resolved) return null;
+  const { course: cardCourse, source: courseSource } = resolved;
 
   const prefix = courseSource === "recommended" ? "Recommended: " : "";
   const heading = `${prefix}${cardCourse.course_number} — ${escapeHtml(cardCourse.name)}`;
