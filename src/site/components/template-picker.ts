@@ -43,6 +43,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let isOpen = false;
   let filter = "";
   let lastBaselineHash = hashRecipe(store.getState());
+  let activeOptionIndex = -1;
 
   // Build the static trigger button once; update aria-expanded in-place.
   const trigger = document.createElement("button");
@@ -55,6 +56,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
 
   trigger.addEventListener("click", () => {
     isOpen = !isOpen;
+    if (isOpen) activeOptionIndex = -1;
     render();
     if (isOpen) parent.querySelector<HTMLInputElement>(".template-filter")?.focus();
   });
@@ -89,9 +91,45 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     const filterInput = popover.querySelector<HTMLInputElement>(".template-filter");
     filterInput?.addEventListener("input", (e) => {
       filter = (e.target as HTMLInputElement).value;
+      activeOptionIndex = -1;
+      parent.querySelector<HTMLElement>(".template-list")?.setAttribute("aria-activedescendant", "");
       render();
       const restored = parent.querySelector<HTMLInputElement>(".template-filter");
       if (restored) { restored.focus(); restored.setSelectionRange(filter.length, filter.length); }
+    });
+
+    filterInput?.addEventListener("keydown", (e) => {
+      const visible = parent.querySelectorAll<HTMLElement>("[role='option']");
+      if (visible.length === 0) return;
+      const list = parent.querySelector<HTMLElement>(".template-list");
+      const setActive = (i: number) => {
+        activeOptionIndex = i;
+        list?.setAttribute("aria-activedescendant", visible[i]!.id);
+      };
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActive(activeOptionIndex + 1 >= visible.length ? 0 : activeOptionIndex + 1);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActive(activeOptionIndex <= 0 ? visible.length - 1 : activeOptionIndex - 1);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        setActive(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        setActive(visible.length - 1);
+      } else if (e.key === "Enter" && activeOptionIndex >= 0) {
+        e.preventDefault();
+        visible[activeOptionIndex]!.click();
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        isOpen = false; filter = ""; activeOptionIndex = -1;
+        render();
+        parent.querySelector<HTMLButtonElement>(".template-trigger")?.focus();
+      } else if (e.key === "Tab") {
+        isOpen = false; filter = ""; activeOptionIndex = -1;
+        render();
+      }
     });
 
     parent.querySelectorAll<HTMLElement>("[role='option']").forEach((opt) => {
@@ -155,13 +193,18 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
   }
 
   function renderGroups(templates: TemplateEntry[]): string {
-    const byCourse = new Map<string, TemplateEntry[]>();
+    // Build contiguous runs so insertion order is preserved (same course appearing
+    // non-consecutively starts a fresh group rather than merging into the earlier one).
+    const runs: Array<{ course: string; group: TemplateEntry[] }> = [];
     for (const t of templates) {
-      const arr = byCourse.get(t.course) ?? [];
-      arr.push(t);
-      byCourse.set(t.course, arr);
+      const last = runs[runs.length - 1];
+      if (last && last.course === t.course) {
+        last.group.push(t);
+      } else {
+        runs.push({ course: t.course, group: [t] });
+      }
     }
-    return Array.from(byCourse.entries()).map(([course, group]) => `
+    return runs.map(({ course, group }) => `
       <ul role="group" aria-label="${escapeHtml(course)}" class="template-group">
         <li class="template-group-label" aria-hidden="true">${escapeHtml(course)}</li>
         ${group.map((t) => `

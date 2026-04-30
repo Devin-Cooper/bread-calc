@@ -148,4 +148,30 @@ describe("template-picker", () => {
     (root.querySelectorAll("[role='option']")[1] as HTMLElement).click();
     expect(document.querySelector("#template-confirm")).toBeNull();
   });
+
+  // ===== Task 3.6: keyboard nav =====
+  it("ArrowDown moves active descendant; Enter selects the active option", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    const filter = root.querySelector(".template-filter") as HTMLInputElement;
+    filter.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    const list = root.querySelector(".template-list") as HTMLElement;
+    expect(list.getAttribute("aria-activedescendant")).toBe("tpl-basic_white_bread");
+    filter.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    expect(list.getAttribute("aria-activedescendant")).toBe("tpl-french_bread");
+    filter.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(store.getState().name).toBe("French Bread");
+  });
+
+  it("Escape closes the picker", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    const filter = root.querySelector(".template-filter") as HTMLInputElement;
+    filter.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+    expect(root.querySelector(".template-popover")).toBeNull();
+  });
 });
