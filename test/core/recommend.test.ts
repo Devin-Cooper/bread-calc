@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { recommendCourse } from "../../src/core/recommend.js";
+import { recommendCourse, resolveCourse } from "../../src/core/recommend.js";
 import type { CourseRecommendation } from "../../src/core/recommend.js";
 import type { BBPDC20Course, Database, Defaults, Flour, Ingredient, Machine, Recipe } from "../../src/core/types.js";
 import ingredientsFile from "../../src/data/ingredients.json" with { type: "json" };
@@ -325,5 +325,149 @@ describe("recommendCourse — edge cases", () => {
       expect(gf.reasons[i]!.verdict).toBe("neutral");
       expect(gf.reasons[i]!.evidence).toBe("Not evaluated — eligibility failed");
     }
+  });
+});
+
+describe("recommendCourse — sugar-free dietary gate", () => {
+  it("recipe with sugar fails Course 7 Sugar Free", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "sugar_granulated", grams: 30 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const sf = recOf("sugar_free", recs);
+    expect(sf!.eligible).toBe(false);
+  });
+
+  it("sugar-free recipe (no sugar items) passes Course 7 Sugar Free", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 320 },
+        { uid: "u_test_a01d", ingredient_id: "yeast_instant", grams: 6 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const sf = recOf("sugar_free", recs);
+    expect(sf!.eligible).toBe(true);
+  });
+});
+
+describe("recommendCourse — lexicographic comparator (synthetic-stub tier breaks)", () => {
+  // These tests construct stub courses with carefully chosen tier scores so
+  // that the lex-sort comparator's per-tier behavior is exercised directly,
+  // not just via the catalog's incidental scores.
+  function makeStubCourse(partial: Partial<BBPDC20Course> & Pick<BBPDC20Course, "id" | "course_number" | "name">): BBPDC20Course {
+    return {
+      total_minutes: 200,
+      stages: [],
+      bakes: true,
+      loaf_sizes: ["1.5lb", "2lb"],
+      crust_shades: ["medium"],
+      inclusions_beep: false,
+      dietary_modes: [],
+      recommended_for: [],
+      yeast_compatibility: ["instant"],
+      confidence: "verified",
+      sources: [],
+      ...partial,
+    };
+  }
+
+  it("tier 1 (confidence) decides ranking when no other tier differs", () => {
+    const stubDb: Database = {
+      ...db,
+      courses: [
+        makeStubCourse({ id: "stub_a", course_number: 99, name: "Stub A", confidence: "community" }),
+        makeStubCourse({ id: "stub_b", course_number: 100, name: "Stub B", confidence: "verified" }),
+      ],
+    };
+    const recipe: Recipe = { schema_version: "2.0", items: [{ uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 }] };
+    const recs = recommendCourse(recipe, stubDb);
+    // Verified beats community — stub_b ranks first despite higher course_number.
+    expect(recs[0]!.course_id).toBe("stub_b");
+    expect(recs[1]!.course_id).toBe("stub_a");
+  });
+
+  it("tier 2 (hydration) breaks tier-1 ties", () => {
+    const stubDb: Database = {
+      ...db,
+      courses: [
+        makeStubCourse({ id: "stub_close", course_number: 99, name: "Stub Close", hydration_range: { min_pct: 55, max_pct: 65, ideal_pct: 60 } }),
+        makeStubCourse({ id: "stub_far",   course_number: 100, name: "Stub Far",   hydration_range: { min_pct: 75, max_pct: 85, ideal_pct: 80 } }),
+      ],
+    };
+    // 320g water / 500g bread_flour = 64% hydration. Closer to stub_close (60%) than stub_far (80%).
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 320 },
+      ],
+    };
+    const recs = recommendCourse(recipe, stubDb);
+    expect(recs[0]!.course_id).toBe("stub_close");
+  });
+
+  it("course_number breaks all-tiers-equal ties (stable, deterministic)", () => {
+    const stubDb: Database = {
+      ...db,
+      courses: [
+        makeStubCourse({ id: "stub_z", course_number: 100, name: "Stub Z" }),
+        makeStubCourse({ id: "stub_a", course_number: 99, name: "Stub A" }),
+      ],
+    };
+    const recipe: Recipe = { schema_version: "2.0", items: [] };
+    const recs = recommendCourse(recipe, stubDb);
+    // All scores tie → course_number ascending → stub_a (99) before stub_z (100).
+    expect(recs[0]!.course_id).toBe("stub_a");
+    expect(recs[1]!.course_id).toBe("stub_z");
+  });
+});
+
+describe("resolveCourse", () => {
+  it("returns user pick with source='user' when recipe.course is set + valid", () => {
+    const recipe: Recipe = { schema_version: "2.0", course: "white", items: [] };
+    const r = resolveCourse(recipe, db);
+    expect(r).not.toBeNull();
+    expect(r!.course.id).toBe("white");
+    expect(r!.source).toBe("user");
+  });
+
+  it("returns null when recipe.course is set to unknown id (no fallback)", () => {
+    const recipe: Recipe = { schema_version: "2.0", course: "made_up", items: [] };
+    expect(resolveCourse(recipe, db)).toBeNull();
+  });
+
+  it("returns top recommendation with source='recommended' when recipe.course is unset", () => {
+    const recipe: Recipe = { schema_version: "2.0", items: [{ uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 }] };
+    const r = resolveCourse(recipe, db);
+    expect(r).not.toBeNull();
+    expect(r!.source).toBe("recommended");
+  });
+
+  it("returns null when there are no eligible courses", () => {
+    const stubDb: Database = { ...db, courses: [] };
+    const recipe: Recipe = { schema_version: "2.0", items: [] };
+    expect(resolveCourse(recipe, stubDb)).toBeNull();
+  });
+
+  it("does NOT apply eligibility check on user-set courses (renders verbatim)", () => {
+    // Recipe is wheat-based; user explicitly chose Gluten Free. resolveCourse
+    // returns the user pick anyway. Eligibility violations surface in warnings,
+    // not here.
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      course: "gluten_free",
+      items: [{ uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 }],
+    };
+    const r = resolveCourse(recipe, db);
+    expect(r).not.toBeNull();
+    expect(r!.course.id).toBe("gluten_free");
+    expect(r!.source).toBe("user");
   });
 });
