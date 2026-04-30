@@ -193,4 +193,25 @@ describe("recipe-meta component", () => {
     expect(active?.selectionStart).toBe(2);
     document.body.removeChild(parent);
   });
+
+  describe("recommendation strip", () => {
+    it("State A: no course set — renders 'Recommended: <top course>' with [Use this] button", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe });
+      mount(parent, store, minimalDb);
+      const strip = parent.querySelector(".recommendation-strip") as HTMLElement | null;
+      expect(strip).not.toBeNull();
+      expect(strip!.textContent).toContain("Recommended: White");
+      const useBtn = parent.querySelector(".rec-use-this") as HTMLButtonElement | null;
+      expect(useBtn).not.toBeNull();
+    });
+
+    it("[Use this] dispatches set_course with the top recommendation's id", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe });
+      mount(parent, store, minimalDb);
+      (parent.querySelector(".rec-use-this") as HTMLButtonElement).click();
+      expect(store.getState().course).toBe("white");
+    });
+  });
 });
