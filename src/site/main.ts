@@ -113,7 +113,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
 
   mountTemplatePicker(document.querySelector("#template-picker") as HTMLElement, store, db);
   mountHeadline(document.querySelector("#recipe-headline") as HTMLElement, store);
-  mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
+  mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store, db);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
   mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
   mountSnapshot(document.querySelector("#snapshot-card") as HTMLElement, store, db, {
