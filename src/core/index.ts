@@ -13,5 +13,7 @@ export type {
   Recipe, RecipeItem, ComputedRecipe, Ingredient, Flour, Database, Defaults, Machine,
   Warning, WarningCode, IngredientFlag, Role, Category, ZoneId, HydrationZone, BBPDC20Recipe,
   RecipeValidationResult,
+  ExplainNode, ExplainTree,
+  ConstantNode, ProjectFieldNode, SumNode, WeightedSumNode, ProductNode, RatioNode, ScaleNode, ProjectFromTreeNode,
 } from "./types.js";
 export { RecipeValidationError } from "./types.js";
