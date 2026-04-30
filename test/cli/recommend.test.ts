@@ -14,14 +14,19 @@ const sampleRecipe = JSON.stringify({
 });
 
 describe("cli recommend", () => {
-  it("text mode prints a table with at least 16 lines (header + rule + 14 rows)", () => {
+  it("text mode prints the tree-predictor header", () => {
     const r = run(["recommend", "-", "--no-color"], sampleRecipe);
     expect(r.code).toBe(0);
-    const lines = r.stdout.split("\n").filter((l) => l.trim().length > 0);
-    expect(lines.length).toBeGreaterThanOrEqual(16);
+    expect(r.stdout).toContain("Recommended courses (tree-predictor engine):");
   });
 
-  it("--json wraps in _meta/payload envelope", () => {
+  it("text mode prints at least the top eligible course with rank #1", () => {
+    const r = run(["recommend", "-", "--no-color"], sampleRecipe);
+    expect(r.code).toBe(0);
+    expect(r.stdout).toMatch(/#1\./);
+  });
+
+  it("--json wraps in _meta/payload envelope with 14 recommendations", () => {
     const r = run(["recommend", "-", "--json"], sampleRecipe);
     expect(r.code).toBe(0);
     const parsed = JSON.parse(r.stdout);
@@ -30,12 +35,11 @@ describe("cli recommend", () => {
     expect(parsed.payload.recommendations.length).toBe(14);
   });
 
-  it("--limit=3 truncates to 3 rows", () => {
+  it("--limit=3 truncates the eligible list to 3 entries in text mode", () => {
     const r = run(["recommend", "-", "--limit=3", "--no-color"], sampleRecipe);
     expect(r.code).toBe(0);
-    const lines = r.stdout.split("\n").filter((l) => l.trim().length > 0);
-    // header + rule + 3 = 5
-    expect(lines.length).toBe(5);
+    const rankMatches = r.stdout.match(/#\d+\./g) ?? [];
+    expect(rankMatches.length).toBe(3);
   });
 
   it("--intent=dough flips eligibility (Dough eligible, White ineligible)", () => {
@@ -45,6 +49,29 @@ describe("cli recommend", () => {
     const white = parsed.payload.recommendations.find((x: { course_id: string }) => x.course_id === "white");
     expect(dough.eligible).toBe(true);
     expect(white.eligible).toBe(false);
+  });
+
+  it("--dietary-intent=sugar_free routes a sweetenerless recipe to Sugar Free", () => {
+    const sweetenerlessRecipe = JSON.stringify({
+      schema_version: "2.0",
+      items: [
+        { uid: "u_a", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_b", ingredient_id: "yeast_instant", grams: 6 },
+      ],
+    });
+    const r = run(["recommend", "-", "--json", "--dietary-intent=sugar_free"], sweetenerlessRecipe);
+    expect(r.code).toBe(0);
+    const parsed = JSON.parse(r.stdout);
+    const top = parsed.payload.recommendations.find((x: { rank: number | null }) => x.rank === 1);
+    expect(top?.course_id).toBe("sugar_free");
+  });
+
+  it("--time-intent=rapid routes a basic white recipe to Rapid White", () => {
+    const r = run(["recommend", "-", "--json", "--time-intent=rapid"], sampleRecipe);
+    expect(r.code).toBe(0);
+    const parsed = JSON.parse(r.stdout);
+    const top = parsed.payload.recommendations.find((x: { rank: number | null }) => x.rank === 1);
+    expect(top?.course_id).toBe("rapid_white");
   });
 
   it("exit code 0 when at least one course is eligible", () => {

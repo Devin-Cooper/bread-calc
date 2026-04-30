@@ -1,60 +1,52 @@
-import type { CourseRecommendation } from "../../core/recommend.js";
+import type { CourseRecommendation, RecommendationReason } from "../../core/recommend.js";
 import type { Database } from "../../core/types.js";
 
-interface FormatOpts {
+export interface FormatRecommendOpts {
   readonly limit?: number;
   readonly noColor?: boolean;
-}
-
-const ANSI_GREEN = "\x1b[32m";
-const ANSI_RED = "\x1b[31m";
-const ANSI_DIM = "\x1b[2m";
-const ANSI_RESET = "\x1b[0m";
-
-function color(text: string, code: string, noColor: boolean): string {
-  return noColor ? text : `${code}${text}${ANSI_RESET}`;
 }
 
 export function formatRecommend(
   recs: readonly CourseRecommendation[],
   db: Database,
-  opts: FormatOpts = {},
+  opts?: FormatRecommendOpts,
 ): string {
-  const noColor = opts.noColor ?? false;
-  const slice = opts.limit !== undefined ? recs.slice(0, opts.limit) : recs;
+  const limit = opts?.limit ?? recs.length;
+  const courseNameOf = (id: string): string => db.courses.find((c) => c.id === id)?.name ?? id;
 
-  const courseNameById = new Map(db.courses.map((c) => [c.id, c.name]));
+  const eligibleRecs = recs.filter((r) => r.eligible).slice(0, limit);
+  const ineligibleRecs = recs.filter((r) => !r.eligible);
 
-  const rows = slice.map((rec) => {
-    const courseName = courseNameById.get(rec.course_id) ?? rec.course_id;
-    const rankStr = rec.rank === null ? "—" : String(rec.rank);
-    const eligibility = rec.eligible
-      ? color("eligible", ANSI_GREEN, noColor)
-      : color("ineligible", ANSI_RED, noColor);
-    let topReason = "—";
-    if (rec.eligible) {
-      const match = rec.reasons.find((r) => r.verdict === "match");
-      topReason = match?.evidence ?? rec.reasons.find((r) => r.verdict === "neutral")?.evidence ?? "—";
-    } else {
-      topReason = rec.reasons.find((r) => r.verdict === "mismatch")?.evidence ?? "—";
+  const lines: string[] = [];
+  lines.push("Recommended courses (tree-predictor engine):");
+  lines.push("─".repeat(60));
+
+  for (const r of eligibleRecs) {
+    const name = courseNameOf(r.course_id);
+    const branch = r.reasons.find(
+      (reason): reason is Extract<RecommendationReason, { kind: "tree_branch" }> => reason.kind === "tree_branch",
+    );
+    const evidence = branch?.evidence ?? "";
+    lines.push(`  #${r.rank}. ${name} (${r.course_id})`);
+    if (evidence) lines.push(`      ${evidence}`);
+    if (r.rank === 1) {
+      const facts = r.reasons.filter(
+        (reason): reason is Extract<RecommendationReason, { kind: "predicate_fact" }> => reason.kind === "predicate_fact",
+      );
+      if (facts.length > 0) {
+        const factText = facts.map((f) => `${f.fact}=${f.value}`).join(", ");
+        lines.push(`      Facts: ${factText}`);
+      }
     }
-    return { rankStr, courseName, eligibility, topReason };
-  });
+  }
 
-  const colW = {
-    rank: Math.max(4, ...rows.map((r) => r.rankStr.length)),
-    course: Math.max(6, ...rows.map((r) => r.courseName.length)),
-    eligibility: Math.max(8, ...rows.map((r) => r.eligibility.replace(/\x1b\[\d+m/g, "").length)),
-  };
+  if (ineligibleRecs.length > 0) {
+    lines.push("");
+    lines.push("Ineligible:");
+    for (const r of ineligibleRecs) {
+      lines.push(`  - ${courseNameOf(r.course_id)} (${r.course_id})`);
+    }
+  }
 
-  const header = `${"Rank".padEnd(colW.rank)}  ${"Course".padEnd(colW.course)}  ${"Verdict".padEnd(colW.eligibility)}  Top reason`;
-  const rule = color("-".repeat(header.length), ANSI_DIM, noColor);
-
-  const body = rows.map((r) => {
-    const visibleEligibility = r.eligibility.replace(/\x1b\[\d+m/g, "");
-    const padding = " ".repeat(Math.max(0, colW.eligibility - visibleEligibility.length));
-    return `${r.rankStr.padEnd(colW.rank)}  ${r.courseName.padEnd(colW.course)}  ${r.eligibility}${padding}  ${r.topReason}`;
-  });
-
-  return [header, rule, ...body].join("\n");
+  return lines.join("\n");
 }

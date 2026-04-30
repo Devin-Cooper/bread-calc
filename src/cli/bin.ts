@@ -53,7 +53,7 @@ Usage:
   bread-calc lookup    <query> [--limit=N] [--json]
   bread-calc apply     <recipe.json> [<fix.json>] [--fix=- | --fix-id=CODE.N] [--out=...]
   bread-calc verify    <claim.json> [--json]
-  bread-calc recommend <recipe.json> [--intent=bake|dough] [--limit=N] [--json]
+  bread-calc recommend <recipe.json> [--intent=bake|dough] [--dietary-intent=salt_free|sugar_free|vegan|gluten_free] [--time-intent=rapid] [--limit=N] [--json]
   bread-calc --version
   bread-calc --help
 
@@ -94,7 +94,9 @@ const ALL_OPTIONS = {
   fix:        { type: "string"  as const },
   "fix-id":   { type: "string"  as const },
   // recommend
-  intent:     { type: "string"  as const },
+  intent:            { type: "string"  as const },
+  "dietary-intent":  { type: "string"  as const },
+  "time-intent":     { type: "string"  as const },
 };
 
 // Per-subcommand allow-list of flags. parseArgs is strict at the syntax level
@@ -115,7 +117,7 @@ const ALLOWED: Record<string, ReadonlyArray<keyof typeof ALL_OPTIONS>> = {
   lookup:     ["limit", "json"],
   apply:      ["fix", "fix-id", "out", "json"],
   verify:     ["json"],
-  recommend:  ["intent", "limit", "json", "no-color"],
+  recommend:  ["intent", "dietary-intent", "time-intent", "limit", "json", "no-color"],
 };
 
 const SUBCOMMANDS = Object.keys(ALLOWED);
@@ -529,16 +531,21 @@ function dispatchVerify(positionals: string[]) {
 function dispatchRecommend(positionals: string[]) {
   const path = positionals[1];
   if (!path) {
-    process.stderr.write("usage: bread-calc recommend <recipe.json> [--intent=bake|dough] [--limit=N] [--json]\n");
+    process.stderr.write("usage: bread-calc recommend <recipe.json> [--intent=bake|dough] [--dietary-intent=salt_free|sugar_free|vegan|gluten_free] [--time-intent=rapid] [--limit=N] [--json]\n");
     process.exit(64);
   }
   const recipeText = path === "-" ? readFileSync(0, "utf8") : readFileSync(path, "utf8");
   const recipe = JSON.parse(recipeText) as Recipe;
-  const intentFlag = values["intent"];
-  const intent: "bake" | "dough" | undefined =
-    intentFlag === "bake" ? "bake" : intentFlag === "dough" ? "dough" : undefined;
+  const outputIntent = values["intent"] as "bake" | "dough" | undefined;
+  const dietaryIntent = values["dietary-intent"] as "salt_free" | "sugar_free" | "vegan" | "gluten_free" | undefined;
+  const timeIntent = values["time-intent"] as "rapid" | undefined;
+  const recipeIntent = (outputIntent || dietaryIntent || timeIntent) ? {
+    ...(outputIntent ? { output: outputIntent } : {}),
+    ...(dietaryIntent ? { dietary: dietaryIntent } : {}),
+    ...(timeIntent ? { time: timeIntent } : {}),
+  } : undefined;
   const limit = values["limit"] !== undefined ? parseInt(String(values["limit"]), 10) : undefined;
-  const result = recommend(recipe, db, intent !== undefined ? { intent } : undefined);
+  const result = recommend(recipe, db, recipeIntent ? { intent: recipeIntent } : undefined);
   // Exit code 4 requires ALL 14 courses ineligible. With the current catalog,
   // every recipe finds at least one passing course (most catalog rows have
   // empty dietary_modes, so dietary never excludes them all). The exit-4
