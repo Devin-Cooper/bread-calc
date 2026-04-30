@@ -342,7 +342,16 @@
         "crust_shade": { "type": "string", "enum": ["light", "medium", "dark"] },
         "loaf_size": { "type": "string", "enum": ["1lb", "1.5lb", "2lb"] },
         "extended_notes": { "type": "string" },
-        "bake_hints": { "type": "array", "items": { "type": "string" } }
+        "bake_hints": { "type": "array", "items": { "type": "string" } },
+        "intent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "dietary": { "type": "string", "enum": ["salt_free", "sugar_free", "vegan", "gluten_free"] },
+            "time": { "type": "string", "enum": ["rapid"] },
+            "output": { "type": "string", "enum": ["bake", "dough"] }
+          }
+        }
       },
       "additionalProperties": true,
       "allOf": [

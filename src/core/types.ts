@@ -153,6 +153,16 @@ export interface RecipeItem {
 export type CrustShade = "light" | "medium" | "dark";
 export type LoafSize = "1lb" | "1.5lb" | "2lb";
 
+export type DietaryIntent = "salt_free" | "sugar_free" | "vegan" | "gluten_free";
+export type TimeIntent = "rapid";
+export type OutputIntent = "bake" | "dough";
+
+export interface RecipeIntent {
+  readonly dietary?: DietaryIntent;
+  readonly time?: TimeIntent;
+  readonly output?: OutputIntent;
+}
+
 export interface Recipe {
   schema_version: "2.0";
   name?: string;
@@ -170,6 +180,7 @@ export interface Recipe {
   loaf_size?: LoafSize;
   extended_notes?: string;
   bake_hints?: string[];
+  intent?: RecipeIntent;
 }
 
 export type WarningCode =
