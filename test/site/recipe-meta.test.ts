@@ -56,4 +56,24 @@ describe("recipe-meta component", () => {
     select.dispatchEvent(new Event("change"));
     expect("course" in store.getState()).toBe(false);
   });
+  it("renders crust shade buttons (light/medium/dark)", () => {
+    const parent = document.createElement("div");
+    mount(parent, createStore({ ...baseRecipe }), minimalDb);
+    const buttons = parent.querySelectorAll("[data-shade]");
+    expect(buttons.length).toBe(3);
+  });
+  it("dispatches set_crust_shade when a button is clicked", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, minimalDb);
+    (parent.querySelector('[data-shade="dark"]') as HTMLButtonElement).click();
+    expect(store.getState().crust_shade).toBe("dark");
+  });
+  it("clear button resets crust_shade to undefined", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, crust_shade: "dark" });
+    mount(parent, store, minimalDb);
+    (parent.querySelector('[data-clear="crust_shade"]') as HTMLButtonElement).click();
+    expect("crust_shade" in store.getState()).toBe(false);
+  });
 });
