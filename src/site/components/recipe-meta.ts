@@ -275,10 +275,21 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       b.addEventListener("click", () => {
         const v = b.dataset.size as "1lb"|"1.5lb"|"2lb";
         store.dispatch({ type: "set_loaf_size", loaf_size: v });
+        // Also push target_loaf_g so the solver re-runs at the new weight.
+        // Standard pound→gram conversions rounded to bread-machine convention:
+        //   1lb → 454g, 1.5lb → 680g, 2lb → 907g.
+        const SIZE_TO_GRAMS: Record<"1lb"|"1.5lb"|"2lb", number> = {
+          "1lb":   454,
+          "1.5lb": 680,
+          "2lb":   907,
+        };
+        store.dispatch({ type: "set_target_loaf_g", grams: SIZE_TO_GRAMS[v] });
       });
     });
     (parent.querySelector('[data-clear="loaf_size"]') as HTMLButtonElement).addEventListener("click", () => {
       store.dispatch({ type: "set_loaf_size", loaf_size: undefined });
+      // Also clear target_loaf_g so the recipe goes back to its baseline.
+      store.dispatch({ type: "set_target_loaf_g", grams: undefined });
     });
 
     parent.querySelectorAll<HTMLButtonElement>("[data-output]").forEach((b) => {
