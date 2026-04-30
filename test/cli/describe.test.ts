@@ -8,7 +8,7 @@ describe("bread-calc describe", () => {
     const out = execFileSync("node", [BIN, "describe", "--json"], { encoding: "utf8" });
     const env = JSON.parse(out);
     expect(env._meta.subcommand).toBe("describe");
-    expect(env.payload.warnings.length).toBe(21);
+    expect(env.payload.warnings.length).toBe(24);
     expect(env.payload.fix_kinds.length).toBe(8);
   });
 
