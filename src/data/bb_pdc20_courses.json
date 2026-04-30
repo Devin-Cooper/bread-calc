@@ -1,0 +1,7 @@
+{
+  "schema_version": "1.0",
+  "_attribution": "Course timings and capabilities researched from public Zojirushi BB-PDC20 documentation and community sources. Machine-specification facts are not copyrightable; this notice is a courtesy.",
+  "_methodology": "Each entry's 'confidence' field reflects source authority: 'verified' = Zojirushi-published spec; 'inferred' = derived from the manual's recipe instructions (e.g., add-ins beep timing); 'community' = Fresh Loaf / Reddit / bread-machine forum reports triangulated across at least two independent sources. The 'sources' array on each entry lists URLs (manual references where available; community thread URLs otherwise). Stage-level temperature targets are typically not published; entries that include 'target_temp_c' are inferred from heated-element duty cycles in community oscilloscope traces and are flagged as 'community' or 'inferred' confidence accordingly. Single-source community claims do not populate typed inferred-bucket fields (hydration_range, whole_wheat_max_pct); they land as a free-form sentence in the row's 'notes' field with the source URL inlined parenthetically.",
+  "machine_id": "zojirushi_bb_pdc20",
+  "entries": []
+}
