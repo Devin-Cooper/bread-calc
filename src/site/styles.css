@@ -3,6 +3,7 @@
 @import url("./styles/header.css");
 @import url("./styles/tip-strip.css");
 @import url("./styles/recipe-headline.css");
+@import url("./styles/tooltip.css");
 
 * { box-sizing: border-box; }
 
