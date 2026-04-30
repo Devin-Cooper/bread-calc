@@ -10,16 +10,16 @@
   "types": "./dist/lib/core/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/lib/index.js",
-      "types": "./dist/lib/core/index.d.ts"
+      "types": "./dist/lib/core/index.d.ts",
+      "import": "./dist/lib/index.js"
     },
     "./agent": {
-      "import": "./dist/lib/agent.js",
-      "types": "./dist/lib/agent/index.d.ts"
+      "types": "./dist/lib/agent/index.d.ts",
+      "import": "./dist/lib/agent.js"
     },
     "./data": {
-      "import": "./dist/lib/data/index.js",
-      "types": "./dist/lib/data/index.d.ts"
+      "types": "./dist/lib/data/index.d.ts",
+      "import": "./dist/lib/data/index.js"
     },
     "./schema": "./dist/lib/schema.json"
   },
