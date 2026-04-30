@@ -42,4 +42,112 @@ describe("recommendCourse — dietary gate", () => {
     expect(white).toBeDefined();
     expect(white!.eligible).toBe(true);
   });
+
+  it("salt-free recipe (no salt items) passes Course 6 Salt Free", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 320 },
+        { uid: "u_test_a01d", ingredient_id: "yeast_instant", grams: 6 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const sf = recOf("salt_free", recs);
+    expect(sf!.eligible).toBe(true);
+  });
+
+  it("recipe with salt fails Course 6 Salt Free", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "salt_table", grams: 9 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const sf = recOf("salt_free", recs);
+    expect(sf!.eligible).toBe(false);
+  });
+
+  it("vegan recipe (no eggs/dairy) passes Course 8 Vegan", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 320 },
+        { uid: "u_test_a01d", ingredient_id: "almond_milk_unsweetened", grams: 100 },
+        { uid: "u_test_a01e", ingredient_id: "olive_oil", grams: 24 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const v = recOf("vegan", recs);
+    expect(v!.eligible).toBe(true);
+  });
+
+  it("recipe with milk fails Course 8 Vegan", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "milk_whole", grams: 200 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const v = recOf("vegan", recs);
+    expect(v!.eligible).toBe(false);
+  });
+
+  it("recipe with butter fails Course 8 Vegan (dairy fat)", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "butter_unsalted", grams: 28 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const v = recOf("vegan", recs);
+    expect(v!.eligible).toBe(false);
+  });
+
+  it("recipe with aquafaba (vegan egg substitute) does NOT block Course 8 Vegan", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "aquafaba", grams: 50 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const v = recOf("vegan", recs);
+    expect(v!.eligible).toBe(true);
+  });
+
+  it("non-vegan no-egg recipe (milk + butter) fails Course 8 Vegan", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "milk_whole", grams: 200 },
+        { uid: "u_test_a01d", ingredient_id: "butter_unsalted", grams: 28 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const v = recOf("vegan", recs);
+    expect(v!.eligible).toBe(false);
+  });
+
+  it("GF recipe (only gf_flour_blend) passes Course 5 Gluten Free", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "gf_flour_blend", grams: 400 },
+        { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 320 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const gf = recOf("gluten_free", recs);
+    expect(gf!.eligible).toBe(true);
+  });
 });
