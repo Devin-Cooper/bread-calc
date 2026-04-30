@@ -1,5 +1,5 @@
 import type { Store } from "../state.js";
-import type { Database } from "../../core/index.js";
+import type { Database, BBPDC20Course } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { recommendCourse } from "../../core/recommend.js";
 import type { CourseRecommendation, TreeBranch, DietaryIntent, OutputIntent, TimeIntent } from "../../core/recommend.js";
@@ -235,6 +235,20 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       });
     }
 
+    parent.querySelectorAll<HTMLButtonElement>(".rec-row-expand").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const expanded = btn.getAttribute("aria-expanded") === "true";
+        const detailId = btn.getAttribute("aria-controls");
+        if (!detailId) return;
+        const detail = parent.querySelector(`#${detailId}`) as HTMLElement | null;
+        if (!detail) return;
+        btn.setAttribute("aria-expanded", expanded ? "false" : "true");
+        btn.textContent = expanded ? "▸" : "▾";
+        if (expanded) detail.setAttribute("hidden", "");
+        else detail.removeAttribute("hidden");
+      });
+    });
+
     const courseSelect = parent.querySelector(".recipe-meta-course") as HTMLSelectElement;
     courseSelect.addEventListener("change", () => {
       const v = courseSelect.value;
@@ -347,18 +361,81 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
   render();
 }
 
+function formatTotalMinutes(minutes: number): string {
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return `${h}:${m.toString().padStart(2, "0")}`;
+}
+
+function courseFingerprint(course: BBPDC20Course): string[] {
+  const lines: string[] = [];
+  if (course.hydration_range) {
+    const idealText = course.hydration_range.ideal_pct !== undefined
+      ? ` (ideal ${course.hydration_range.ideal_pct}%)`
+      : "";
+    lines.push(`Hydration: ${course.hydration_range.min_pct}–${course.hydration_range.max_pct}%${idealText}`);
+  }
+  if (course.whole_wheat_max_pct !== undefined) {
+    lines.push(`Whole-wheat: up to ${course.whole_wheat_max_pct}%`);
+  }
+  if (course.yeast_compatibility.length > 0) {
+    const yeastNames = course.yeast_compatibility.map((y) => y === "active_dry" ? "active dry" : y);
+    lines.push(`Yeast: ${yeastNames.join(", ")}`);
+  }
+  if (course.loaf_sizes.length > 0) {
+    lines.push(`Loaf sizes: ${course.loaf_sizes.join(", ")}`);
+  }
+  if (course.crust_shades.length > 0) {
+    const crustText = course.crust_shades.length === 1
+      ? `fixed ${course.crust_shades[0]}`
+      : course.crust_shades.join(", ");
+    lines.push(`Crust: ${crustText}`);
+  }
+  if (course.dietary_modes.length > 0) {
+    lines.push(`Dietary: ${course.dietary_modes.join(", ").replace(/_/g, "-")}`);
+  }
+  lines.push(`Total time: ${formatTotalMinutes(course.total_minutes)} (medium crust)`);
+  if (!course.bakes) {
+    if (course.id === "dough" || course.id === "sourdough_starter") {
+      lines.push("No bake — produces dough only");
+    } else if (course.id === "jam") {
+      lines.push("No bake — cooks fruit + sugar");
+    }
+  }
+  return lines;
+}
+
 function renderSeeAllTable(recs: readonly CourseRecommendation[], db: Database): string {
   const courseName = (id: string) => db.courses.find((c) => c.id === id)?.name ?? id;
+  const courseById = (id: string) => db.courses.find((c) => c.id === id);
   const rows = recs.map((rec) => {
     const rankText = rec.rank === null ? "—" : String(rec.rank);
     const eligText = rec.eligible ? "eligible" : "ineligible";
     const branchReason = rec.reasons.find((r) => r.kind === "tree_branch");
     const evidence = branchReason?.kind === "tree_branch" ? branchReason.evidence : "—";
-    return `<tr class="rec-row" data-eligible="${rec.eligible}"><td>${rankText}</td><td>${escapeHtml(courseName(rec.course_id))}</td><td>${eligText}</td><td>${escapeHtml(evidence)}</td></tr>`;
+    const course = courseById(rec.course_id);
+    const detailId = `rec-row-detail-${rec.course_id}`;
+    const notes = course?.recommended_for_notes ?? "";
+    const fingerprintItems = course ? courseFingerprint(course).map((line) => `<li>${escapeHtml(line)}</li>`).join("") : "";
+    return `
+      <tr class="rec-row" data-eligible="${rec.eligible}">
+        <td>${rankText}</td>
+        <td>${escapeHtml(courseName(rec.course_id))}</td>
+        <td>${eligText}</td>
+        <td>${escapeHtml(evidence)}</td>
+        <td><button type="button" class="rec-row-expand" aria-expanded="false" aria-controls="${detailId}">▸</button></td>
+      </tr>
+      <tr class="rec-row-detail" id="${detailId}" hidden>
+        <td colspan="5">
+          ${notes ? `<p class="rec-row-notes">${escapeHtml(notes)}</p>` : ""}
+          <ul class="rec-row-fingerprint">${fingerprintItems}</ul>
+        </td>
+      </tr>
+    `;
   }).join("");
   return `
     <table class="recommendation-table">
-      <thead><tr><th>Rank</th><th>Course</th><th>Verdict</th><th>Reason</th></tr></thead>
+      <thead><tr><th>Rank</th><th>Course</th><th>Verdict</th><th>Reason</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
   `;
