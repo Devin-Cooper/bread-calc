@@ -193,4 +193,67 @@ describe("recipe-meta component", () => {
     expect(active?.selectionStart).toBe(2);
     document.body.removeChild(parent);
   });
+
+  describe("recommendation strip", () => {
+    it("State A: no course set — renders 'Recommended: <top course>' with [Use this] button", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe });
+      mount(parent, store, minimalDb);
+      const strip = parent.querySelector(".recommendation-strip") as HTMLElement | null;
+      expect(strip).not.toBeNull();
+      expect(strip!.textContent).toContain("Recommended: White");
+      const useBtn = parent.querySelector(".rec-use-this") as HTMLButtonElement | null;
+      expect(useBtn).not.toBeNull();
+    });
+
+    it("[Use this] dispatches set_course with the top recommendation's id", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe });
+      mount(parent, store, minimalDb);
+      (parent.querySelector(".rec-use-this") as HTMLButtonElement).click();
+      expect(store.getState().course).toBe("white");
+    });
+
+    it("State B: recipe.course matches top — shows ✓ badge, no swap button", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe, course: "white" });
+      mount(parent, store, minimalDb);
+      const strip = parent.querySelector(".recommendation-strip") as HTMLElement;
+      expect(strip.textContent).toContain("Top match");
+      expect(parent.querySelector(".rec-use-top")).toBeNull();
+      expect(parent.querySelector(".rec-use-this")).toBeNull();
+    });
+
+    it("State C: recipe.course differs from top — shows rank-of-N + [Use top match]", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe, course: "whole_wheat" });
+      mount(parent, store, minimalDb);
+      const strip = parent.querySelector(".recommendation-strip") as HTMLElement;
+      expect(strip.textContent).toContain("Recommended:");
+      expect(strip.textContent).toContain("Your pick");
+      const swap = parent.querySelector(".rec-use-top") as HTMLButtonElement | null;
+      expect(swap).not.toBeNull();
+    });
+
+    it("[Use top match] dispatches set_course with top recommendation's id", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe, course: "whole_wheat" });
+      mount(parent, store, minimalDb);
+      (parent.querySelector(".rec-use-top") as HTMLButtonElement).click();
+      expect(store.getState().course).toBe("white");
+    });
+
+    it("[See all] toggles a ranking table with one row per course in db.courses", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe });
+      mount(parent, store, minimalDb);
+      const seeAll = parent.querySelector(".rec-see-all") as HTMLButtonElement;
+      expect(parent.querySelector(".recommendation-table")).toBeNull();
+      seeAll.click();
+      const table = parent.querySelector(".recommendation-table") as HTMLElement;
+      expect(table).not.toBeNull();
+      const rows = table.querySelectorAll("tr.rec-row");
+      expect(rows.length).toBe(minimalDb.courses.length);
+    });
+  });
 });

@@ -1,8 +1,12 @@
 import type { Store } from "../state.js";
 import type { Database } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
+import { recommendCourse } from "../../core/recommend.js";
+import type { CourseRecommendation } from "../../core/recommend.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
+  let seeAllOpen = false;
+
   function render() {
     const r = store.getState();
     const targetMode = r.target_loaf_g != null;
@@ -39,6 +43,52 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
             ${courseOptions}
           </select>
         </label>
+        ${(() => {
+          const recs = recommendCourse(r, db);
+          const top = recs.find((rec) => rec.eligible);
+          if (!top) {
+            return `<div class="recommendation-strip recommendation-empty">No compatible course found.</div>`;
+          }
+          const topName = db.courses.find((c) => c.id === top.course_id)?.name ?? top.course_id;
+          const matchCount = top.reasons.filter((rr) => rr.verdict === "match").length;
+          const matchLabel = `(${matchCount} reason${matchCount === 1 ? "" : "s"} match)`;
+
+          if (r.course === undefined) {
+            return `
+              <div class="recommendation-strip">
+                <span class="rec-label">Recommended: <strong>${escapeHtml(topName)}</strong> ${matchLabel}</span>
+                <button type="button" class="rec-use-this" data-rec-id="${escapeHtml(top.course_id)}">Use this</button>
+                <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all</button>
+              </div>
+              ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
+            `;
+          }
+          if (r.course === top.course_id) {
+            return `
+              <div class="recommendation-strip">
+                <span class="rec-label">Top match: <strong>✓ ${escapeHtml(topName)}</strong> ${matchLabel}</span>
+                <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all</button>
+              </div>
+              ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
+            `;
+          }
+          // State C
+          const userRec = recs.find((rec) => rec.course_id === r.course);
+          const userRank = userRec?.rank ?? null;
+          const eligibleCount = recs.filter((rec) => rec.eligible).length;
+          const userCourseName = db.courses.find((c) => c.id === r.course)?.name ?? r.course;
+          const userBlurb = userRank !== null
+            ? `Your pick (${escapeHtml(userCourseName)}) is rank #${userRank} of ${eligibleCount} eligible`
+            : `Your pick (${escapeHtml(userCourseName)}) is ineligible`;
+          return `
+            <div class="recommendation-strip">
+              <span class="rec-label">Recommended: <strong>${escapeHtml(topName)}</strong> ${matchLabel} · ${userBlurb}</span>
+              <button type="button" class="rec-use-top" data-rec-id="${escapeHtml(top.course_id)}">Use top match</button>
+              <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all</button>
+            </div>
+            ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
+          `;
+        })()}
         <fieldset class="recipe-meta-control">
           <legend class="recipe-meta-label">Crust</legend>
           <div class="segmented" role="radiogroup" aria-label="Crust shade">
@@ -87,6 +137,28 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         <p class="hint">In target mode, set baker's % on each ingredient and the grams below are solved automatically.</p>
       ` : ""}
     `;
+
+    const useThisBtn = parent.querySelector(".rec-use-this") as HTMLButtonElement | null;
+    if (useThisBtn) {
+      useThisBtn.addEventListener("click", () => {
+        const id = useThisBtn.dataset.recId;
+        if (id) store.dispatch({ type: "set_course", course: id });
+      });
+    }
+    const useTopBtn = parent.querySelector(".rec-use-top") as HTMLButtonElement | null;
+    if (useTopBtn) {
+      useTopBtn.addEventListener("click", () => {
+        const id = useTopBtn.dataset.recId;
+        if (id) store.dispatch({ type: "set_course", course: id });
+      });
+    }
+    const seeAllBtn = parent.querySelector(".rec-see-all") as HTMLButtonElement | null;
+    if (seeAllBtn) {
+      seeAllBtn.addEventListener("click", () => {
+        seeAllOpen = !seeAllOpen;
+        render();
+      });
+    }
 
     const courseSelect = parent.querySelector(".recipe-meta-course") as HTMLSelectElement;
     courseSelect.addEventListener("change", () => {
@@ -160,4 +232,22 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
   }
   store.subscribe(render);
   render();
+}
+
+function renderSeeAllTable(recs: readonly CourseRecommendation[], db: Database): string {
+  const courseName = (id: string) => db.courses.find((c) => c.id === id)?.name ?? id;
+  const rows = recs.map((rec) => {
+    const rankText = rec.rank === null ? "—" : String(rec.rank);
+    const eligText = rec.eligible ? "eligible" : "ineligible";
+    const reason = rec.eligible
+      ? rec.reasons.find((rr) => rr.verdict === "match")?.evidence ?? "—"
+      : rec.reasons.find((rr) => rr.verdict === "mismatch")?.evidence ?? "—";
+    return `<tr class="rec-row" data-eligible="${rec.eligible}"><td>${rankText}</td><td>${escapeHtml(courseName(rec.course_id))}</td><td>${eligText}</td><td>${escapeHtml(reason)}</td></tr>`;
+  }).join("");
+  return `
+    <table class="recommendation-table">
+      <thead><tr><th>Rank</th><th>Course</th><th>Verdict</th><th>Top reason</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
 }
