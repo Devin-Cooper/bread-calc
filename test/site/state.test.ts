@@ -104,4 +104,14 @@ describe("createStore", () => {
     s.dispatch({ type: "set_loaf_size", loaf_size: undefined });
     expect("loaf_size" in s.getState()).toBe(false);
   });
+  it("dispatches set_extended_notes and sets the field", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_extended_notes", extended_notes: "Multi-paragraph story\n\nSecond paragraph." });
+    expect(s.getState().extended_notes).toBe("Multi-paragraph story\n\nSecond paragraph.");
+  });
+  it("set_extended_notes('') clears the field", () => {
+    const s = createStore({ schema_version: "2.0", extended_notes: "old", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_extended_notes", extended_notes: "" });
+    expect("extended_notes" in s.getState()).toBe(false);
+  });
 });
