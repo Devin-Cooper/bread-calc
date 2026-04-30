@@ -2,7 +2,27 @@ import type { Store } from "../state.js";
 import type { Database } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { recommendCourse } from "../../core/recommend.js";
-import type { CourseRecommendation } from "../../core/recommend.js";
+import type { CourseRecommendation, TreeBranch } from "../../core/recommend.js";
+
+const BRANCH_LABEL: Record<TreeBranch, string> = {
+  intent_output_dough:   "dough output intent",
+  intent_output_bake:    "bake output intent",
+  dietary_gluten_free:   "gluten-free profile",
+  dietary_salt_free:     "salt-free profile",
+  dietary_vegan:         "vegan profile",
+  dietary_sugar_free:    "sugar-free profile",
+  rapid_white:           "rapid white-bread profile",
+  rapid_whole_wheat:     "rapid whole-wheat profile",
+  grain_multigrain:      "multigrain composition",
+  grain_whole_wheat:     "whole-wheat composition",
+  structural_european:   "lean European-style profile",
+  default_white:         "white-bread default",
+  non_baking_ineligible: "output-form mismatch",
+};
+
+function branchLabel(branch: TreeBranch): string {
+  return BRANCH_LABEL[branch] ?? branch;
+}
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let seeAllOpen = false;
@@ -51,8 +71,8 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
           }
           const topName = db.courses.find((c) => c.id === top.course_id)?.name ?? top.course_id;
           const branchReason = top.reasons.find((r) => r.kind === "tree_branch");
-          const branchName = branchReason?.kind === "tree_branch" ? branchReason.branch : "default_white";
-          const matchLabel = `(via ${branchName})`;
+          const branchName: TreeBranch = branchReason?.kind === "tree_branch" ? branchReason.branch : "default_white";
+          const matchLabel = `(via ${branchLabel(branchName)})`;
 
           if (r.course === undefined) {
             return `

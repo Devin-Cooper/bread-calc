@@ -45,3 +45,75 @@ describe("audit-recommendations", () => {
     expect(Array.isArray(parsed.rows)).toBe(true);
   });
 });
+
+describe("runAudit — verdict classification on synthetic fixtures", () => {
+  // Synthetic 3-fixture set exercising each verdict path
+  const syntheticFixtures = [
+    {
+      name: "Exact match fixture",
+      canonical_course: "white",
+      canonical_family: ["white", "rapid_white", "european"],
+      recipe: {
+        schema_version: "2.0" as const,
+        items: [
+          { uid: "u_e1", ingredient_id: "bread_flour", grams: 500 },
+          { uid: "u_e2", ingredient_id: "water_tap", grams: 290 },
+          { uid: "u_e3", ingredient_id: "sugar_granulated", grams: 30 },
+          { uid: "u_e4", ingredient_id: "butter_unsalted", grams: 30 },
+          { uid: "u_e5", ingredient_id: "salt_table", grams: 9 },
+          { uid: "u_e6", ingredient_id: "yeast_instant", grams: 6 },
+        ],
+      },
+    },
+    {
+      name: "Same-family fixture (claims rapid_white, engine picks white)",
+      canonical_course: "rapid_white",
+      canonical_family: ["white", "rapid_white", "european"],
+      recipe: {
+        schema_version: "2.0" as const,
+        items: [
+          { uid: "u_s1", ingredient_id: "bread_flour", grams: 500 },
+          { uid: "u_s2", ingredient_id: "water_tap", grams: 290 },
+          { uid: "u_s3", ingredient_id: "sugar_granulated", grams: 30 },
+          { uid: "u_s4", ingredient_id: "butter_unsalted", grams: 30 },
+          { uid: "u_s5", ingredient_id: "salt_table", grams: 9 },
+          { uid: "u_s6", ingredient_id: "yeast_instant", grams: 6 },
+        ],
+        // No intent.time="rapid", so engine routes to white instead of rapid_white;
+        // canonical_family contains both, so verdict is "same_family"
+      },
+    },
+    {
+      name: "Mismatch fixture (claims sourdough_starter, engine picks white)",
+      canonical_course: "sourdough_starter",
+      canonical_family: ["sourdough_starter"],
+      recipe: {
+        schema_version: "2.0" as const,
+        items: [
+          { uid: "u_m1", ingredient_id: "bread_flour", grams: 500 },
+          { uid: "u_m2", ingredient_id: "water_tap", grams: 290 },
+          { uid: "u_m3", ingredient_id: "sugar_granulated", grams: 30 },
+          { uid: "u_m4", ingredient_id: "butter_unsalted", grams: 30 },
+          { uid: "u_m5", ingredient_id: "salt_table", grams: 9 },
+          { uid: "u_m6", ingredient_id: "yeast_instant", grams: 6 },
+        ],
+      },
+    },
+  ];
+
+  it("classifies all three verdict types in one audit run", () => {
+    const result = runAudit(syntheticFixtures, db);
+    expect(result.exact).toBe(1);
+    expect(result.same_family).toBe(1);
+    expect(result.mismatch).toBe(1);
+    expect(result.total).toBe(3);
+  });
+
+  it("formatAudit text output uses the right markers (✓, ~, ✗) per verdict", () => {
+    const result = runAudit(syntheticFixtures, db);
+    const text = formatAudit(result, db);
+    expect(text).toContain("✓ Exact match fixture");
+    expect(text).toContain("~ Same-family fixture (claims rapid_white, engine picks white)");
+    expect(text).toContain("✗ Mismatch fixture (claims sourdough_starter, engine picks white)");
+  });
+});

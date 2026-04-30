@@ -93,41 +93,15 @@
       "free_water_factor": 0.3, "density_g_per_cup": 68, "usda_fdc_id": 172172,
       "notes": "Nonfat dry milk powder; adds milk solids / tenderness to enriched bread. USDA FDC 172172." },
 
-    { "id": "olive_oil", "name": "Olive oil (extra virgin)", "category": "fats",
-      "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100,
-      "free_water_factor": 0, "density_g_per_cup": 216,
-      "notes": "Alias for oil_olive_extra_virgin; used in BB-PDC20 herb and lean-style recipes." },
-
     { "id": "vegetable_oil", "name": "Vegetable oil (neutral)", "category": "fats",
       "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100,
       "free_water_factor": 0, "density_g_per_cup": 218,
       "notes": "Neutral vegetable / soybean oil. USDA density 218 g/cup." },
 
-    { "id": "raisins", "name": "Raisins, seedless", "category": "dried_fruit",
-      "is_liquid": false, "water_pct": 15.4, "salt_pct": 0, "sugar_pct": 59.2, "fat_pct": 0.46,
-      "free_water_factor": 0.3, "density_g_per_cup": 145, "usda_fdc_id": 168165,
-      "flags": ["humectant_bound_water"],
-      "notes": "Alias for raisin_regular_seedless; used in BB-PDC20 Raisin, Multigrain Raisin, and Rapid Raisin recipes." },
-
-    { "id": "walnut_pieces", "name": "Walnut, pieces", "category": "nuts_seeds",
-      "is_liquid": false, "water_pct": 4.1, "salt_pct": 0, "sugar_pct": 2.6, "fat_pct": 65.2,
-      "free_water_factor": 0.2, "density_g_per_cup": 117, "usda_fdc_id": 170187,
-      "notes": "Walnut pieces / chopped; same macros as walnut_english. Used in BB-PDC20 WW Walnut and Cranberry Walnut recipes." },
-
     { "id": "dried_cranberries", "name": "Cranberries, dried (unsweetened)", "category": "dried_fruit",
       "is_liquid": false, "water_pct": 16.0, "salt_pct": 0, "sugar_pct": 64.0, "fat_pct": 1.1,
       "free_water_factor": 0.3, "density_g_per_cup": 130,
       "notes": "Dried cranberries. Similar macros to craisin_sweetened. Used in BB-PDC20 Cranberry Walnut Bread." },
-
-    { "id": "cocoa_powder", "name": "Cocoa powder (natural)", "category": "specialty",
-      "is_liquid": false, "water_pct": 3.0, "salt_pct": 0.05, "sugar_pct": 1.75, "fat_pct": 13.7,
-      "free_water_factor": 0.5, "density_g_per_cup": 86, "usda_fdc_id": 169593,
-      "notes": "Natural cocoa powder; alias for cocoa_powder_natural. Used in BB-PDC20 Chocolate Bread." },
-
-    { "id": "chocolate_chips", "name": "Chocolate chips, semisweet", "category": "specialty",
-      "is_liquid": false, "water_pct": 0.93, "salt_pct": 0.024, "sugar_pct": 51.5, "fat_pct": 31.0,
-      "free_water_factor": 0.5, "density_g_per_cup": 170, "usda_fdc_id": 169593,
-      "notes": "Semisweet chocolate chips; alias for chocolate_semisweet_chips. Used in BB-PDC20 Chocolate Bread." },
 
     { "id": "dried_basil", "name": "Basil, dried", "category": "herbs_spices",
       "is_liquid": false, "water_pct": 6.0, "salt_pct": 0.04, "sugar_pct": 1.7, "fat_pct": 4.0,

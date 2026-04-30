@@ -107,7 +107,7 @@ describe("recommendCourse — tree branches", () => {
         { uid: "u_a", ingredient_id: "bread_flour", grams: 500 },
         { uid: "u_b", ingredient_id: "water_tap", grams: 200 },
         { uid: "u_c", ingredient_id: "almond_milk_unsweetened", grams: 150 },
-        { uid: "u_d", ingredient_id: "olive_oil", grams: 24 },
+        { uid: "u_d", ingredient_id: "oil_olive_extra_virgin", grams: 24 },
         { uid: "u_e", ingredient_id: "salt_table", grams: 9 },
         { uid: "u_f", ingredient_id: "yeast_instant", grams: 6 },
       ],

@@ -1,5 +1,7 @@
-import type { BBPDC20Course, Database, Recipe } from "./types.js";
+import type { BBPDC20Course, Database, Recipe, RecipeIntent } from "./types.js";
 import { computeRecipe } from "./compute.js";
+
+export type { DietaryIntent, TimeIntent, OutputIntent, RecipeIntent } from "./types.js";
 
 /* Dataset constants */
 
@@ -41,16 +43,6 @@ const SALT_TOLERANCE_G = 0.5;
 const SWEETENERS_TOLERANCE_G = 2.0;
 
 /* Public types */
-
-export type DietaryIntent = "salt_free" | "sugar_free" | "vegan" | "gluten_free";
-export type TimeIntent = "rapid";
-export type OutputIntent = "bake" | "dough";
-
-export interface RecipeIntent {
-  readonly dietary?: DietaryIntent;
-  readonly time?: TimeIntent;
-  readonly output?: OutputIntent;
-}
 
 export type TreeBranch =
   | "intent_output_dough"
@@ -192,7 +184,14 @@ function deriveFacts(recipe: Recipe, db: Database): RecipeFacts {
     // Fats
     if (ingr.id === "butter_unsalted" || ingr.id === "butter_salted") butter_g += grams;
     if (ingr.id === "lard") lard_g += grams;
-    if (ingr.id === "olive_oil" || ingr.id === "vegetable_oil" || ingr.id === "canola_oil" || ingr.id === "coconut_oil") oil_g += grams;
+    if (
+      ingr.id === "oil_olive_extra_virgin" ||
+      ingr.id === "olive_oil" ||
+      ingr.id === "vegetable_oil" ||
+      ingr.id === "oil_canola" ||
+      ingr.id === "canola_oil" ||
+      ingr.id === "coconut_oil"
+    ) oil_g += grams;
 
     // Milk
     if (ingr.id === "milk_powder_nonfat" || ingr.id === "milk_powder_whole") dry_milk_g += grams;

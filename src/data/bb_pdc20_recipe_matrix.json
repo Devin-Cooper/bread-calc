@@ -32,7 +32,7 @@
           { "uid": "u_ih_01_water", "ingredient_id": "water_tap", "grams": 320 },
           { "uid": "u_ih_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
           { "uid": "u_ih_03_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
-          { "uid": "u_ih_04_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_ih_04_oil", "ingredient_id": "oil_olive_extra_virgin", "grams": 24 },
           { "uid": "u_ih_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_ih_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_ih_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
@@ -73,7 +73,7 @@
           { "uid": "u_rb_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_rb_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_rb_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
-          { "uid": "u_rb_08_raisins", "ingredient_id": "raisins", "grams": 140 },
+          { "uid": "u_rb_08_raisins", "ingredient_id": "raisin_regular_seedless", "grams": 140 },
           { "uid": "u_rb_09_cinnamon", "ingredient_id": "cinnamon_ground", "grams": 3 }
         ]
       }
@@ -91,10 +91,10 @@
           { "uid": "u_cb_03_flour", "ingredient_id": "bread_flour", "grams": 545 },
           { "uid": "u_cb_04_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
           { "uid": "u_cb_05_butter", "ingredient_id": "butter_unsalted", "grams": 35 },
-          { "uid": "u_cb_06_cocoa", "ingredient_id": "cocoa_powder", "grams": 24 },
+          { "uid": "u_cb_06_cocoa", "ingredient_id": "cocoa_powder_natural", "grams": 24 },
           { "uid": "u_cb_07_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_cb_08_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
-          { "uid": "u_cb_09_chocchip", "ingredient_id": "chocolate_chips", "grams": 90 }
+          { "uid": "u_cb_09_chocchip", "ingredient_id": "chocolate_semisweet_chips", "grams": 90 }
         ]
       }
     },
@@ -113,7 +113,7 @@
           { "uid": "u_cw_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_cw_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_cw_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
-          { "uid": "u_cw_08_walnut", "ingredient_id": "walnut_pieces", "grams": 55 },
+          { "uid": "u_cw_08_walnut", "ingredient_id": "walnut_english", "grams": 55 },
           { "uid": "u_cw_09_cran", "ingredient_id": "dried_cranberries", "grams": 40 }
         ]
       }
@@ -155,7 +155,7 @@
           { "uid": "u_wwwa_07_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_wwwa_08_yst", "ingredient_id": "yeast_instant", "grams": 6 },
           { "uid": "u_wwwa_09_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 32 },
-          { "uid": "u_wwwa_10_wnut", "ingredient_id": "walnut_pieces", "grams": 73 }
+          { "uid": "u_wwwa_10_wnut", "ingredient_id": "walnut_english", "grams": 73 }
         ]
       }
     },
@@ -231,7 +231,7 @@
           { "uid": "u_rh_01_water", "ingredient_id": "water_tap", "grams": 320 },
           { "uid": "u_rh_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
           { "uid": "u_rh_03_sugar", "ingredient_id": "sugar_granulated", "grams": 12 },
-          { "uid": "u_rh_04_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_rh_04_oil", "ingredient_id": "oil_olive_extra_virgin", "grams": 24 },
           { "uid": "u_rh_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_rh_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_rh_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
@@ -337,7 +337,7 @@
           { "uid": "u_mr_07_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_mr_08_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_mr_09_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
-          { "uid": "u_mr_10_raisins", "ingredient_id": "raisins", "grams": 47 }
+          { "uid": "u_mr_10_raisins", "ingredient_id": "raisin_regular_seedless", "grams": 47 }
         ]
       }
     },
@@ -373,7 +373,7 @@
           { "uid": "u_gfih_02_egg", "ingredient_id": "egg_whole_large", "grams": 150 },
           { "uid": "u_gfih_03_flour", "ingredient_id": "gf_flour_blend", "grams": 548 },
           { "uid": "u_gfih_04_honey", "ingredient_id": "honey", "grams": 60 },
-          { "uid": "u_gfih_05_oil", "ingredient_id": "olive_oil", "grams": 36 },
+          { "uid": "u_gfih_05_oil", "ingredient_id": "oil_olive_extra_virgin", "grams": 36 },
           { "uid": "u_gfih_06_salt", "ingredient_id": "salt_table", "grams": 7.5 },
           { "uid": "u_gfih_07_yeast", "ingredient_id": "yeast_active_dry", "grams": 9 },
           { "uid": "u_gfih_08_xg", "ingredient_id": "xanthan_gum", "grams": 12 },
@@ -399,7 +399,7 @@
           { "uid": "u_gfrr_07_yeast", "ingredient_id": "yeast_active_dry", "grams": 9 },
           { "uid": "u_gfrr_08_xg", "ingredient_id": "xanthan_gum", "grams": 12 },
           { "uid": "u_gfrr_09_acv", "ingredient_id": "vinegar_apple_cider", "grams": 15 },
-          { "uid": "u_gfrr_10_raisn", "ingredient_id": "raisins", "grams": 75 }
+          { "uid": "u_gfrr_10_raisn", "ingredient_id": "raisin_regular_seedless", "grams": 75 }
         ]
       }
     },
@@ -489,7 +489,7 @@
           { "uid": "u_vw_02_almond", "ingredient_id": "almond_milk_unsweetened", "grams": 160 },
           { "uid": "u_vw_03_flour", "ingredient_id": "bread_flour", "grams": 545 },
           { "uid": "u_vw_04_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
-          { "uid": "u_vw_05_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_vw_05_oil", "ingredient_id": "oil_olive_extra_virgin", "grams": 24 },
           { "uid": "u_vw_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_vw_07_yeast", "ingredient_id": "yeast_instant", "grams": 4.5 }
         ]
@@ -507,7 +507,7 @@
           { "uid": "u_vww_02_almond", "ingredient_id": "almond_milk_unsweetened", "grams": 160 },
           { "uid": "u_vww_03_flour", "ingredient_id": "whole_wheat_flour", "grams": 553 },
           { "uid": "u_vww_04_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
-          { "uid": "u_vww_05_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_vww_05_oil", "ingredient_id": "oil_olive_extra_virgin", "grams": 24 },
           { "uid": "u_vww_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_vww_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
           { "uid": "u_vww_08_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 24 }
@@ -545,7 +545,7 @@
           { "uid": "u_rih_01_water", "ingredient_id": "water_tap", "grams": 320 },
           { "uid": "u_rih_02_flour", "ingredient_id": "bread_flour", "grams": 545 },
           { "uid": "u_rih_03_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
-          { "uid": "u_rih_04_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_rih_04_oil", "ingredient_id": "oil_olive_extra_virgin", "grams": 24 },
           { "uid": "u_rih_05_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_rih_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_rih_07_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 },
@@ -569,7 +569,7 @@
           { "uid": "u_rrb_05_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_rrb_06_salt", "ingredient_id": "salt_table", "grams": 10 },
           { "uid": "u_rrb_07_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 },
-          { "uid": "u_rrb_08_raisn", "ingredient_id": "raisins", "grams": 93 }
+          { "uid": "u_rrb_08_raisn", "ingredient_id": "raisin_regular_seedless", "grams": 93 }
         ]
       }
     },
