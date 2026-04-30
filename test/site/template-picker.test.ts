@@ -61,4 +61,32 @@ describe("template-picker", () => {
     (root.querySelector(".template-close") as HTMLButtonElement).click();
     expect(root.querySelector(".template-popover")).toBeNull();
   });
+
+  // ===== Task 3.3: filter =====
+  it("filters templates by name (case-insensitive substring)", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    const filter = root.querySelector(".template-filter") as HTMLInputElement;
+    filter.value = "white";
+    filter.dispatchEvent(new Event("input", { bubbles: true }));
+    const visibleNames = Array.from(root.querySelectorAll("[role='option']"))
+      .map((opt) => opt.querySelector(".template-name")!.textContent!);
+    expect(visibleNames.length).toBeGreaterThan(0);
+    expect(visibleNames.every((n) => n.toLowerCase().includes("white"))).toBe(true);
+  });
+
+  it("filter matches the course name as well", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    const filter = root.querySelector(".template-filter") as HTMLInputElement;
+    filter.value = "european";
+    filter.dispatchEvent(new Event("input", { bubbles: true }));
+    const visibleNames = Array.from(root.querySelectorAll("[role='option']"))
+      .map((opt) => opt.querySelector(".template-name")!.textContent!);
+    expect(visibleNames).toContain("French Bread");
+  });
 });

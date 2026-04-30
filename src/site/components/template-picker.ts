@@ -5,6 +5,7 @@ import { buildTemplates, type TemplateEntry } from "../templates.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let isOpen = false;
+  let filter = "";
 
   // Build the static trigger button once; update aria-expanded in-place.
   const trigger = document.createElement("button");
@@ -34,19 +35,35 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     popover.className = "template-popover";
     popover.innerHTML = `
       <div class="template-search-row">
-        <input type="search" class="template-filter"
+        <input type="search" class="template-filter" value="${escapeHtml(filter)}"
                placeholder="Type to filter…" aria-label="Filter templates" />
         <button type="button" class="template-close" aria-label="Close template picker">×</button>
       </div>
       <div class="template-list" role="listbox" aria-label="BB-PDC20 templates" tabindex="-1">
-        ${renderGroups(templates)}
+        ${renderGroups(filterTemplates(templates, filter))}
       </div>
     `;
     parent.appendChild(popover);
 
     popover.querySelector<HTMLButtonElement>(".template-close")?.addEventListener("click", () => {
-      isOpen = false; render();
+      isOpen = false; filter = ""; render();
     });
+
+    const filterInput = popover.querySelector<HTMLInputElement>(".template-filter");
+    filterInput?.addEventListener("input", (e) => {
+      filter = (e.target as HTMLInputElement).value;
+      render();
+      const restored = parent.querySelector<HTMLInputElement>(".template-filter");
+      if (restored) { restored.focus(); restored.setSelectionRange(filter.length, filter.length); }
+    });
+  }
+
+  function filterTemplates(templates: TemplateEntry[], q: string): TemplateEntry[] {
+    const query = q.toLowerCase().trim();
+    if (!query) return templates;
+    const byName = templates.filter((t) => t.name.toLowerCase().includes(query));
+    if (byName.length > 0) return byName;
+    return templates.filter((t) => t.course.toLowerCase().includes(query));
   }
 
   function renderGroups(templates: TemplateEntry[]): string {
