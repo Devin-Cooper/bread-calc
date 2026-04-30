@@ -213,6 +213,20 @@
   }
 
   /* ============== Ingredients table ============== */
+  /*
+   * Column width strategy (nth-child-based so it works in both 3-col and
+   * 4-col layouts — role column is conditionally rendered):
+   *   col 1 (name)         → auto (gets the remainder)
+   *   col 2 (% — always)   → 13%, right-aligned, tabular nums
+   *   col 3 (role OR grams):
+   *     - when 4 cols (role visible): 20% role text, ellipsize
+   *     - when 3 cols (role hidden): becomes the grams column → 18%
+   *   col 4 (grams when role shown) → 18%, right-aligned, tabular nums
+   *
+   * Padding reduced from 5pt to 3pt on num cells: 5pt left + 5pt right
+   * + tabular numerals = "326" (≈21pt at 9pt) didn't fit in a 10% (19pt)
+   * column with 10pt of padding consuming 50%+ of cell width.
+   */
   .kc-table {
     width: 100%;
     border-collapse: separate;
@@ -224,30 +238,17 @@
     text-align: left;
     font-size: 6pt;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     font-weight: 700;
     color: var(--print-on-accent);
     background: var(--print-accent);
-    padding: 3pt 5pt;
+    padding: 3pt 4pt;
     border: none;
-  }
-  .kc-th-name { width: auto; }
-  .kc-th-num,
-  .kc-td-num {
-    width: 10%;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    padding-left: 2pt;
-  }
-  .kc-th-role,
-  .kc-td-role {
-    width: 14%;
-    font-size: 7pt;
-    text-transform: lowercase;
-    color: var(--print-muted);
+    overflow: hidden;
+    white-space: nowrap;
   }
   .kc-table tbody td {
-    padding: 3pt 5pt;
+    padding: 3pt 4pt;
     font-size: 9pt;
     line-height: 1.3;
     color: var(--print-body);
@@ -261,6 +262,59 @@
     background-size: var(--benday-size);
   }
   .kc-table tbody tr:last-child td { border-bottom: none; }
+
+  /* Col 1: name — gets remainder */
+  .kc-table th:first-child,
+  .kc-table td:first-child {
+    width: auto;
+  }
+
+  /* Col 2: % — always present, always second */
+  .kc-table th:nth-child(2),
+  .kc-table td:nth-child(2) {
+    width: 13%;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    padding-left: 3pt;
+    padding-right: 4pt;
+  }
+
+  /* Col 3 when role is hidden (3 cols total): this is the grams column.
+   * Col 3 when role is shown (4 cols total): this is the role column. */
+  .kc-table th:nth-child(3):last-child,
+  .kc-table td:nth-child(3):last-child {
+    /* 3-column layout: this cell is grams */
+    width: 18%;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    padding-left: 3pt;
+    padding-right: 5pt;
+  }
+  .kc-table th:nth-child(3):not(:last-child),
+  .kc-table td:nth-child(3):not(:last-child) {
+    /* 4-column layout: this cell is role */
+    width: 20%;
+    font-size: 7pt;
+    text-transform: lowercase;
+    color: var(--print-muted);
+    padding-left: 4pt;
+    padding-right: 4pt;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Col 4 (only present when role is visible): grams */
+  .kc-table th:nth-child(4),
+  .kc-table td:nth-child(4) {
+    width: 18%;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    padding-left: 3pt;
+    padding-right: 5pt;
+  }
+
+  /* Name cell */
   .kc-td-name {
     font-weight: 600;
     color: var(--print-text);
@@ -268,6 +322,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  /* Numeric cells — tighter weight + tabular alignment */
   .kc-td-num {
     font-weight: 500;
   }
