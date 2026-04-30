@@ -8,7 +8,7 @@ const water: Ingredient = { id: "water_tap", name: "Water", category: "liquids",
 const salt: Ingredient = { id: "salt_table", name: "Salt", category: "salt", is_liquid: false, water_pct: 0, salt_pct: 100, sugar_pct: 0, fat_pct: 0, free_water_factor: 0, density_g_per_cup: 273 };
 
 const defaults: Defaults = {
-  default_free_water_factors_by_category: { liquids: 1, sweeteners: 0.4, fats: 0.5, fresh_fruit: 0.7, dried_fruit: 0.3, nuts_seeds: 0.2, eggs: 0.85, cheese: 0.5, vegetables: 0.7, herbs_spices: 0.5, acids_alcohols: 0.95, specialty: 0.7, flour: 0, salt: 0, yeast: 0, leavener: 0 },
+  default_free_water_factors_by_category: { liquids: 1, sweeteners: 0.4, fats: 0.5, fresh_fruit: 0.7, dried_fruit: 0.3, nuts_seeds: 0.2, eggs: 0.85, cheese: 0.5, vegetables: 0.7, herbs_spices: 0.5, acids_alcohols: 0.95, specialty: 0.7, flour: 0, grain_cereal: 0.3, salt: 0, yeast: 0, leavener: 0 },
   default_bake_loss_pct: 12, default_machine_id: "zojirushi_bb_pdc20",
 };
 const machine: Machine = { id: "zojirushi_bb_pdc20", name: "Zojirushi BB-PDC20", pan_capacity_g: 907, pan_overflow_threshold_g: 950, pan_underfill_threshold_g: 600, flour_quantity_typical_min_g: 470, flour_quantity_typical_max_g: 620, inclusion_max_fraction_of_flour: 0.3 };

@@ -19,6 +19,7 @@ export const CATEGORY_ROLE_MAP: Readonly<Record<Category, RoleSpec>> = {
   vegetables: "inclusion",
   herbs_spices: "inclusion",
   specialty: "inclusion",
+  grain_cereal: "inclusion",
 };
 
 export function inferRole(category: Category, isLiquid: boolean): Role {

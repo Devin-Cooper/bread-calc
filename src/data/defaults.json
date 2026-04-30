@@ -13,6 +13,7 @@
     "acids_alcohols": 0.95,
     "specialty": 0.7,
     "flour": 0,
+    "grain_cereal": 0.3,
     "salt": 0,
     "yeast": 0,
     "leavener": 0

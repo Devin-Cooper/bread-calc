@@ -4,7 +4,7 @@ export type Category =
   | "liquids" | "sweeteners" | "fats" | "fresh_fruit" | "dried_fruit"
   | "nuts_seeds" | "eggs" | "cheese" | "vegetables"
   | "herbs_spices" | "acids_alcohols" | "specialty"
-  | "flour" | "salt" | "yeast" | "leavener";
+  | "flour" | "grain_cereal" | "salt" | "yeast" | "leavener";
 
 export type Role =
   | "flour" | "wet" | "fat" | "sweetener" | "salt" | "yeast" | "leavener"

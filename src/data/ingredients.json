@@ -69,6 +69,23 @@
     { "id": "yeast_active_dry", "name": "Yeast, active dry", "category": "yeast", "is_liquid": false, "water_pct": 5.0, "salt_pct": 0.06, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 192 },
 
     { "id": "baking_soda", "name": "Baking soda", "category": "leavener", "is_liquid": false, "water_pct": 0, "salt_pct": 27.4, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 220, "flags": ["leavener_consumed"] },
-    { "id": "baking_powder", "name": "Baking powder", "category": "leavener", "is_liquid": false, "water_pct": 5.0, "salt_pct": 18.0, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 220, "flags": ["leavener_consumed"] }
+    { "id": "baking_powder", "name": "Baking powder", "category": "leavener", "is_liquid": false, "water_pct": 5.0, "salt_pct": 18.0, "sugar_pct": 0, "fat_pct": 0, "free_water_factor": 0, "density_g_per_cup": 220, "flags": ["leavener_consumed"] },
+
+    { "id": "seven_grain_cereal", "name": "7-Grain Cereal Blend", "category": "grain_cereal",
+      "is_liquid": false, "water_pct": 10, "salt_pct": 0, "sugar_pct": 1.5, "fat_pct": 4,
+      "free_water_factor": 0.3, "density_g_per_cup": 100,
+      "notes": "Bob's Red Mill 7-grain hot cereal style; used in BB-PDC20 7 Grain Bread recipe." },
+    { "id": "ten_grain_cereal", "name": "10-Grain Cereal Blend", "category": "grain_cereal",
+      "is_liquid": false, "water_pct": 10, "salt_pct": 0, "sugar_pct": 1.5, "fat_pct": 4,
+      "free_water_factor": 0.3, "density_g_per_cup": 100,
+      "notes": "10-grain hot cereal blend; used in BB-PDC20 12 Grain Bread recipe." },
+    { "id": "multigrain_cereal_blend", "name": "Multigrain Cereal Blend (generic)", "category": "grain_cereal",
+      "is_liquid": false, "water_pct": 10, "salt_pct": 0, "sugar_pct": 1.5, "fat_pct": 4,
+      "free_water_factor": 0.3, "density_g_per_cup": 100,
+      "notes": "Generic multigrain cereal blend; substitute for any seven_grain_cereal or ten_grain_cereal." },
+    { "id": "teff", "name": "Teff (whole grain)", "category": "grain_cereal",
+      "is_liquid": false, "water_pct": 9, "salt_pct": 0, "sugar_pct": 2, "fat_pct": 2.4,
+      "free_water_factor": 0.3, "density_g_per_cup": 145, "usda_fdc_id": 169747,
+      "notes": "Whole-grain teff; used in BB-PDC20 Multigrain Raisin Bread recipe." }
   ]
 }

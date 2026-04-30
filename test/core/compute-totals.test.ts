@@ -11,7 +11,7 @@ const defaults: Defaults = {
   default_free_water_factors_by_category: {
     liquids: 1, sweeteners: 0.4, fats: 0.5, fresh_fruit: 0.7, dried_fruit: 0.3,
     nuts_seeds: 0.2, eggs: 0.85, cheese: 0.5, vegetables: 0.7, herbs_spices: 0.5,
-    acids_alcohols: 0.95, specialty: 0.7, flour: 0, salt: 0, yeast: 0, leavener: 0,
+    acids_alcohols: 0.95, specialty: 0.7, flour: 0, grain_cereal: 0.3, salt: 0, yeast: 0, leavener: 0,
   },
   default_bake_loss_pct: 12,
   default_machine_id: "zojirushi_bb_pdc20",
