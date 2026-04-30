@@ -412,6 +412,46 @@
           "0": "all match",
           "6": "at least one diverged"
         }
+      },
+      {
+        "name": "recommend",
+        "description": "Rank BB-PDC20 courses by fit for a recipe.",
+        "args": [
+          {
+            "name": "recipe",
+            "required": true,
+            "description": "Recipe file path or '-' for stdin."
+          }
+        ],
+        "flags": [
+          {
+            "name": "intent",
+            "type": "string",
+            "description": "bake|dough — filter courses by intent."
+          },
+          {
+            "name": "limit",
+            "type": "number",
+            "description": "Cap result rows in text output."
+          },
+          {
+            "name": "json",
+            "type": "boolean",
+            "description": "Force JSON output."
+          },
+          {
+            "name": "no-color",
+            "type": "boolean",
+            "description": "Disable ANSI color in text output."
+          }
+        ],
+        "reads_recipe": true,
+        "emits_envelope": true,
+        "exit_codes": {
+          "0": "at least one eligible course",
+          "4": "all courses ineligible",
+          "64": "bad usage"
+        }
       }
     ],
     "warnings": [

@@ -29,12 +29,12 @@ describe("describe()", () => {
     expect(m.explain_node_types.length).toBe(8);
   });
 
-  it("subcommands lists all 14 v2.0 subcommands", () => {
+  it("subcommands lists all 15 v2.0 subcommands", () => {
     const m = describeManifest();
     const names = m.subcommands.map((s) => s.name).sort();
     expect(names).toEqual([
       "apply", "compute", "convert", "describe", "examples", "ingredients",
-      "lookup", "parse", "plot", "reference", "schema", "solve", "validate", "verify",
+      "lookup", "parse", "plot", "recommend", "reference", "schema", "solve", "validate", "verify",
     ]);
   });
 
