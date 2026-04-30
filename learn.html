@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Learn — breadmachine.io</title>
+  <meta name="description" content="How baker's percentages, hydration, and zones work — explained for bread-machine bakers." />
+  <link rel="canonical" href="https://breadmachine.io/learn" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-variable.woff2" crossorigin />
+  <link rel="preload" as="font" type="font/woff2" href="/fonts/fraunces-variable.woff2" crossorigin />
+  <link rel="stylesheet" href="/src/site/styles.css" />
+</head>
+<body class="learn-page">
+  <header role="banner" class="learn-header">
+    <a href="/" id="back-to-calc" class="learn-back type-body-md">← Back to calculator</a>
+    <h1 class="type-display-md">Learn</h1>
+  </header>
+
+  <main class="learn-main">
+    <nav class="learn-toc" aria-label="Sections">
+      <ol class="type-body-sm">
+        <li><a href="#bakers-percent">Baker's percentage</a></li>
+        <li><a href="#hydration">Hydration</a></li>
+        <li><a href="#effective-hydration">Effective hydration</a></li>
+        <li><a href="#nominal-hydration">Nominal hydration</a></li>
+        <li><a href="#total-liquid">Total liquid</a></li>
+        <li><a href="#zones">Zones</a></li>
+        <li><a href="#free-water-factor">Free-water factor</a></li>
+        <li><a href="#bb-pdc20">BB-PDC20 specifics</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#privacy-and-share-urls">Privacy &amp; share URLs</a></li>
+      </ol>
+    </nav>
+
+    <article class="learn-article type-body-lg">
+
+      <section id="bakers-percent">
+        <h2 class="type-heading-lg"><a href="#bakers-percent">Baker's percentage</a></h2>
+        <p>Bakers express every ingredient as a percentage of total flour weight. Flour is always 100&nbsp;%. Water at 65&nbsp;% means the recipe contains 65&nbsp;g of water for every 100&nbsp;g of flour. Salt at 2&nbsp;% means 2&nbsp;g of salt per 100&nbsp;g of flour.</p>
+        <p>This convention scales cleanly: doubling the flour doubles every other ingredient. Comparing two recipes is easier when they're written as percentages, not grams.</p>
+      </section>
+
+      <section id="hydration">
+        <h2 class="type-heading-lg"><a href="#hydration">Hydration</a></h2>
+        <p>Hydration is water weight ÷ flour weight, expressed as a percentage. A simple white bread is around 60&nbsp;%; a country sourdough sits around 75&nbsp;%; a ciabatta might run 80&nbsp;% or higher.</p>
+        <p>Higher hydration generally produces an open, irregular crumb but a stickier, harder-to-handle dough. Lower hydration produces a tighter, more uniform crumb that slices well — which is what most bread machines aim for.</p>
+        <p>Bread machines mostly live between 58&nbsp;% and 70&nbsp;%. Pushing past 75&nbsp;% in a bread machine often produces gummy results because the kneading paddle can't develop the gluten in time.</p>
+      </section>
+
+      <section id="effective-hydration">
+        <h2 class="type-heading-lg"><a href="#effective-hydration">Effective hydration</a></h2>
+        <p>Most ingredients aren't pure flour or pure water. Milk is mostly water. Butter and eggs contain some water. Honey is partly water. If you treat them as solids, you'll underestimate the dough's actual moisture.</p>
+        <p>"Effective hydration" counts the water inside every ingredient, weighted by how much of that ingredient acts like free water in the dough. This is the number that best predicts how the dough will behave in the bread machine.</p>
+      </section>
+
+      <section id="nominal-hydration">
+        <h2 class="type-heading-lg"><a href="#nominal-hydration">Nominal hydration</a></h2>
+        <p>"Nominal hydration" is the simple, traditional view: just plain water ÷ flour. It ignores hidden water from milk, eggs, butter, and so on.</p>
+        <p>It's a useful number when comparing recipes to a published formula that specifies only "water" and "flour" — but for predicting how a real dough behaves in your machine, effective hydration is more honest.</p>
+      </section>
+
+      <section id="total-liquid">
+        <h2 class="type-heading-lg"><a href="#total-liquid">Total liquid</a></h2>
+        <p>"Total liquid" counts every liquid ingredient at 100&nbsp;% of its weight, regardless of free-water content. So 100&nbsp;g of milk is counted as 100&nbsp;g of liquid, even though only ~87&nbsp;% of milk is water.</p>
+        <p>Total liquid is the broadest read; it's useful when you're comparing dough types where the liquid mix matters (a cake batter vs. a bread dough), but it overstates how much water the dough actually has.</p>
+      </section>
+
+      <section id="zones">
+        <h2 class="type-heading-lg"><a href="#zones">Hydration zones</a></h2>
+        <p>For bread machines, four hydration zones cover almost everything:</p>
+        <ul>
+          <li><strong>Dry</strong> (under 60&nbsp;%) — enriched doughs, rolls, brioche-style. Very tight crumb.</li>
+          <li><strong>Sandwich</strong> (60–75&nbsp;%) — the canonical bread-machine zone. Soft, sliceable crumb. Most BB-PDC20 recipes live here.</li>
+          <li><strong>Wet</strong> (75–88&nbsp;%) — country-style, more open crumb. Bread machines start to struggle here without good gluten development.</li>
+          <li><strong>Very wet</strong> (above 88&nbsp;%) — open-crumb sourdough, ciabatta. Generally not recommended for bread machines.</li>
+        </ul>
+        <p>The zone band visualizer on the calculator shows where your recipe lands relative to all the BB-PDC20 booklet recipes.</p>
+      </section>
+
+      <section id="free-water-factor">
+        <h2 class="type-heading-lg"><a href="#free-water-factor">Free-water factor</a></h2>
+        <p>Each ingredient has a "free-water factor" — the fraction of its mass that behaves like water in the dough. Pure water is 1.0; salt is 0.0; butter is roughly 0.16; whole milk roughly 0.87; honey around 0.20.</p>
+        <p>The calculator multiplies each ingredient's grams by its water_pct (how much of its mass is water by composition) and then by its free-water factor (how much of that water is actually available to the dough), and sums the results to compute effective hydration.</p>
+      </section>
+
+      <section id="bb-pdc20">
+        <h2 class="type-heading-lg"><a href="#bb-pdc20">BB-PDC20 specifics</a></h2>
+        <p>This calculator is calibrated for the Zojirushi BB-PDC20 Home Bakery Virtuoso Plus. The free-water factors and zone boundaries come from analyzing the BB-PDC20 recipe booklet's published recipes; loaf-weight predictions account for the BB-PDC20's typical bake loss.</p>
+        <p>For other 2-pound bread machines, the math is broadly similar but the bake-loss percentage and zone boundaries may differ slightly. Use the calculator as a guide, not a guarantee.</p>
+      </section>
+
+      <section id="troubleshooting">
+        <h2 class="type-heading-lg"><a href="#troubleshooting">Troubleshooting</a></h2>
+        <p>Common bread-machine outcomes and what to change:</p>
+        <ul>
+          <li><strong>Gummy crumb</strong> — hydration likely too high for the machine; bring it down by 3–5&nbsp;%.</li>
+          <li><strong>Dense, heavy loaf</strong> — too little water, or salt above 2.5&nbsp;% inhibiting yeast; check both.</li>
+          <li><strong>Collapsed top</strong> — over-proofed; reduce yeast by 0.2–0.4&nbsp;% or shorten the cycle.</li>
+          <li><strong>Dough too stiff to knead</strong> — usually below 55&nbsp;% hydration; add water 5&nbsp;g at a time and watch the paddle.</li>
+        </ul>
+      </section>
+
+      <section id="privacy-and-share-urls">
+        <h2 class="type-heading-lg"><a href="#privacy-and-share-urls">Privacy &amp; share URLs</a></h2>
+        <p>breadmachine.io is fully static. There are no analytics, no telemetry, no third-party scripts, no cookies. Recipe autosave uses your browser's local storage and is never transmitted.</p>
+        <p>The "Copy share URL" button puts a compressed copy of your recipe into the URL itself (after the <code>#r=</code> fragment). Share URLs are opt-in: the recipe never leaves your browser unless you copy and paste the URL somewhere.</p>
+      </section>
+
+    </article>
+  </main>
+
+  <footer class="learn-footer type-caption">
+    <a href="https://github.com/Devin-Cooper/bread-calc">GitHub</a> ·
+    <a href="https://github.com/Devin-Cooper/bread-calc/blob/main/LICENSE">MIT</a> ·
+    <a href="#privacy-and-share-urls">Privacy</a>
+  </footer>
+
+  <script type="module" src="/src/site/learn.ts"></script>
+</body>
+</html>

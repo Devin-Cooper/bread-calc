@@ -1,0 +1,100 @@
+/* @font-face declarations + type scale tokens. */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-variable.woff2") format("woff2-variations");
+}
+
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/fraunces-variable.woff2") format("woff2-variations");
+}
+
+:root {
+  --font-sans:     "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display:  "Fraunces", Georgia, "Times New Roman", serif;
+}
+
+/* Type scale tokens (size / line-height / weight / tracking) */
+
+.type-display-md {
+  font-family: var(--font-display);
+  font-size: 36px; line-height: 44px;
+  font-weight: 500;
+  font-variation-settings: "opsz" 72;
+  letter-spacing: -0.36px; /* -1% of 36 */
+}
+
+.type-heading-lg {
+  font-family: var(--font-sans);
+  font-size: 22px; line-height: 30px;
+  font-weight: 600;
+  letter-spacing: -0.22px;
+}
+
+.type-heading-md {
+  font-family: var(--font-sans);
+  font-size: 18px; line-height: 26px;
+  font-weight: 600;
+  letter-spacing: -0.09px;
+}
+
+.type-body-lg {
+  font-family: var(--font-sans);
+  font-size: 17px; line-height: 26px;
+  font-weight: 400;
+}
+
+.type-body-md {
+  font-family: var(--font-sans);
+  font-size: 15px; line-height: 22px;
+  font-weight: 400;
+}
+
+.type-body-sm {
+  font-family: var(--font-sans);
+  font-size: 13px; line-height: 18px;
+  font-weight: 500;
+  letter-spacing: 0.13px; /* +1% of 13 */
+}
+
+.type-numeric-display {
+  font-family: var(--font-sans);
+  font-size: 32px; line-height: 36px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.32px;
+}
+
+.type-numeric-md {
+  font-family: var(--font-sans);
+  font-size: 17px; line-height: 24px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.type-numeric-sm {
+  font-family: var(--font-sans);
+  font-size: 13px; line-height: 18px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.type-caption {
+  font-family: var(--font-sans);
+  font-size: 12px; line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.24px; /* +2% of 12 */
+}
+
+/* Apply tabular-nums to all numeric inputs by default */
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "cv11", "ss01";
+}

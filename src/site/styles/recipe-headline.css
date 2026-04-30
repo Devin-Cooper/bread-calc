@@ -1,0 +1,87 @@
+#recipe-headline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.recipe-name {
+  margin: 0;
+  color: var(--color-emphasis);
+}
+
+.recipe-name [data-role="name"] {
+  display: inline-block;
+  min-width: 1ch;
+  outline: none;
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-1);
+  margin: 0 calc(-1 * var(--space-1));
+}
+
+.recipe-name [data-role="name"][data-empty="1"] {
+  color: var(--color-fg-subtle);
+  font-style: italic;
+}
+
+.recipe-name [data-role="name"]:hover {
+  background: var(--color-bg-muted);
+}
+
+.recipe-name [data-role="name"]:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.recipe-notes-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  min-height: 24px;
+}
+
+.recipe-notes {
+  color: var(--color-fg-muted);
+  font-style: italic;
+  outline: none;
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-1);
+  flex: 1;
+}
+
+.recipe-notes:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.recipe-notes-clear {
+  width: 24px; height: 24px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-fg-subtle);
+  font-size: 16px;
+  padding: 0;
+}
+.recipe-notes-clear:hover { background: var(--color-bg-muted); color: var(--color-fg-default); }
+
+.recipe-notes-add {
+  background: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: var(--space-1) var(--space-3);
+  color: var(--color-fg-muted);
+  cursor: pointer;
+}
+.recipe-notes-add:hover { color: var(--color-accent-fg); border-color: var(--color-accent-fg); }
+
+.mode-badge {
+  display: inline-block;
+  align-self: flex-start;
+  padding: 2px var(--space-2);
+  background: var(--color-bg-muted);
+  color: var(--color-fg-muted);
+  border-radius: var(--radius-pill);
+}

@@ -3,13 +3,18 @@ import { generateUid } from "../core/uid.js";
 import { createStore } from "./state.js";
 import { mount as mountPicker } from "./components/ingredient-picker.js";
 import { mount as mountTable } from "./components/recipe-table.js";
-import { mount as mountResults } from "./components/results-panel.js";
+import { mount as mountSnapshot } from "./components/snapshot-card.js";
 import { mount as mountWarnings } from "./components/warnings-panel.js";
-import { mount as mountChart } from "./components/chart-card.js";
-import { mount as mountMode } from "./components/mode-toggle.js";
 import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
+import { mount as mountHeader, type HeaderActionId } from "./components/header.js";
+import { mount as mountTipStrip } from "./components/tip-strip.js";
+import { mount as mountDrawer, applyTheme } from "./components/settings-drawer.js";
+import { mount as mountHeadline } from "./components/recipe-headline.js";
+import { mount as mountZoneBand } from "./components/zone-band.js";
+import { mount as mountShowMath } from "./components/show-math.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
+import { mount as mountKitchenCard } from "./pdf/kitchen-card.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -30,7 +35,10 @@ const db: Database = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const STARTER: Recipe = {
-  schema_version: "2.0", name: "Classic White (BB-PDC20)", machine: "zojirushi_bb_pdc20",
+  schema_version: "2.0",
+  name: "Classic White (BB-PDC20)",
+  notes: "Bread-machine basic; baseline for tweaking hydration.",
+  machine: "zojirushi_bb_pdc20",
   items: [
     { uid: generateUid(), ingredient_id: "bread_flour",      grams: 553 },
     { uid: generateUid(), ingredient_id: "water_tap",        grams: 326 },
@@ -62,44 +70,55 @@ async function loadInitialRecipe(): Promise<Recipe> {
 }
 
 (async () => {
+  applyTheme();
   const initial = await loadInitialRecipe();
   const store = createStore(initial);
 
-  mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
-  mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
-  mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
-  mountResults(document.querySelector("#results-panel") as HTMLElement, store, db);
-  mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
-  mountChart(document.querySelector("#chart-card") as HTMLElement, store, db);
-  mountMode(document.querySelector("#mode-toggle") as HTMLSelectElement, store);
+  // Header + actions
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".bread.json,application/json";
+  fileInput.hidden = true;
+  document.body.appendChild(fileInput);
 
-  const actionBar = document.querySelector("#action-bar") as HTMLElement;
-  actionBar.innerHTML = `
-    <button id="btn-save">Save .bread.json</button>
-    <button id="btn-load">Open recipe…</button>
-    <input type="file" id="file-input" accept=".bread.json,application/json" hidden />
-    <button id="btn-share">Copy share URL</button>
-    <button id="btn-pdf">Export PDF</button>
-  `;
-  const fileInput = document.querySelector("#file-input") as HTMLInputElement;
-  (document.querySelector("#btn-save") as HTMLButtonElement).addEventListener("click", () => {
-    saveRecipeAsFile(store.getState(), store.getState().name ?? "recipe");
-  });
-  (document.querySelector("#btn-load") as HTMLButtonElement).addEventListener("click", () => fileInput.click());
   fileInput.addEventListener("change", async () => {
     const f = fileInput.files?.[0];
     if (!f) return;
     try {
-      store.dispatch({ type: "load", recipe: await readRecipeFile(f) });
+      const recipe = await readRecipeFile(f);
+      if (recipe.schema_version !== "2.0") {
+        alert("This file uses an older recipe format. breadmachine.io now requires v2.0 recipes.");
+      } else {
+        store.dispatch({ type: "load", recipe });
+      }
     } catch (e) {
       alert(`Could not load recipe: ${(e as Error).message}`);
     }
     fileInput.value = "";
   });
-  (document.querySelector("#btn-share") as HTMLButtonElement).addEventListener("click", async () => {
-    await navigator.clipboard.writeText(location.href);
+
+  function handleHeaderAction(id: HeaderActionId): void {
+    if (id === "save") saveRecipeAsFile(store.getState(), store.getState().name ?? "recipe");
+    else if (id === "open") fileInput.click();
+    else if (id === "share") void navigator.clipboard.writeText(location.href);
+    else if (id === "pdf") window.print();
+    else if (id === "settings") drawerCtl.open();
+  }
+  mountHeader(document.querySelector("#site-header") as HTMLElement, { onAction: handleHeaderAction });
+  mountTipStrip(document.querySelector("#tip-strip") as HTMLElement);
+  const drawerCtl = mountDrawer(document.querySelector("#settings-drawer") as HTMLDialogElement, store);
+
+  mountHeadline(document.querySelector("#recipe-headline") as HTMLElement, store);
+  mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
+  mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
+  mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
+  mountSnapshot(document.querySelector("#snapshot-card") as HTMLElement, store, db, {
+    onOpenSettings: () => drawerCtl.open(),
   });
-  (document.querySelector("#btn-pdf") as HTMLButtonElement).addEventListener("click", () => window.print());
+  mountZoneBand(document.querySelector("#zone-band") as HTMLElement, store, db);
+  mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
+  mountShowMath(document.querySelector("#show-math-section") as HTMLElement, store, db);
+  mountKitchenCard(document.querySelector("#kitchen-card") as HTMLElement, store, db);
 
   let timer: number | undefined;
   store.subscribe(() => {

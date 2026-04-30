@@ -1,0 +1,77 @@
+#zone-band { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.zone-band-heading {
+  margin: 0;
+  display: flex; align-items: center; gap: var(--space-1);
+}
+
+.zone-band {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  background: var(--color-bg-muted);
+  border-radius: var(--radius-md);
+}
+
+@media (max-width: 767px) {
+  .zone-band { height: 64px; }
+}
+
+.zone-segment {
+  position: absolute;
+  top: 0; bottom: 0;
+  border-right: 1px solid var(--color-border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-fg-subtle);
+  pointer-events: none;
+}
+.zone-segment:last-of-type { border-right: none; }
+.zone-segment.is-active {
+  background: var(--color-accent-bg);
+  color: var(--crust-700);
+}
+.zone-segment-label {
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+.zone-tick {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px; height: 60%;
+  background: var(--color-fg-subtle);
+  border: none; padding: 0;
+  cursor: pointer;
+}
+.zone-tick:hover { background: var(--color-fg-default); }
+.zone-tick:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.zone-marker {
+  position: absolute;
+  bottom: 100%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  color: var(--color-accent-fg);
+  cursor: default;
+}
+.zone-marker:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+.zone-marker-value {
+  margin-bottom: -2px;
+}
+
+.zone-note {
+  margin: 0;
+  color: var(--color-fg-muted);
+}
+
+@media (forced-colors: active) {
+  .zone-segment { border: 1px solid CanvasText; }
+}

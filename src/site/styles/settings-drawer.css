@@ -1,0 +1,102 @@
+#settings-drawer {
+  border: none;
+  padding: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+  color: var(--color-fg-default);
+  box-shadow: var(--shadow-overlay);
+  width: min(360px, calc(100vw - 32px));
+  margin-left: auto; margin-right: 0;
+  max-height: 90vh;
+}
+
+#settings-drawer::backdrop {
+  background: rgba(31, 28, 22, 0.4);
+}
+
+@media (max-width: 767px) {
+  #settings-drawer {
+    width: 100vw;
+    max-height: 60vh;
+    margin: auto auto 0 auto;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+}
+
+.drawer-inner {
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.drawer-header h2 {
+  margin: 0;
+  color: var(--color-emphasis);
+}
+
+.drawer-close {
+  width: 44px; height: 44px;
+  border: none; background: transparent;
+  border-radius: var(--radius-sm);
+  font-size: 22px;
+  color: var(--color-fg-muted);
+  cursor: pointer;
+}
+.drawer-close:hover { background: var(--color-bg-muted); color: var(--color-fg-default); }
+
+.drawer-control {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.drawer-control legend {
+  color: var(--color-fg-muted);
+  padding: 0;
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 2px;
+  background: var(--color-bg-canvas);
+}
+
+.segmented button {
+  flex: 1 1 auto;
+  padding: var(--space-2) var(--space-3);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-pill);
+  color: var(--color-fg-default);
+  font: inherit;
+  cursor: pointer;
+}
+
+.segmented button.is-on {
+  background: var(--color-accent-fg);
+  color: var(--color-bg-canvas);
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+.checkbox-row input[type="checkbox"] {
+  width: 20px; height: 20px;
+  accent-color: var(--color-accent-fg);
+}

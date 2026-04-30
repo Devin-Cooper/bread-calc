@@ -64,4 +64,14 @@ describe("createStore", () => {
     s.dispatch({ type: "load", recipe: { schema_version: "2.0", name: "fresh", items: [] } });
     expect(s.getState()).toEqual({ schema_version: "2.0", name: "fresh", items: [] });
   });
+  it("dispatches set_notes", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_notes", notes: "soft sandwich crumb" });
+    expect(s.getState().notes).toBe("soft sandwich crumb");
+  });
+  it("set_notes('') clears notes", () => {
+    const s = createStore({ schema_version: "2.0", notes: "old", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_notes", notes: "" });
+    expect("notes" in s.getState()).toBe(false);
+  });
 });
