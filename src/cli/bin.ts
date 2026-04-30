@@ -15,6 +15,7 @@ import { applyFix } from "../agent/fix.js";
 import { verifyClaims } from "../agent/verify.js";
 import { recommend } from "../agent/recommend.js";
 import { formatRecommend } from "./format/recommend.js";
+import { runAudit, formatAudit } from "./format/audit.js";
 import type { Fix } from "../core/types.js";
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -23,6 +24,7 @@ import coursesFile from "../data/bb_pdc20_courses.json" with { type: "json" };
 import machinesFile from "../data/machines.json" with { type: "json" };
 import defaultsRaw from "../data/defaults.json" with { type: "json" };
 import schemaJson from "../data/schema.json" with { type: "json" };
+import matrixRaw from "../data/bb_pdc20_recipe_matrix.json" with { type: "json" };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -54,6 +56,7 @@ Usage:
   bread-calc apply     <recipe.json> [<fix.json>] [--fix=- | --fix-id=CODE.N] [--out=...]
   bread-calc verify    <claim.json> [--json]
   bread-calc recommend <recipe.json> [--intent=bake|dough] [--dietary-intent=salt_free|sugar_free|vegan|gluten_free] [--time-intent=rapid] [--limit=N] [--json]
+  bread-calc audit-recommendations [--json]
   bread-calc --version
   bread-calc --help
 
@@ -118,6 +121,7 @@ const ALLOWED: Record<string, ReadonlyArray<keyof typeof ALL_OPTIONS>> = {
   apply:      ["fix", "fix-id", "out", "json"],
   verify:     ["json"],
   recommend:  ["intent", "dietary-intent", "time-intent", "limit", "json", "no-color"],
+  "audit-recommendations": ["json", "no-color"],
 };
 
 const SUBCOMMANDS = Object.keys(ALLOWED);
@@ -563,6 +567,16 @@ function dispatchRecommend(positionals: string[]) {
   process.exit(allIneligible ? 4 : 0);
 }
 
+function dispatchAuditRecommendations(_positionals: string[]) {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const matrixEntries = (matrixRaw as any).entries;
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+  const result = runAudit(matrixEntries, db);
+  const out = formatAudit(result, db, { json: values.json === true });
+  console.log(out);
+  process.exit(result.exact === result.total ? 0 : 1);
+}
+
 type Handler = (positionals: string[]) => void;
 const HANDLERS: Record<string, Handler> = {
   compute:     dispatchCompute,
@@ -580,6 +594,7 @@ const HANDLERS: Record<string, Handler> = {
   apply:       dispatchApply,
   verify:      dispatchVerify,
   recommend:   dispatchRecommend,
+  "audit-recommendations": dispatchAuditRecommendations,
 };
 const handler = HANDLERS[sub];
 if (handler) handler(positionals);
