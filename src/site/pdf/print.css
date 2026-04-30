@@ -1,53 +1,60 @@
-/* ===== Kitchen-card print stylesheet =====
+/* ===== Kitchen-card print stylesheet — 1950s art-pop edition =====
  *
  * Output: 6 × 4 in landscape index card. Single page, hard-clipped.
  *
- * Color strategy: site terracotta accent (--crust-600 family) is layered
- * onto a paper-warm neutral palette. The accent's OKLCH lightness ≈ 0.58
- * sits between body text (~0.18) and muted labels (~0.45), so the visual
- * hierarchy survives a greyscale print pass without losing meaning.
+ * Aesthetic: mid-century newsprint × pop art halftone.
+ *   - Chunky condensed-uppercase masthead for the recipe name
+ *   - Ben-Day dot patterns on accent panels (course #, metric tiles,
+ *     hint markers) — reads as texture in color, soft grey in B&W
+ *   - Heavy 2pt black border with inner 0.5pt accent rule for that
+ *     gallery-print frame feel
+ *   - Numbered comic-action circles for bake hints
+ *   - Filled-circle course-number badge (course #N as a stamp)
  *
- * Single-page guarantees:
- *   1. body height clamped + overflow hidden (clips spillover)
- *   2. .kc-card is the entire printable region with overflow: hidden
- *   3. break-inside: avoid on the card and each content block
- *   4. min-width: 0 on every grid/flex child (prevents bleed)
+ * Greyscale safety: every accent uses OKLCH lightness ≈ 0.45–0.50,
+ * which collapses to a clean mid-grey. No information depends on
+ * color alone — every accent placement also has weight, position,
+ * border, or pattern reinforcement.
  *
- * Anything that overflows the card is clipped, never paginated.
+ * Glanceable invariants (must read at the machine):
+ *   - Recipe name (masthead)
+ *   - Total grams + Hydration % + Zone (metric tiles)
+ *   - Ingredient list with grams
+ *   - Course number badge + course name
+ *   - Bake hints (numbered)
+ *
+ * Decorative elements (style without sacrificing legibility):
+ *   - Card border, header rule, section underlines
+ *   - Ben-Day dot textures on accent backgrounds
+ *   - Footer stamp
  */
 
 @media print {
-  /* 6 × 4 inch landscape recipe card; no page margin — card owns its inset */
   @page {
     size: 6in 4in;
     margin: 0;
   }
 
-  /* Hide everything except the kitchen card */
   body > *:not(#kitchen-card) { display: none !important; }
 
-  /* Color tokens — sRGB equivalents of site OKLCH so print engines render
-   * faithfully even when forced-color or color-adjust settings are active.
-   * Greyscale-safe: lightness values chosen so each token reads distinctly
-   * even when collapsed to luminance.
-   *
-   *   accent:  L≈0.50 → mid-grey on greyscale
-   *   text:    L≈0.18 → near-black
-   *   muted:   L≈0.45 → medium grey
-   *   subtle:  L≈0.62 → light grey
-   *   rule:    L≈0.86 → faint grey
-   *   wash:    L≈0.93 → off-white panel
-   */
   body {
-    --print-accent: #a04f23;     /* crust-700 sRGB */
-    --print-accent-soft: #f5e7df; /* crust-50 sRGB — used for subtle wash */
-    --print-text:   #1f1c16;     /* ink-900 sRGB */
-    --print-body:   #3a342c;     /* ink-800 sRGB */
-    --print-muted:  #6a615a;     /* ink-600 sRGB */
-    --print-subtle: #8d837a;     /* ink-400 sRGB */
-    --print-rule:   #d6cec3;     /* paper-300 sRGB */
-    --print-wash:   #f0eae2;     /* paper-200 sRGB */
-    --print-paper:  #fbfaf7;     /* paper-50 sRGB */
+    /* sRGB equivalents of site OKLCH tokens, picked for greyscale safety */
+    --print-accent: #b94626;       /* lithograph-red — crust-700 sRGB; greyscale L≈0.50 */
+    --print-accent-deep: #8a3217;   /* hover/pressed accent */
+    --print-text:   #1a1612;        /* near-black, warm */
+    --print-body:   #2e2820;        /* dark warm grey */
+    --print-muted:  #6a615a;        /* medium warm grey */
+    --print-subtle: #8d837a;        /* light-medium grey */
+    --print-rule:   #d6cec3;        /* faint grey */
+    --print-wash:   #f0e9dc;        /* off-white panel */
+    --print-paper:  #faf2dc;        /* cream — slightly more yellow than the site for that 1950s newsprint feel */
+    --print-on-accent: #fbf3dc;     /* cream text on accent fills */
+
+    /* Ben-Day dot pattern — small dots, ~50% coverage on accent fills */
+    --benday: radial-gradient(circle, rgba(0, 0, 0, 0.35) 0.5pt, transparent 0.9pt);
+    --benday-size: 3pt 3pt;
+    /* Ben-Day on cream — for subtle wash bands */
+    --benday-cream: radial-gradient(circle, rgba(184, 70, 38, 0.18) 0.5pt, transparent 0.9pt);
 
     font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
     color: var(--print-body);
@@ -58,7 +65,7 @@
     height: 4in;
     overflow: hidden;
     font-size: 9pt;
-    line-height: 1.3;
+    line-height: 1.35;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -71,97 +78,116 @@
     margin: 0;
   }
 
-  /* The card is the entire printable region. Hard-clipped to one page. */
+  /* Card: heavy black gallery frame with inner accent rule */
   .kc-card {
+    position: relative;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    padding: 0.18in 0.22in 0.16in;
+    padding: 0.18in 0.22in 0.18in;
     background: var(--print-paper);
-    border: 0.75pt solid var(--print-accent);
-    border-radius: 4pt;
+    border: 2pt solid var(--print-text);
+    box-shadow: inset 0 0 0 0.5pt var(--print-accent), inset 0 0 0 4pt var(--print-paper);
     display: flex;
     flex-direction: column;
     gap: 6pt;
     overflow: hidden;
-    position: relative;
     break-inside: avoid;
     page-break-inside: avoid;
   }
 
-  /* ============== Header ============== */
+  /* ============== Masthead header ============== */
   .kc-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 12pt;
+    align-items: stretch;
+    gap: 14pt;
     padding-bottom: 5pt;
-    border-bottom: 1pt solid var(--print-accent);
+    border-bottom: 2.5pt solid var(--print-text);
     flex: 0 0 auto;
+    position: relative;
   }
+  /* Decorative red rule beneath the black header rule (offset double-rule) */
+  .kc-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3.5pt;
+    height: 0.75pt;
+    background: var(--print-accent);
+  }
+
   .kc-header-text {
     flex: 1 1 auto;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .kc-name {
-    font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
-    font-size: 17pt;
-    font-weight: 600;
-    line-height: 1.1;
-    margin: 0 0 2pt;
+    font-family: "Inter", "Helvetica Neue Condensed Bold", "Arial Narrow", sans-serif;
+    font-size: 21pt;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0 0 3pt;
     color: var(--print-text);
+    text-transform: uppercase;
+    letter-spacing: -0.015em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    letter-spacing: -0.01em;
   }
   .kc-notes {
+    font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
     font-style: italic;
     color: var(--print-muted);
     margin: 0;
-    font-size: 8.5pt;
+    font-size: 9pt;
     line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  /* Metric strip in header — labelled stat tiles */
+  /* Metric strip: 3 stamped tiles in the masthead */
   .kc-metric-strip {
     display: flex;
-    gap: 9pt;
+    gap: 4pt;
     align-items: stretch;
     flex: 0 0 auto;
   }
   .kc-metric {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-end;
-    min-width: 0;
-    text-align: right;
-    border-left: 0.5pt solid var(--print-rule);
-    padding-left: 9pt;
-  }
-  .kc-metric:first-child {
-    border-left: none;
-    padding-left: 0;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 36pt;
+    padding: 2pt 5pt 3pt;
+    background: var(--print-text);
+    background-image: var(--benday);
+    background-size: var(--benday-size);
+    color: var(--print-on-accent);
+    border: 0.5pt solid var(--print-text);
+    text-align: center;
   }
   .kc-metric-label {
-    font-size: 6pt;
+    font-size: 5.5pt;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--print-muted);
+    letter-spacing: 0.1em;
+    color: var(--print-on-accent);
     margin-bottom: 1pt;
-    font-weight: 500;
+    font-weight: 600;
+    opacity: 0.85;
   }
   .kc-metric-value {
-    font-size: 12pt;
-    font-weight: 600;
+    font-size: 13pt;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
-    color: var(--print-accent);
+    color: var(--print-on-accent);
     line-height: 1;
     white-space: nowrap;
+    letter-spacing: -0.015em;
   }
 
   /* ============== Body grid ============== */
@@ -169,7 +195,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     column-gap: 14pt;
-    align-items: start;
+    align-items: stretch;
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
@@ -183,13 +209,14 @@
   .kc-col-right {
     display: flex;
     flex-direction: column;
-    gap: 5pt;
+    gap: 6pt;
   }
 
   /* ============== Ingredients table ============== */
   .kc-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     table-layout: fixed;
     break-inside: avoid;
   }
@@ -197,17 +224,17 @@
     text-align: left;
     font-size: 6pt;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 600;
-    color: var(--print-muted);
-    padding: 0 4pt 3pt;
-    border-bottom: 0.75pt solid var(--print-accent);
-    background: transparent;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: var(--print-on-accent);
+    background: var(--print-accent);
+    padding: 3pt 5pt;
+    border: none;
   }
   .kc-th-name { width: auto; }
   .kc-th-num,
   .kc-td-num {
-    width: 9%;
+    width: 10%;
     text-align: right;
     font-variant-numeric: tabular-nums;
     padding-left: 2pt;
@@ -220,61 +247,119 @@
     color: var(--print-muted);
   }
   .kc-table tbody td {
-    padding: 1.5pt 4pt;
-    font-size: 8.5pt;
-    line-height: 1.25;
+    padding: 3pt 5pt;
+    font-size: 9pt;
+    line-height: 1.3;
     color: var(--print-body);
     vertical-align: baseline;
-    border: none;
+    border-bottom: 0.25pt solid var(--print-rule);
   }
-  /* Subtle zebra striping — wash band reads as paper highlight on color
-   * print, faint grey on greyscale. Keeps row tracking readable. */
+  /* Ben-Day cream wash on alternate rows — texture in color, soft grey on B&W */
   .kc-table tbody tr:nth-child(even) td {
-    background: var(--print-wash);
+    background-color: var(--print-wash);
+    background-image: var(--benday-cream);
+    background-size: var(--benday-size);
   }
+  .kc-table tbody tr:last-child td { border-bottom: none; }
   .kc-td-name {
-    font-weight: 500;
+    font-weight: 600;
     color: var(--print-text);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-
-  /* ============== Right-column section headings ============== */
-  .kc-section-heading {
-    font-size: 6pt;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--print-accent);
-    margin: 0 0 3pt;
-    padding: 0 0 1pt;
-    border-bottom: 0.5pt solid var(--print-accent);
+  .kc-td-num {
+    font-weight: 500;
   }
 
-  /* Course block — most prominent right-column item */
+  /* ============== Right-column sections ============== */
+  .kc-section-heading {
+    font-size: 6.5pt;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--print-text);
+    margin: 0 0 4pt;
+    padding-bottom: 2pt;
+    border-bottom: 2pt solid var(--print-accent);
+    position: relative;
+  }
+  /* Decorative offset under-rule for the masthead-style section heading */
+  .kc-section-heading::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -3.5pt;
+    height: 0.5pt;
+    background: var(--print-text);
+  }
+
+  /* Course block — comic-style with course number badge */
   .kc-course-block {
     flex: 0 0 auto;
     break-inside: avoid;
   }
   .kc-course-heading {
     font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
-    font-size: 12pt;
-    font-weight: 500;
+    font-size: 14pt;
+    font-weight: 600;
     margin: 0 0 1pt;
     color: var(--print-text);
-    line-height: 1.15;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 5pt;
+    flex-wrap: wrap;
+  }
+  .kc-course-prefix {
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 6.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--print-accent);
+    flex: 0 0 auto;
+  }
+  .kc-course-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22pt;
+    height: 22pt;
+    border-radius: 50%;
+    background: var(--print-accent);
+    background-image: var(--benday);
+    background-size: var(--benday-size);
+    color: var(--print-on-accent);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 13pt;
+    font-weight: 800;
+    line-height: 1;
+    flex: 0 0 auto;
+    box-shadow: 1pt 1pt 0 var(--print-text);
+  }
+  /* Hide the literal " — " separator visually; kept in DOM for textContent semantics */
+  .kc-course-dash {
+    display: none;
+  }
+  .kc-course-name {
+    font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
+    font-weight: 600;
+    color: var(--print-text);
+    line-height: 1.1;
   }
   .kc-course-subline {
     font-size: 8pt;
     color: var(--print-muted);
-    margin: 0;
+    margin: 3pt 0 0;
     line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
   }
 
-  /* Notes block — first to clip if the column overruns. Notes is descriptive
-   * context; bake hints (below) are action items at the machine and stay
-   * rigid so they never disappear under long notes. */
+  /* Notes — first to clip if column overruns. Uses Fraunces for editorial feel. */
   .kc-notes-block {
     flex: 0 1 auto;
     min-height: 0;
@@ -282,15 +367,15 @@
     break-inside: avoid;
   }
   .kc-notes-block p {
+    font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
     font-size: 8.5pt;
     margin: 0 0 3pt;
-    line-height: 1.3;
+    line-height: 1.35;
     color: var(--print-body);
   }
   .kc-notes-block p:last-child { margin-bottom: 0; }
 
-  /* Bake hints block — accent-cued bullets. Rigid (flex: 0 0 auto) so they
-   * always survive against pressure from a long notes block. */
+  /* Bake hints — comic-action numbered stamps. Rigid; never clipped. */
   .kc-hints-block {
     flex: 0 0 auto;
     break-inside: avoid;
@@ -299,65 +384,87 @@
     list-style: none;
     margin: 0;
     padding: 0;
+    counter-reset: hint;
+    display: flex;
+    flex-direction: column;
+    gap: 2pt;
   }
   .kc-hints-list li {
+    counter-increment: hint;
     font-size: 8.5pt;
     line-height: 1.3;
     color: var(--print-body);
-    margin: 0 0 2pt;
-    padding-left: 9pt;
-    text-indent: -9pt;
+    padding-left: 17pt;
+    position: relative;
+    font-weight: 500;
   }
-  .kc-hints-list li:before {
-    content: "▸ ";
-    color: var(--print-accent);
-    font-weight: 600;
+  .kc-hints-list li::before {
+    content: counter(hint);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 12pt;
+    height: 12pt;
+    border-radius: 50%;
+    background: var(--print-text);
+    background-image: var(--benday);
+    background-size: var(--benday-size);
+    color: var(--print-on-accent);
+    font-family: "Inter", system-ui, sans-serif;
+    font-size: 7pt;
+    font-weight: 800;
+    line-height: 12pt;
+    text-align: center;
+    box-shadow: 0.75pt 0.75pt 0 var(--print-accent);
   }
-  .kc-hints-list li:last-child { margin-bottom: 0; }
 
-  /* ============== Brand footer ============== */
+  /* ============== Footer stamp ============== */
   .kc-footer {
     position: absolute;
-    bottom: 0.07in;
+    bottom: 0.06in;
     right: 0.22in;
     font-size: 5.5pt;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: var(--print-subtle);
+    letter-spacing: 0.22em;
+    color: var(--print-text);
+    font-weight: 700;
     line-height: 1;
+    padding: 1pt 4pt;
+    border: 0.5pt solid var(--print-text);
+    background: var(--print-paper);
   }
 }
 
 /* ===== On-screen preview (no @media print) =====
- * Lets the user inspect the kitchen card in the browser without printing.
- * Inherits the print look but adds a soft drop-shadow + page background.
+ * Hidden by default; the print-preview button can override via [data-preview="on"].
  */
 @media not print {
   #kitchen-card {
-    display: none;  /* hidden by default; the print-preview button can override */
+    display: none;
   }
   #kitchen-card[data-preview="on"] {
     display: block;
     width: 6in;
     height: 4in;
     margin: 1rem auto;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   }
+  /* Mirror the print look on screen for spot-checks; tokens fall back via var(...) */
   #kitchen-card[data-preview="on"] .kc-card {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    padding: 0.18in 0.22in 0.16in;
-    background: var(--color-bg-canvas, #fbfaf7);
-    color: var(--color-fg-default, #3a342c);
-    border: 0.75pt solid var(--color-accent-fg, #a04f23);
-    border-radius: 4pt;
+    padding: 0.18in 0.22in;
+    background: #faf2dc;
+    color: #2e2820;
+    border: 2pt solid #1a1612;
+    box-shadow: inset 0 0 0 0.5pt #b94626, inset 0 0 0 4pt #faf2dc;
     display: flex;
     flex-direction: column;
     gap: 6pt;
     overflow: hidden;
-    font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: "Inter", system-ui, sans-serif;
     font-size: 9pt;
-    line-height: 1.3;
+    line-height: 1.35;
   }
 }

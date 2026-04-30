@@ -134,14 +134,17 @@ function renderCourseBlock(recipe: Recipe, db: Database): string | null {
   if (!resolved) return null;
   const { course: cardCourse, source: courseSource } = resolved;
 
-  const prefix = courseSource === "recommended" ? "Recommended: " : "";
-  const heading = `${prefix}${cardCourse.course_number} — ${escapeHtml(cardCourse.name)}`;
+  const prefix = courseSource === "recommended"
+    ? `<span class="kc-course-prefix">Recommended: </span>`
+    : "";
+  const numBadge = `<span class="kc-course-num">${cardCourse.course_number}</span>`;
+  const dash = `<span class="kc-course-dash"> — </span>`;
   const subline = renderCrustSizeSubline(recipe, cardCourse);
 
   return `
     <div class="kc-course-block">
       <h2 class="kc-section-heading">Course</h2>
-      <p class="kc-course-heading">${heading}</p>
+      <p class="kc-course-heading">${prefix}${numBadge}${dash}<span class="kc-course-name">${escapeHtml(cardCourse.name)}</span></p>
       ${subline ? `<p class="kc-course-subline">${subline}</p>` : ""}
     </div>
   `;
