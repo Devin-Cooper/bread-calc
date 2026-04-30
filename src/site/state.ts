@@ -18,6 +18,9 @@ export type Action =
   | { type: "set_bake_hints"; bake_hints: string[] }
   | { type: "set_headline_metric"; metric: "effective" | "nominal" | "total_liquid" }
   | { type: "set_free_water_factor_override"; ingredient_id: string; factor: number | undefined }
+  | { type: "set_intent_output"; output: "bake" | "dough" | undefined }
+  | { type: "set_intent_dietary"; dietary: "salt_free" | "sugar_free" | "vegan" | "gluten_free" | undefined }
+  | { type: "set_intent_time"; time: "rapid" | undefined }
   | { type: "load"; recipe: Recipe };
 
 function reduce(state: Recipe, action: Action): Recipe {
@@ -104,6 +107,39 @@ function reduce(state: Recipe, action: Action): Recipe {
       if (action.factor === undefined) delete overrides[action.ingredient_id];
       else overrides[action.ingredient_id] = action.factor;
       return { ...state, free_water_factor_overrides: overrides };
+    }
+    case "set_intent_output": {
+      const next = { ...(state.intent ?? {}) };
+      if (action.output === undefined) delete next.output;
+      else next.output = action.output;
+      if (Object.keys(next).length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { intent: _intent, ...rest } = state;
+        return rest;
+      }
+      return { ...state, intent: next };
+    }
+    case "set_intent_dietary": {
+      const next = { ...(state.intent ?? {}) };
+      if (action.dietary === undefined) delete next.dietary;
+      else next.dietary = action.dietary;
+      if (Object.keys(next).length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { intent: _intent, ...rest } = state;
+        return rest;
+      }
+      return { ...state, intent: next };
+    }
+    case "set_intent_time": {
+      const next = { ...(state.intent ?? {}) };
+      if (action.time === undefined) delete next.time;
+      else next.time = action.time;
+      if (Object.keys(next).length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { intent: _intent, ...rest } = state;
+        return rest;
+      }
+      return { ...state, intent: next };
     }
     case "load": return action.recipe;
   }
