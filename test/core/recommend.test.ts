@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { recommendCourse } from "../../src/core/recommend.js";
+import type { CourseRecommendation } from "../../src/core/recommend.js";
 import type { BBPDC20Course, Database, Defaults, Flour, Ingredient, Machine, Recipe } from "../../src/core/types.js";
 import ingredientsFile from "../../src/data/ingredients.json" with { type: "json" };
 import floursFile from "../../src/data/flours.json" with { type: "json" };
@@ -23,7 +24,7 @@ const baseRecipe: Recipe = {
   items: [{ uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 }],
 };
 
-function recOf(courseId: string, recs: readonly { course_id: string }[]) {
+function recOf(courseId: string, recs: readonly CourseRecommendation[]) {
   return recs.find((r) => r.course_id === courseId);
 }
 
