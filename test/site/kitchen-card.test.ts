@@ -40,10 +40,12 @@ const db: Database = {
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
-// Canonical white-bread hydration (~58 %, matching Course 1 White's
-// ideal_pct=58). Keeping the recipe at 58 % ensures the recommendation
-// engine surfaces White as the top match in the recommendation-fallback
-// test, which is the typical case a user printing this recipe expects.
+// Canonical white-bread recipe with butter + sugar — matches Course 1 White's
+// enrichment profile and falls outside the European structural predicate's
+// lean-bread thresholds (sugar/flour > 4%, butter/flour > 2%). This ensures
+// the tree-predictor engine surfaces White as the top recommendation in the
+// recommendation-fallback test, which is the typical case a user printing
+// this recipe expects.
 const baseRecipe: Recipe = {
   schema_version: "2.0",
   name: "Test Recipe",
@@ -51,8 +53,10 @@ const baseRecipe: Recipe = {
   items: [
     { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
     { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 290 },
-    { uid: "u_test_a01d", ingredient_id: "salt_table", grams: 9 },
-    { uid: "u_test_a01e", ingredient_id: "yeast_instant", grams: 6 },
+    { uid: "u_test_a01d", ingredient_id: "sugar_granulated", grams: 30 },
+    { uid: "u_test_a01e", ingredient_id: "butter_unsalted", grams: 30 },
+    { uid: "u_test_a01f", ingredient_id: "salt_table", grams: 9 },
+    { uid: "u_test_a01g", ingredient_id: "yeast_instant", grams: 6 },
   ],
 };
 
@@ -91,9 +95,9 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     const courseBlock = parent.querySelector(".kc-course-block");
     expect(courseBlock).not.toBeNull();
-    // baseRecipe is 58 % hydration (290 g water / 500 g bread flour) — exact
-    // match for Course 1 White's ideal_pct=58, so White wins via the in-range
-    // hydration score.
+    // baseRecipe carries sugar + butter that exceed the European structural
+    // thresholds, so the tree-predictor falls through to White as the default
+    // for an enriched bread-flour recipe.
     expect(courseBlock!.textContent).toContain("Recommended:");
     expect(courseBlock!.textContent).toContain("1 — White");
   });
