@@ -31,7 +31,7 @@ interface CourseEntry {
 
 const STAGE_CANONICAL_ORDER = [
   "preheat", "knead_1", "rest", "knead_2",
-  "rise_1", "add_ins_beep", "punch", "rise_2",
+  "add_ins_beep", "rise_1", "punch", "rise_2",
   "preheat_bake", "bake", "cool", "keep_warm",
 ];
 const VALID_CONFIDENCE = new Set(["verified", "inferred", "community"]);
@@ -41,7 +41,7 @@ const entries = (coursesFile as { entries: CourseEntry[] }).entries;
 describe("bb_pdc20_courses.json shape invariants", () => {
   it("every entry validates against the schema", () => {
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const ajv = new (Ajv as any)({ strict: false });
+    const ajv = new (Ajv as any)({ strict: false, ownProperties: true });
     const validate = ajv.compile(schemaFile);
     /* eslint-enable @typescript-eslint/no-explicit-any */
     const ok = validate(coursesFile);
