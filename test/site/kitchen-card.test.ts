@@ -58,4 +58,14 @@ describe("kitchen-card component", () => {
     expect(parent.querySelector(".kc-notes")?.textContent).toContain("one-line notes");
     expect(parent.querySelectorAll(".kc-metric").length).toBe(3);
   });
+
+  it("course block: shows user pick '<n> — <name>' when recipe.course is set + valid", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "white" });
+    mount(parent, store, db);
+    const courseBlock = parent.querySelector(".kc-course-block");
+    expect(courseBlock).not.toBeNull();
+    expect(courseBlock!.textContent).toContain("1 — White");
+    expect(courseBlock!.textContent).not.toContain("Recommended:");
+  });
 });

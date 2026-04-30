@@ -1,9 +1,10 @@
 import type { Store } from "../state.js";
-import type { Database, Role } from "../../core/index.js";
+import type { Database, Role, BBPDC20Course, Recipe } from "../../core/index.js";
 import { computeRecipe, inferRole } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { effectiveRecipe } from "../effective-recipe.js";
 import { sortItemsForPrint } from "./load-order.js";
+import { recommendCourse } from "../../core/recommend.js";
 
 const PRINT_ROLE_KEY = "bread-calc:print-show-role";
 
@@ -48,6 +49,8 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
           <div class="kc-metric"><span class="kc-metric-label">Hydration</span><span class="kc-metric-value">${fmt(hyEff, "%")}</span></div>
           <div class="kc-metric"><span class="kc-metric-label">Zone</span><span class="kc-metric-value">${escapeHtml(zoneLabel)}</span></div>
         </div>
+
+        ${renderCourseBlock(store.getState(), db) ?? ""}
 
         <table class="kc-table">
           <thead>
@@ -96,4 +99,74 @@ function effectiveRole(item: { ingredient_id: string; role?: Role }, db: Databas
   const ing = db.ingredients.find((i) => i.id === item.ingredient_id);
   if (ing) return inferRole(ing.category, ing.is_liquid ?? false);
   return null;
+}
+
+function capitalize(s: string): string {
+  return s.length > 0 ? s[0]!.toUpperCase() + s.slice(1) : s;
+}
+
+function formatLoafSize(s: string): string {
+  return s.replace(/lb$/, " lb");
+}
+
+function resolveCrustLabel(recipe: Recipe, course: BBPDC20Course): string | null {
+  if (recipe.crust_shade) return capitalize(recipe.crust_shade);
+  if (course.crust_shades.length === 0) return null;
+  if (course.crust_shades.includes("medium")) return "Medium";
+  return capitalize(course.crust_shades[0]!);
+}
+
+function resolveSizeLabel(recipe: Recipe, course: BBPDC20Course): string | null {
+  if (recipe.loaf_size) return formatLoafSize(recipe.loaf_size);
+  if (course.loaf_sizes.length === 0) return null;
+  if (course.loaf_sizes.includes("2lb")) return formatLoafSize("2lb");
+  if (course.loaf_sizes.includes("1.5lb")) return formatLoafSize("1.5lb");
+  return formatLoafSize(course.loaf_sizes[0]!);
+}
+
+function renderCrustSizeSubline(recipe: Recipe, course: BBPDC20Course): string | null {
+  const crust = resolveCrustLabel(recipe, course);
+  const size = resolveSizeLabel(recipe, course);
+  const parts: string[] = [];
+  if (crust) parts.push(`Crust:&nbsp;${escapeHtml(crust)}`);
+  if (size) parts.push(`Size:&nbsp;${escapeHtml(size)}`);
+  if (parts.length === 0) return null;
+  return parts.join("&nbsp;·&nbsp;");
+}
+
+function renderCourseBlock(recipe: Recipe, db: Database): string | null {
+  let cardCourse: BBPDC20Course | null = null;
+  let courseSource: "user" | "recommended" | null = null;
+
+  if (recipe.course !== undefined) {
+    const found = db.courses.find((c) => c.id === recipe.course);
+    if (found) {
+      cardCourse = found;
+      courseSource = "user";
+    }
+  } else {
+    const recs = recommendCourse(recipe, db);
+    const top = recs.find((r) => r.eligible);
+    if (top) {
+      const found = db.courses.find((c) => c.id === top.course_id);
+      if (found) {
+        cardCourse = found;
+        courseSource = "recommended";
+      }
+    }
+  }
+
+  if (cardCourse === null || courseSource === null) return null;
+
+  const prefix = courseSource === "recommended" ? "Recommended: " : "";
+  const heading = `${prefix}${cardCourse.course_number} — ${escapeHtml(cardCourse.name)}`;
+  const subline = renderCrustSizeSubline(recipe, cardCourse);
+
+  return `
+    <div class="kc-course-block">
+      <h2 class="kc-section-heading">Course</h2>
+      <p class="kc-course-heading">${heading}</p>
+      ${subline ? `<p class="kc-course-subline">${subline}</p>` : ""}
+    </div>
+  `;
 }
