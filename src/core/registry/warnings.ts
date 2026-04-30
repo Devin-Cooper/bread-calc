@@ -513,6 +513,70 @@ warningRules.register({
   fixes() { return []; },
 });
 
+warningRules.register({
+  code: "unknown_course_id",
+  severity_default: "warn",
+  description: "Recipe references a course id not present in the loaded catalog.",
+  category: "structural",
+  consumes: ["recipe.course", "db.courses"],
+  has_fixes: false,
+  evaluate({ computed, db }) {
+    const r = computed.recipe;
+    if (r.course === undefined) return { fired: false };
+    const course = db.courses.find((c) => c.id === r.course);
+    if (course) return { fired: false };
+    return {
+      fired: true,
+      message: `Unknown course id "${r.course}" — not present in the BB-PDC20 catalog.`,
+    };
+  },
+  fixes() { return []; },
+});
+
+warningRules.register({
+  code: "course_loaf_size_unsupported",
+  severity_default: "warn",
+  description: "Selected loaf size is not supported by the chosen course on this machine.",
+  category: "machine",
+  consumes: ["recipe.course", "recipe.loaf_size", "db.courses"],
+  has_fixes: false,
+  evaluate({ computed, db }) {
+    const r = computed.recipe;
+    if (r.course === undefined || r.loaf_size === undefined) return { fired: false };
+    const course = db.courses.find((c) => c.id === r.course);
+    if (!course) return { fired: false };
+    if (course.loaf_sizes.length === 0) return { fired: false }; // non-baking course
+    if (course.loaf_sizes.includes(r.loaf_size)) return { fired: false };
+    return {
+      fired: true,
+      message: `Course "${course.name}" does not support "${r.loaf_size}" loaf (supported: ${course.loaf_sizes.join(", ")}).`,
+    };
+  },
+  fixes() { return []; },
+});
+
+warningRules.register({
+  code: "course_crust_shade_unsupported",
+  severity_default: "warn",
+  description: "Selected crust shade is not supported by the chosen course on this machine.",
+  category: "machine",
+  consumes: ["recipe.course", "recipe.crust_shade", "db.courses"],
+  has_fixes: false,
+  evaluate({ computed, db }) {
+    const r = computed.recipe;
+    if (r.course === undefined || r.crust_shade === undefined) return { fired: false };
+    const course = db.courses.find((c) => c.id === r.course);
+    if (!course) return { fired: false }; // unknown_course_id rule handles this
+    if (course.crust_shades.length === 0) return { fired: false }; // course doesn't bake
+    if (course.crust_shades.includes(r.crust_shade)) return { fired: false };
+    return {
+      fired: true,
+      message: `Course "${course.name}" does not support "${r.crust_shade}" crust (supported: ${course.crust_shades.join(", ")}).`,
+    };
+  },
+  fixes() { return []; },
+});
+
 export function runWarnings(ctx: WarningCtx): { warnings: import("../types.js").Warning[] } {
   const out: import("../types.js").Warning[] = [];
   for (const rule of warningRules.list()) {

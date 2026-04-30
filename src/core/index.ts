@@ -15,7 +15,7 @@ export type { RawTemplateEntry, RawTemplateItem, TemplateTotals } from "./templa
 export type {
   Recipe, RecipeItem, ComputedRecipe, Ingredient, Flour, Database, Defaults, Machine,
   Warning, WarningCode, IngredientFlag, Role, Category, ZoneId, HydrationZone, BBPDC20Recipe,
-  RecipeValidationResult,
+  RecipeValidationResult, CrustShade, LoafSize,
   ExplainNode, ExplainTree,
   ConstantNode, ProjectFieldNode, SumNode, WeightedSumNode, ProductNode, RatioNode, ScaleNode, ProjectFromTreeNode,
   BBPDC20StageName, BBPDC20Stage, BBPDC20Course,

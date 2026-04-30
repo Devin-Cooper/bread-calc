@@ -639,6 +639,41 @@
           "resolved"
         ],
         "has_fixes": false
+      },
+      {
+        "code": "unknown_course_id",
+        "severity_default": "warn",
+        "category": "structural",
+        "description": "Recipe references a course id not present in the loaded catalog.",
+        "consumes": [
+          "recipe.course",
+          "db.courses"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "course_loaf_size_unsupported",
+        "severity_default": "warn",
+        "category": "machine",
+        "description": "Selected loaf size is not supported by the chosen course on this machine.",
+        "consumes": [
+          "recipe.course",
+          "recipe.loaf_size",
+          "db.courses"
+        ],
+        "has_fixes": false
+      },
+      {
+        "code": "course_crust_shade_unsupported",
+        "severity_default": "warn",
+        "category": "machine",
+        "description": "Selected crust shade is not supported by the chosen course on this machine.",
+        "consumes": [
+          "recipe.course",
+          "recipe.crust_shade",
+          "db.courses"
+        ],
+        "has_fixes": false
       }
     ],
     "fix_kinds": [

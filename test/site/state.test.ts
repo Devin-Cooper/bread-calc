@@ -74,4 +74,54 @@ describe("createStore", () => {
     s.dispatch({ type: "set_notes", notes: "" });
     expect("notes" in s.getState()).toBe(false);
   });
+  it("dispatches set_course and sets the field", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_course", course: "white" });
+    expect(s.getState().course).toBe("white");
+  });
+  it("set_course(undefined) clears the field", () => {
+    const s = createStore({ schema_version: "2.0", course: "white", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_course", course: undefined });
+    expect("course" in s.getState()).toBe(false);
+  });
+  it("dispatches set_crust_shade and sets the field", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_crust_shade", crust_shade: "dark" });
+    expect(s.getState().crust_shade).toBe("dark");
+  });
+  it("set_crust_shade(undefined) clears the field", () => {
+    const s = createStore({ schema_version: "2.0", crust_shade: "dark", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_crust_shade", crust_shade: undefined });
+    expect("crust_shade" in s.getState()).toBe(false);
+  });
+  it("dispatches set_loaf_size and sets the field", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_loaf_size", loaf_size: "2lb" });
+    expect(s.getState().loaf_size).toBe("2lb");
+  });
+  it("set_loaf_size(undefined) clears the field", () => {
+    const s = createStore({ schema_version: "2.0", loaf_size: "2lb", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_loaf_size", loaf_size: undefined });
+    expect("loaf_size" in s.getState()).toBe(false);
+  });
+  it("dispatches set_extended_notes and sets the field", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_extended_notes", extended_notes: "Multi-paragraph story\n\nSecond paragraph." });
+    expect(s.getState().extended_notes).toBe("Multi-paragraph story\n\nSecond paragraph.");
+  });
+  it("set_extended_notes('') clears the field", () => {
+    const s = createStore({ schema_version: "2.0", extended_notes: "old", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_extended_notes", extended_notes: "" });
+    expect("extended_notes" in s.getState()).toBe(false);
+  });
+  it("dispatches set_bake_hints and sets the array", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_bake_hints", bake_hints: ["watch crust at 50min", "brush egg wash"] });
+    expect(s.getState().bake_hints).toEqual(["watch crust at 50min", "brush egg wash"]);
+  });
+  it("set_bake_hints([]) clears the field", () => {
+    const s = createStore({ schema_version: "2.0", bake_hints: ["a"], items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_bake_hints", bake_hints: [] });
+    expect("bake_hints" in s.getState()).toBe(false);
+  });
 });

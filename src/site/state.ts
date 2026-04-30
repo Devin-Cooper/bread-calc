@@ -1,4 +1,4 @@
-import type { Recipe, RecipeItem } from "../core/index.js";
+import type { CrustShade, LoafSize, Recipe, RecipeItem } from "../core/index.js";
 import { generateUid } from "../core/uid.js";
 
 export type Action =
@@ -11,6 +11,11 @@ export type Action =
   | { type: "set_bake_loss_pct"; pct: number }
   | { type: "set_name"; name: string }
   | { type: "set_notes"; notes: string }
+  | { type: "set_course"; course: string | undefined }
+  | { type: "set_crust_shade"; crust_shade: CrustShade | undefined }
+  | { type: "set_loaf_size"; loaf_size: LoafSize | undefined }
+  | { type: "set_extended_notes"; extended_notes: string }
+  | { type: "set_bake_hints"; bake_hints: string[] }
   | { type: "set_headline_metric"; metric: "effective" | "nominal" | "total_liquid" }
   | { type: "set_free_water_factor_override"; ingredient_id: string; factor: number | undefined }
   | { type: "load"; recipe: Recipe };
@@ -52,6 +57,46 @@ function reduce(state: Recipe, action: Action): Recipe {
         return rest;
       }
       return { ...state, notes: action.notes };
+    }
+    case "set_course": {
+      if (action.course === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { course: _course, ...rest } = state;
+        return rest;
+      }
+      return { ...state, course: action.course };
+    }
+    case "set_crust_shade": {
+      if (action.crust_shade === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { crust_shade: _crust_shade, ...rest } = state;
+        return rest;
+      }
+      return { ...state, crust_shade: action.crust_shade };
+    }
+    case "set_loaf_size": {
+      if (action.loaf_size === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { loaf_size: _loaf_size, ...rest } = state;
+        return rest;
+      }
+      return { ...state, loaf_size: action.loaf_size };
+    }
+    case "set_extended_notes": {
+      if (action.extended_notes === "") {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { extended_notes: _extended_notes, ...rest } = state;
+        return rest;
+      }
+      return { ...state, extended_notes: action.extended_notes };
+    }
+    case "set_bake_hints": {
+      if (action.bake_hints.length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { bake_hints: _bake_hints, ...rest } = state;
+        return rest;
+      }
+      return { ...state, bake_hints: action.bake_hints };
     }
     case "set_headline_metric": return { ...state, headline_metric: action.metric };
     case "set_free_water_factor_override": {

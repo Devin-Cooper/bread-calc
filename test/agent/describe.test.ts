@@ -14,9 +14,9 @@ describe("describe()", () => {
     expect(m.catalogs.zones.length).toBe(4);
   });
 
-  it("warnings has exactly 21 entries (matches WarningCode union)", () => {
+  it("warnings has exactly 24 entries (matches WarningCode union)", () => {
     const m = describeManifest();
-    expect(m.warnings.length).toBe(21);
+    expect(m.warnings.length).toBe(24);
   });
 
   it("fix_kinds has exactly 8 entries", () => {
