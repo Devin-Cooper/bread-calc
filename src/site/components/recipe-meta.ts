@@ -52,9 +52,15 @@ function intentChipText(intent: { dietary?: DietaryIntent; time?: TimeIntent; ou
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let seeAllOpen = false;
   let intentManuallyToggled = false; // set by toggle handler; suppresses auto-open after manual interaction
+  let lastRecipeRef: ReturnType<typeof store.getState> | null = null;
 
   function render() {
     const r = store.getState();
+    if (lastRecipeRef !== null && lastRecipeRef !== r && lastRecipeRef.items !== r.items) {
+      // Detect wholesale recipe replacement (e.g., load action). Reset transient UI flags.
+      intentManuallyToggled = false;
+    }
+    lastRecipeRef = r;
     const targetMode = r.target_loaf_g != null;
 
     // Focus restoration: capture active element BEFORE clearing innerHTML.
@@ -136,7 +142,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
               <div class="rec-top3">
                 ${top3Rows}
               </div>
-              <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all 14</button>
+              <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}" aria-controls="rec-see-all-table">See all ${recs.length}</button>
               ${userPickFooter}
             </div>
             ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
@@ -400,6 +406,8 @@ function courseFingerprint(course: BBPDC20Course): string[] {
       lines.push("No bake — produces dough only");
     } else if (course.id === "jam") {
       lines.push("No bake — cooks fruit + sugar");
+    } else {
+      lines.push("No bake — output is not a baked loaf");
     }
   }
   return lines;
@@ -434,7 +442,7 @@ function renderSeeAllTable(recs: readonly CourseRecommendation[], db: Database):
     `;
   }).join("");
   return `
-    <table class="recommendation-table">
+    <table class="recommendation-table" id="rec-see-all-table">
       <thead><tr><th>Rank</th><th>Course</th><th>Verdict</th><th>Reason</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
