@@ -6,6 +6,7 @@
 @import url("./styles/tooltip.css");
 @import url("./styles/settings-drawer.css");
 @import url("./styles/snapshot-card.css");
+@import url("./styles/zone-band.css");
 
 * { box-sizing: border-box; }
 

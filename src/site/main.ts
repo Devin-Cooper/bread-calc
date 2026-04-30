@@ -11,6 +11,7 @@ import { mount as mountHeader, type HeaderActionId } from "./components/header.j
 import { mount as mountTipStrip } from "./components/tip-strip.js";
 import { mount as mountDrawer, applyTheme } from "./components/settings-drawer.js";
 import { mount as mountHeadline } from "./components/recipe-headline.js";
+import { mount as mountZoneBand } from "./components/zone-band.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
@@ -109,6 +110,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountSnapshot(document.querySelector("#snapshot-card") as HTMLElement, store, db, {
     onOpenSettings: () => drawerCtl.open(),
   });
+  mountZoneBand(document.querySelector("#zone-band") as HTMLElement, store, db);
   mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
 
   let timer: number | undefined;
