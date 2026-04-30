@@ -50,8 +50,9 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
             return `<div class="recommendation-strip recommendation-empty">No compatible course found.</div>`;
           }
           const topName = db.courses.find((c) => c.id === top.course_id)?.name ?? top.course_id;
-          const matchCount = top.reasons.filter((rr) => rr.verdict === "match").length;
-          const matchLabel = `(${matchCount} reason${matchCount === 1 ? "" : "s"} match)`;
+          const branchReason = top.reasons.find((r) => r.kind === "tree_branch");
+          const branchName = branchReason?.kind === "tree_branch" ? branchReason.branch : "default_white";
+          const matchLabel = `(via ${branchName})`;
 
           if (r.course === undefined) {
             return `
@@ -239,14 +240,13 @@ function renderSeeAllTable(recs: readonly CourseRecommendation[], db: Database):
   const rows = recs.map((rec) => {
     const rankText = rec.rank === null ? "—" : String(rec.rank);
     const eligText = rec.eligible ? "eligible" : "ineligible";
-    const reason = rec.eligible
-      ? rec.reasons.find((rr) => rr.verdict === "match")?.evidence ?? "—"
-      : rec.reasons.find((rr) => rr.verdict === "mismatch")?.evidence ?? "—";
-    return `<tr class="rec-row" data-eligible="${rec.eligible}"><td>${rankText}</td><td>${escapeHtml(courseName(rec.course_id))}</td><td>${eligText}</td><td>${escapeHtml(reason)}</td></tr>`;
+    const branchReason = rec.reasons.find((r) => r.kind === "tree_branch");
+    const evidence = branchReason?.kind === "tree_branch" ? branchReason.evidence : "—";
+    return `<tr class="rec-row" data-eligible="${rec.eligible}"><td>${rankText}</td><td>${escapeHtml(courseName(rec.course_id))}</td><td>${eligText}</td><td>${escapeHtml(evidence)}</td></tr>`;
   }).join("");
   return `
     <table class="recommendation-table">
-      <thead><tr><th>Rank</th><th>Course</th><th>Verdict</th><th>Top reason</th></tr></thead>
+      <thead><tr><th>Rank</th><th>Course</th><th>Verdict</th><th>Reason</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
   `;
