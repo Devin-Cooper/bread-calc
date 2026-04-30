@@ -13,6 +13,10 @@ const EXPECTED_CODES: WarningCode[] = [
   "humectant_overestimate_risk", "flour_quantity_atypical",
   "no_salt", "salt_inherent_dominant",
   "target_loaf_g_ignored_no_pcts",
+  // Sub-project B
+  "course_crust_shade_unsupported",
+  "course_loaf_size_unsupported",
+  "unknown_course_id",
 ];
 
 describe("warningRules registry", () => {

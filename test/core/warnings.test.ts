@@ -172,4 +172,14 @@ describe("warnings", () => {
     const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "dough", loaf_size: "1lb" }), dbWithCourses);
     expect(c.warnings.find((w) => w.code === "course_loaf_size_unsupported")).toBeUndefined();
   });
+
+  // --- unknown_course_id ---
+  it("emits unknown_course_id when recipe.course is not in db.courses", () => {
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "nonexistent_course" }), db);
+    expect(c.warnings.find((w) => w.code === "unknown_course_id")).toBeDefined();
+  });
+  it("does NOT emit unknown_course_id when recipe.course is undefined", () => {
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }]), db);
+    expect(c.warnings.find((w) => w.code === "unknown_course_id")).toBeUndefined();
+  });
 });

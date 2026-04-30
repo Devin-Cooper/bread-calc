@@ -514,6 +514,26 @@ warningRules.register({
 });
 
 warningRules.register({
+  code: "unknown_course_id",
+  severity_default: "warn",
+  description: "Recipe references a course id not present in the loaded catalog.",
+  category: "structural",
+  consumes: ["recipe.course", "db.courses"],
+  has_fixes: false,
+  evaluate({ computed, db }) {
+    const r = computed.recipe;
+    if (r.course === undefined) return { fired: false };
+    const course = db.courses.find((c) => c.id === r.course);
+    if (course) return { fired: false };
+    return {
+      fired: true,
+      message: `Unknown course id "${r.course}" — not present in the BB-PDC20 catalog.`,
+    };
+  },
+  fixes() { return []; },
+});
+
+warningRules.register({
   code: "course_loaf_size_unsupported",
   severity_default: "warn",
   description: "Selected loaf size is not supported by the chosen course on this machine.",
