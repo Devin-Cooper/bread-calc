@@ -23,3 +23,8 @@ export type {
   BBPDC20YeastCompat, BBPDC20Confidence,
 } from "./types.js";
 export { RecipeValidationError } from "./types.js";
+export { recommendCourse } from "./recommend.js";
+export type {
+  CourseRecommendation, RecommendationReason, RecommendationTier,
+  RecommendationVerdict, RecommendOpts,
+} from "./recommend.js";
