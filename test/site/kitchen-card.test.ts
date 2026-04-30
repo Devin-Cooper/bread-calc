@@ -1,4 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+
+function makeMemStorage(): Storage {
+  const map = new Map<string, string>();
+  return {
+    get length() { return map.size; },
+    key: (i: number) => Array.from(map.keys())[i] ?? null,
+    getItem: (k: string) => map.get(k) ?? null,
+    setItem: (k: string, v: string) => { map.set(k, String(v)); },
+    removeItem: (k: string) => { map.delete(k); },
+    clear: () => map.clear(),
+  } as Storage;
+}
 import type { Database, Recipe } from "../../src/core/index.js";
 import { createStore } from "../../src/site/state.js";
 import { mount } from "../../src/site/pdf/kitchen-card.js";
@@ -195,5 +207,24 @@ describe("kitchen-card component", () => {
     expect(courseBlock).not.toBeNull();
     expect(courseBlock!.textContent).toContain("11 — Dough");
     expect(parent.querySelector(".kc-course-subline")).toBeNull();
+  });
+
+  it("role column: appears in ingredients table when localStorage PRINT_ROLE_KEY is '1'", () => {
+    const mem = makeMemStorage();
+    mem.setItem(PRINT_ROLE_KEY, "1");
+    vi.stubGlobal("localStorage", mem);
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    vi.unstubAllGlobals();
+    expect(parent.querySelector(".kc-th-role")).not.toBeNull();
+    expect(parent.querySelectorAll(".kc-td-role").length).toBeGreaterThan(0);
+  });
+
+  it("role column: absent when PRINT_ROLE_KEY is unset", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    expect(parent.querySelector(".kc-th-role")).toBeNull();
   });
 });
