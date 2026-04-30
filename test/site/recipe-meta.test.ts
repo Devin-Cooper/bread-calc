@@ -95,4 +95,35 @@ describe("recipe-meta component", () => {
     (parent.querySelector('[data-clear="loaf_size"]') as HTMLButtonElement).click();
     expect("loaf_size" in store.getState()).toBe(false);
   });
+  it("renders 'More details' disclosure (closed by default when fields are empty)", () => {
+    const parent = document.createElement("div");
+    mount(parent, createStore({ ...baseRecipe }), minimalDb);
+    const details = parent.querySelector("details.recipe-meta-details") as HTMLDetailsElement | null;
+    expect(details).not.toBeNull();
+    expect(details!.hasAttribute("open")).toBe(false);
+  });
+  it("disclosure starts open when extended_notes is set", () => {
+    const parent = document.createElement("div");
+    mount(parent, createStore({ ...baseRecipe, extended_notes: "x" }), minimalDb);
+    const details = parent.querySelector("details.recipe-meta-details") as HTMLDetailsElement;
+    expect(details.hasAttribute("open")).toBe(true);
+  });
+  it("dispatches set_extended_notes on textarea input", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, minimalDb);
+    const ta = parent.querySelector("textarea.recipe-meta-extended-notes") as HTMLTextAreaElement;
+    ta.value = "new content";
+    ta.dispatchEvent(new Event("input"));
+    expect(store.getState().extended_notes).toBe("new content");
+  });
+  it("clearing the textarea (empty string) deletes the field", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, extended_notes: "old" });
+    mount(parent, store, minimalDb);
+    const ta = parent.querySelector("textarea.recipe-meta-extended-notes") as HTMLTextAreaElement;
+    ta.value = "";
+    ta.dispatchEvent(new Event("input"));
+    expect("extended_notes" in store.getState()).toBe(false);
+  });
 });
