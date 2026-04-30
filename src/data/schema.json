@@ -119,6 +119,114 @@
       "additionalProperties": true,
       "allOf": [{ "$ref": "#/$defs/ForbiddenKeys" }]
     },
+    "BBPDC20Stage": {
+      "type": "object",
+      "required": ["name", "duration_minutes", "target_temp_c"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": ["preheat", "knead_1", "rest", "knead_2",
+                   "rise_1", "punch", "add_ins_beep", "rise_2",
+                   "preheat_bake", "bake", "cool", "keep_warm"]
+        },
+        "duration_minutes": { "type": "number", "minimum": 0 },
+        "target_temp_c": { "type": ["number", "null"] },
+        "notes": { "type": "string" }
+      },
+      "allOf": [{ "$ref": "#/$defs/ForbiddenKeys" }]
+    },
+    "BBPDC20Course": {
+      "type": "object",
+      "required": [
+        "id", "course_number", "name",
+        "total_minutes", "stages",
+        "bakes", "loaf_sizes", "crust_shades",
+        "inclusions_beep", "dietary_modes",
+        "recommended_for", "yeast_compatibility",
+        "confidence", "sources"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "course_number": { "type": "integer", "minimum": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "total_minutes": { "type": "number", "minimum": 0 },
+        "stages": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BBPDC20Stage" }
+        },
+        "bakes": { "type": "boolean" },
+        "loaf_sizes": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["1lb", "1.5lb", "2lb"] },
+          "uniqueItems": true
+        },
+        "crust_shades": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["light", "medium", "dark"] },
+          "uniqueItems": true
+        },
+        "inclusions_beep": { "type": "boolean" },
+        "dietary_modes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["vegan", "salt_free", "sugar_free", "egg_free", "gluten_free"]
+          },
+          "uniqueItems": true
+        },
+        "recommended_for": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "recommended_for_notes": { "type": "string" },
+        "hydration_range": {
+          "type": "object",
+          "required": ["min_pct", "max_pct"],
+          "additionalProperties": false,
+          "properties": {
+            "min_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+            "max_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+            "ideal_pct": { "type": "number", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "whole_wheat_max_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "yeast_compatibility": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["instant", "active_dry", "sourdough", "fresh"]
+          },
+          "uniqueItems": true
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["verified", "inferred", "community"]
+        },
+        "sources": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": { "type": "string" }
+      },
+      "allOf": [{ "$ref": "#/$defs/ForbiddenKeys" }]
+    },
+    "BBPDC20CoursesFile": {
+      "type": "object",
+      "required": ["schema_version", "machine_id", "entries"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "_attribution": { "type": "string" },
+        "_methodology": { "type": "string" },
+        "machine_id": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BBPDC20Course" }
+        }
+      }
+    },
     "BBPDC20TemplateItem": {
       "type": "object",
       "required": ["ingredient_id", "grams"],
@@ -260,6 +368,7 @@
     { "$ref": "#/$defs/BBPDC20RecipesFile" },
     { "$ref": "#/$defs/BBPDC20TemplatesFile" },
     { "$ref": "#/$defs/MachinesFile" },
-    { "$ref": "#/$defs/Defaults" }
+    { "$ref": "#/$defs/Defaults" },
+    { "$ref": "#/$defs/BBPDC20CoursesFile" }
   ]
 }
