@@ -1,0 +1,619 @@
+{
+  "schema_version": "1.0",
+  "_attribution": "31 recipes from BB-PDC20 manual recipe book (zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf), retrieved 2026-04-29. Quantities verbatim from the manual; ingredient ids resolved against src/data/ingredients.json + src/data/flours.json.",
+  "_methodology": "This file is the regression-test contract for the course-recommendation engine. Each entry's `recipe` field is a full Recipe object that must round-trip through `recommendCourse` and produce `top.course_id === canonical_course`. The `canonical_family` field is the set of course ids that count as same-family for the top-3 same-family check (per spec §5.6). Authoring rules: (1) ingredient quantities verbatim from the manual; (2) recipe.intent set ONLY when the canonical course requires user intent (Sugar Free → intent.dietary='sugar_free'; Rapid → intent.time='rapid'); (3) Salt Free / Vegan / GF fixtures do NOT set recipe.intent — the structural predicates must catch them.",
+  "entries": [
+    {
+      "name": "Basic White Bread",
+      "canonical_course": "white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Basic White Bread",
+        "items": [
+          { "uid": "u_bw_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_bw_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_bw_03_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_bw_04_butter", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_bw_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_bw_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_bw_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 }
+        ]
+      }
+    },
+    {
+      "name": "Italian Herb Bread",
+      "canonical_course": "white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Italian Herb Bread",
+        "items": [
+          { "uid": "u_ih_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_ih_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_ih_03_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_ih_04_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_ih_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_ih_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_ih_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_ih_08_basil", "ingredient_id": "dried_basil", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Honey Bread",
+      "canonical_course": "white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Honey Bread",
+        "items": [
+          { "uid": "u_hb_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_hb_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_hb_03_honey", "ingredient_id": "honey", "grams": 60 },
+          { "uid": "u_hb_04_butter", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_hb_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_hb_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_hb_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 }
+        ]
+      }
+    },
+    {
+      "name": "Raisin Bread",
+      "canonical_course": "white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Raisin Bread",
+        "items": [
+          { "uid": "u_rb_01_water", "ingredient_id": "water_tap", "grams": 300 },
+          { "uid": "u_rb_02_flour", "ingredient_id": "bread_flour", "grams": 520 },
+          { "uid": "u_rb_03_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_rb_04_butter", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_rb_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rb_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rb_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_rb_08_raisins", "ingredient_id": "raisins", "grams": 140 },
+          { "uid": "u_rb_09_cinnamon", "ingredient_id": "cinnamon_ground", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Chocolate Bread",
+      "canonical_course": "white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Chocolate Bread",
+        "items": [
+          { "uid": "u_cb_01_milk", "ingredient_id": "milk_whole", "grams": 320 },
+          { "uid": "u_cb_02_egg", "ingredient_id": "egg_whole_large", "grams": 50 },
+          { "uid": "u_cb_03_flour", "ingredient_id": "bread_flour", "grams": 545 },
+          { "uid": "u_cb_04_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_cb_05_butter", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_cb_06_cocoa", "ingredient_id": "cocoa_powder", "grams": 24 },
+          { "uid": "u_cb_07_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_cb_08_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_cb_09_chocchip", "ingredient_id": "chocolate_chips", "grams": 90 }
+        ]
+      }
+    },
+    {
+      "name": "Cranberry Walnut Bread",
+      "canonical_course": "white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Cranberry Walnut Bread",
+        "items": [
+          { "uid": "u_cw_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_cw_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_cw_03_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_cw_04_butter", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_cw_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_cw_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_cw_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_cw_08_walnut", "ingredient_id": "walnut_pieces", "grams": 55 },
+          { "uid": "u_cw_09_cran", "ingredient_id": "dried_cranberries", "grams": 40 }
+        ]
+      }
+    },
+    {
+      "name": "100% Whole Wheat",
+      "canonical_course": "whole_wheat",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "100% Whole Wheat",
+        "items": [
+          { "uid": "u_ww_01_water", "ingredient_id": "water_tap", "grams": 370 },
+          { "uid": "u_ww_02_flour", "ingredient_id": "whole_wheat_flour", "grams": 553 },
+          { "uid": "u_ww_03_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_ww_04_honey", "ingredient_id": "honey", "grams": 40 },
+          { "uid": "u_ww_05_butter", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_ww_06_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_ww_07_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_ww_08_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_ww_09_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 32 }
+        ]
+      }
+    },
+    {
+      "name": "100% Whole Wheat Walnut",
+      "canonical_course": "whole_wheat",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "100% Whole Wheat Walnut",
+        "items": [
+          { "uid": "u_wwwa_01_water", "ingredient_id": "water_tap", "grams": 450 },
+          { "uid": "u_wwwa_02_flour", "ingredient_id": "whole_wheat_flour", "grams": 563 },
+          { "uid": "u_wwwa_03_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_wwwa_04_honey", "ingredient_id": "honey", "grams": 20 },
+          { "uid": "u_wwwa_05_butr", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_wwwa_06_drym", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_wwwa_07_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_wwwa_08_yst", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_wwwa_09_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 32 },
+          { "uid": "u_wwwa_10_wnut", "ingredient_id": "walnut_pieces", "grams": 73 }
+        ]
+      }
+    },
+    {
+      "name": "Light Rye Bread",
+      "canonical_course": "whole_wheat",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Light Rye Bread",
+        "items": [
+          { "uid": "u_lr_01_water", "ingredient_id": "water_tap", "grams": 330 },
+          { "uid": "u_lr_02_bf", "ingredient_id": "bread_flour", "grams": 358 },
+          { "uid": "u_lr_03_ww", "ingredient_id": "whole_wheat_flour", "grams": 65 },
+          { "uid": "u_lr_04_rye", "ingredient_id": "rye_flour_light", "grams": 130 },
+          { "uid": "u_lr_05_sugar", "ingredient_id": "sugar_granulated", "grams": 24 },
+          { "uid": "u_lr_06_butter", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_lr_07_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_lr_08_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_lr_09_yeast", "ingredient_id": "yeast_instant", "grams": 6 }
+        ]
+      }
+    },
+    {
+      "name": "Pumpernickel Bread",
+      "canonical_course": "whole_wheat",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Pumpernickel Bread",
+        "items": [
+          { "uid": "u_pn_01_water", "ingredient_id": "water_tap", "grams": 380 },
+          { "uid": "u_pn_02_coffee", "ingredient_id": "coffee_brewed", "grams": 30 },
+          { "uid": "u_pn_03_bf", "ingredient_id": "bread_flour", "grams": 260 },
+          { "uid": "u_pn_04_ww", "ingredient_id": "whole_wheat_flour", "grams": 130 },
+          { "uid": "u_pn_05_rye", "ingredient_id": "rye_flour_dark", "grams": 98 },
+          { "uid": "u_pn_06_corn", "ingredient_id": "cornmeal", "grams": 35 },
+          { "uid": "u_pn_07_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_pn_08_molas", "ingredient_id": "molasses", "grams": 40 },
+          { "uid": "u_pn_09_oil", "ingredient_id": "vegetable_oil", "grams": 24 },
+          { "uid": "u_pn_10_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_pn_11_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_pn_12_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_pn_13_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 32 }
+        ]
+      }
+    },
+    {
+      "name": "French Bread",
+      "canonical_course": "european",
+      "canonical_family": ["european", "white", "rapid_white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "French Bread",
+        "items": [
+          { "uid": "u_fb_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_fb_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_fb_03_sugar", "ingredient_id": "sugar_granulated", "grams": 12 },
+          { "uid": "u_fb_04_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_fb_05_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_fb_06_yeast", "ingredient_id": "yeast_instant", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Rustic Herb Bread",
+      "canonical_course": "european",
+      "canonical_family": ["european", "white", "rapid_white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Rustic Herb Bread",
+        "items": [
+          { "uid": "u_rh_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_rh_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_rh_03_sugar", "ingredient_id": "sugar_granulated", "grams": 12 },
+          { "uid": "u_rh_04_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_rh_05_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rh_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rh_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_rh_08_basil", "ingredient_id": "dried_basil", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Sesame Bread",
+      "canonical_course": "european",
+      "canonical_family": ["european", "white", "rapid_white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Sesame Bread",
+        "items": [
+          { "uid": "u_sb_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_sb_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_sb_03_sugar", "ingredient_id": "sugar_granulated", "grams": 12 },
+          { "uid": "u_sb_04_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_sb_05_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_sb_06_yeast", "ingredient_id": "yeast_instant", "grams": 3 },
+          { "uid": "u_sb_07_sesame", "ingredient_id": "sesame_seeds", "grams": 16 }
+        ]
+      }
+    },
+    {
+      "name": "Bacon Bread",
+      "canonical_course": "european",
+      "canonical_family": ["european", "white", "rapid_white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Bacon Bread",
+        "items": [
+          { "uid": "u_bb_01_water", "ingredient_id": "water_tap", "grams": 360 },
+          { "uid": "u_bb_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_bb_03_sugar", "ingredient_id": "sugar_granulated", "grams": 12 },
+          { "uid": "u_bb_04_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_bb_05_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_bb_06_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_bb_07_bacon", "ingredient_id": "bacon_cooked", "grams": 60 },
+          { "uid": "u_bb_08_pepper", "ingredient_id": "black_pepper_ground", "grams": 2 }
+        ]
+      }
+    },
+    {
+      "name": "7 Grain Bread",
+      "canonical_course": "multigrain",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "7 Grain Bread",
+        "items": [
+          { "uid": "u_7g_01_water", "ingredient_id": "water_tap", "grams": 310 },
+          { "uid": "u_7g_02_bf", "ingredient_id": "bread_flour", "grams": 217 },
+          { "uid": "u_7g_03_ww", "ingredient_id": "whole_wheat_flour", "grams": 228 },
+          { "uid": "u_7g_04_cereal", "ingredient_id": "seven_grain_cereal", "grams": 100 },
+          { "uid": "u_7g_05_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_7g_06_butter", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_7g_07_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_7g_08_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_7g_09_yeast", "ingredient_id": "yeast_instant", "grams": 6 }
+        ]
+      }
+    },
+    {
+      "name": "12 Grain Bread",
+      "canonical_course": "multigrain",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "12 Grain Bread",
+        "items": [
+          { "uid": "u_12g_01_water", "ingredient_id": "water_tap", "grams": 330 },
+          { "uid": "u_12g_02_bf", "ingredient_id": "bread_flour", "grams": 293 },
+          { "uid": "u_12g_03_ww", "ingredient_id": "whole_wheat_flour", "grams": 130 },
+          { "uid": "u_12g_04_cereal", "ingredient_id": "ten_grain_cereal", "grams": 75 },
+          { "uid": "u_12g_05_rye", "ingredient_id": "rye_flour_light", "grams": 65 },
+          { "uid": "u_12g_06_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_12g_07_butr", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_12g_08_drym", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_12g_09_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_12g_10_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_12g_11_sun", "ingredient_id": "sunflower_seed", "grams": 24 },
+          { "uid": "u_12g_12_poppy", "ingredient_id": "poppy_seed", "grams": 12 },
+          { "uid": "u_12g_13_tarr", "ingredient_id": "dried_tarragon", "grams": 2 }
+        ]
+      }
+    },
+    {
+      "name": "Multigrain Raisin",
+      "canonical_course": "multigrain",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Multigrain Raisin",
+        "items": [
+          { "uid": "u_mr_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_mr_02_bf", "ingredient_id": "bread_flour", "grams": 293 },
+          { "uid": "u_mr_03_ww", "ingredient_id": "whole_wheat_flour", "grams": 195 },
+          { "uid": "u_mr_04_teff", "ingredient_id": "teff", "grams": 33 },
+          { "uid": "u_mr_05_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_mr_06_butter", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_mr_07_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_mr_08_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_mr_09_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_mr_10_raisins", "ingredient_id": "raisins", "grams": 47 }
+        ]
+      }
+    },
+    {
+      "name": "GF Brown Rice Bread",
+      "canonical_course": "gluten_free",
+      "canonical_family": ["gluten_free"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "GF Brown Rice Bread",
+        "items": [
+          { "uid": "u_gfbr_01_milk", "ingredient_id": "milk_whole", "grams": 360 },
+          { "uid": "u_gfbr_02_egg", "ingredient_id": "egg_whole_large", "grams": 150 },
+          { "uid": "u_gfbr_03_flour", "ingredient_id": "gf_flour_blend", "grams": 548 },
+          { "uid": "u_gfbr_04_honey", "ingredient_id": "honey", "grams": 60 },
+          { "uid": "u_gfbr_05_oil", "ingredient_id": "vegetable_oil", "grams": 36 },
+          { "uid": "u_gfbr_06_salt", "ingredient_id": "salt_table", "grams": 7.5 },
+          { "uid": "u_gfbr_07_yeast", "ingredient_id": "yeast_active_dry", "grams": 9 },
+          { "uid": "u_gfbr_08_xg", "ingredient_id": "xanthan_gum", "grams": 12 },
+          { "uid": "u_gfbr_09_acv", "ingredient_id": "vinegar_apple_cider", "grams": 15 }
+        ]
+      }
+    },
+    {
+      "name": "GF Italian Herb Bread",
+      "canonical_course": "gluten_free",
+      "canonical_family": ["gluten_free"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "GF Italian Herb Bread",
+        "items": [
+          { "uid": "u_gfih_01_milk", "ingredient_id": "milk_whole", "grams": 360 },
+          { "uid": "u_gfih_02_egg", "ingredient_id": "egg_whole_large", "grams": 150 },
+          { "uid": "u_gfih_03_flour", "ingredient_id": "gf_flour_blend", "grams": 548 },
+          { "uid": "u_gfih_04_honey", "ingredient_id": "honey", "grams": 60 },
+          { "uid": "u_gfih_05_oil", "ingredient_id": "olive_oil", "grams": 36 },
+          { "uid": "u_gfih_06_salt", "ingredient_id": "salt_table", "grams": 7.5 },
+          { "uid": "u_gfih_07_yeast", "ingredient_id": "yeast_active_dry", "grams": 9 },
+          { "uid": "u_gfih_08_xg", "ingredient_id": "xanthan_gum", "grams": 12 },
+          { "uid": "u_gfih_09_acv", "ingredient_id": "vinegar_apple_cider", "grams": 15 },
+          { "uid": "u_gfih_10_basil", "ingredient_id": "dried_basil", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "GF Raisin Bread",
+      "canonical_course": "gluten_free",
+      "canonical_family": ["gluten_free"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "GF Raisin Bread",
+        "items": [
+          { "uid": "u_gfrr_01_milk", "ingredient_id": "milk_whole", "grams": 400 },
+          { "uid": "u_gfrr_02_egg", "ingredient_id": "egg_whole_large", "grams": 150 },
+          { "uid": "u_gfrr_03_flour", "ingredient_id": "gf_flour_blend", "grams": 548 },
+          { "uid": "u_gfrr_04_honey", "ingredient_id": "honey", "grams": 60 },
+          { "uid": "u_gfrr_05_oil", "ingredient_id": "vegetable_oil", "grams": 36 },
+          { "uid": "u_gfrr_06_salt", "ingredient_id": "salt_table", "grams": 7.5 },
+          { "uid": "u_gfrr_07_yeast", "ingredient_id": "yeast_active_dry", "grams": 9 },
+          { "uid": "u_gfrr_08_xg", "ingredient_id": "xanthan_gum", "grams": 12 },
+          { "uid": "u_gfrr_09_acv", "ingredient_id": "vinegar_apple_cider", "grams": 15 },
+          { "uid": "u_gfrr_10_raisn", "ingredient_id": "raisins", "grams": 75 }
+        ]
+      }
+    },
+    {
+      "name": "Salt Free White",
+      "canonical_course": "salt_free",
+      "canonical_family": ["salt_free", "white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Salt Free White",
+        "items": [
+          { "uid": "u_sfw_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_sfw_02_acv", "ingredient_id": "vinegar_apple_cider", "grams": 15 },
+          { "uid": "u_sfw_03_flour", "ingredient_id": "bread_flour", "grams": 545 },
+          { "uid": "u_sfw_04_sugar", "ingredient_id": "sugar_granulated", "grams": 42 },
+          { "uid": "u_sfw_05_butr", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_sfw_06_drym", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_sfw_07_yeast", "ingredient_id": "yeast_instant", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Salt Free Whole Wheat",
+      "canonical_course": "salt_free",
+      "canonical_family": ["salt_free", "whole_wheat"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Salt Free Whole Wheat",
+        "items": [
+          { "uid": "u_sfww_01_water", "ingredient_id": "water_tap", "grams": 400 },
+          { "uid": "u_sfww_02_acv", "ingredient_id": "vinegar_apple_cider", "grams": 15 },
+          { "uid": "u_sfww_03_flr", "ingredient_id": "whole_wheat_flour", "grams": 553 },
+          { "uid": "u_sfww_04_sgr", "ingredient_id": "sugar_granulated", "grams": 42 },
+          { "uid": "u_sfww_05_btr", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_sfww_06_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_sfww_07_yst", "ingredient_id": "yeast_instant", "grams": 3 },
+          { "uid": "u_sfww_08_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 16 }
+        ]
+      }
+    },
+    {
+      "name": "Sugar Free White",
+      "canonical_course": "sugar_free",
+      "canonical_family": ["sugar_free", "white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Sugar Free White",
+        "intent": { "dietary": "sugar_free" },
+        "items": [
+          { "uid": "u_sufw_01_watr", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_sufw_02_flr", "ingredient_id": "bread_flour", "grams": 545 },
+          { "uid": "u_sufw_03_btr", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_sufw_04_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_sufw_05_slt", "ingredient_id": "salt_table", "grams": 7.5 },
+          { "uid": "u_sufw_06_yst", "ingredient_id": "yeast_instant", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Sugar Free Whole Wheat",
+      "canonical_course": "sugar_free",
+      "canonical_family": ["sugar_free", "whole_wheat"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Sugar Free Whole Wheat",
+        "intent": { "dietary": "sugar_free" },
+        "items": [
+          { "uid": "u_sufww_01_wtr", "ingredient_id": "water_tap", "grams": 360 },
+          { "uid": "u_sufww_02_flr", "ingredient_id": "whole_wheat_flour", "grams": 553 },
+          { "uid": "u_sufww_03_btr", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_sufww_04_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_sufww_05_slt", "ingredient_id": "salt_table", "grams": 7.5 },
+          { "uid": "u_sufww_06_yst", "ingredient_id": "yeast_instant", "grams": 3 },
+          { "uid": "u_sufww_07_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 16 }
+        ]
+      }
+    },
+    {
+      "name": "Vegan White",
+      "canonical_course": "vegan",
+      "canonical_family": ["vegan", "white"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Vegan White",
+        "items": [
+          { "uid": "u_vw_01_water", "ingredient_id": "water_tap", "grams": 160 },
+          { "uid": "u_vw_02_almond", "ingredient_id": "almond_milk_unsweetened", "grams": 160 },
+          { "uid": "u_vw_03_flour", "ingredient_id": "bread_flour", "grams": 545 },
+          { "uid": "u_vw_04_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_vw_05_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_vw_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_vw_07_yeast", "ingredient_id": "yeast_instant", "grams": 4.5 }
+        ]
+      }
+    },
+    {
+      "name": "Vegan Whole Wheat",
+      "canonical_course": "vegan",
+      "canonical_family": ["vegan", "whole_wheat"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Vegan Whole Wheat",
+        "items": [
+          { "uid": "u_vww_01_water", "ingredient_id": "water_tap", "grams": 210 },
+          { "uid": "u_vww_02_almond", "ingredient_id": "almond_milk_unsweetened", "grams": 160 },
+          { "uid": "u_vww_03_flour", "ingredient_id": "whole_wheat_flour", "grams": 553 },
+          { "uid": "u_vww_04_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_vww_05_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_vww_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_vww_07_yeast", "ingredient_id": "yeast_instant", "grams": 6 },
+          { "uid": "u_vww_08_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 24 }
+        ]
+      }
+    },
+    {
+      "name": "Rapid Basic White",
+      "canonical_course": "rapid_white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Rapid Basic White",
+        "intent": { "time": "rapid" },
+        "items": [
+          { "uid": "u_rbw_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_rbw_02_flour", "ingredient_id": "bread_flour", "grams": 553 },
+          { "uid": "u_rbw_03_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_rbw_04_butr", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_rbw_05_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rbw_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rbw_07_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 }
+        ]
+      }
+    },
+    {
+      "name": "Rapid Italian Herb",
+      "canonical_course": "rapid_white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Rapid Italian Herb",
+        "intent": { "time": "rapid" },
+        "items": [
+          { "uid": "u_rih_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_rih_02_flour", "ingredient_id": "bread_flour", "grams": 545 },
+          { "uid": "u_rih_03_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_rih_04_oil", "ingredient_id": "olive_oil", "grams": 24 },
+          { "uid": "u_rih_05_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rih_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rih_07_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 },
+          { "uid": "u_rih_08_basil", "ingredient_id": "dried_basil", "grams": 3 }
+        ]
+      }
+    },
+    {
+      "name": "Rapid Raisin Bread",
+      "canonical_course": "rapid_white",
+      "canonical_family": ["white", "rapid_white", "european"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Rapid Raisin Bread",
+        "intent": { "time": "rapid" },
+        "items": [
+          { "uid": "u_rrb_01_water", "ingredient_id": "water_tap", "grams": 320 },
+          { "uid": "u_rrb_02_flour", "ingredient_id": "bread_flour", "grams": 545 },
+          { "uid": "u_rrb_03_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
+          { "uid": "u_rrb_04_butr", "ingredient_id": "butter_unsalted", "grams": 35 },
+          { "uid": "u_rrb_05_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rrb_06_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rrb_07_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 },
+          { "uid": "u_rrb_08_raisn", "ingredient_id": "raisins", "grams": 93 }
+        ]
+      }
+    },
+    {
+      "name": "Rapid 100% Whole Wheat",
+      "canonical_course": "rapid_whole_wheat",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Rapid 100% Whole Wheat",
+        "intent": { "time": "rapid" },
+        "items": [
+          { "uid": "u_rww_01_water", "ingredient_id": "water_tap", "grams": 380 },
+          { "uid": "u_rww_02_flour", "ingredient_id": "whole_wheat_flour", "grams": 553 },
+          { "uid": "u_rww_03_sugar", "ingredient_id": "sugar_granulated", "grams": 36 },
+          { "uid": "u_rww_04_honey", "ingredient_id": "honey", "grams": 40 },
+          { "uid": "u_rww_05_butr", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_rww_06_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rww_07_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rww_08_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 },
+          { "uid": "u_rww_09_vwg", "ingredient_id": "vital_wheat_gluten", "grams": 32 }
+        ]
+      }
+    },
+    {
+      "name": "Rapid Light Rye",
+      "canonical_course": "rapid_whole_wheat",
+      "canonical_family": ["whole_wheat", "rapid_whole_wheat", "multigrain"],
+      "recipe": {
+        "schema_version": "2.0",
+        "name": "Rapid Light Rye",
+        "intent": { "time": "rapid" },
+        "items": [
+          { "uid": "u_rlr_01_water", "ingredient_id": "water_tap", "grams": 330 },
+          { "uid": "u_rlr_02_bf", "ingredient_id": "bread_flour", "grams": 358 },
+          { "uid": "u_rlr_03_ww", "ingredient_id": "whole_wheat_flour", "grams": 65 },
+          { "uid": "u_rlr_04_rye", "ingredient_id": "rye_flour_light", "grams": 130 },
+          { "uid": "u_rlr_05_sugar", "ingredient_id": "sugar_granulated", "grams": 24 },
+          { "uid": "u_rlr_06_butr", "ingredient_id": "butter_unsalted", "grams": 28 },
+          { "uid": "u_rlr_07_drm", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
+          { "uid": "u_rlr_08_salt", "ingredient_id": "salt_table", "grams": 10 },
+          { "uid": "u_rlr_09_yeast", "ingredient_id": "yeast_instant", "grams": 7.5 }
+        ]
+      }
+    }
+  ]
+}

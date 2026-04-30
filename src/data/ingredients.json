@@ -86,6 +86,94 @@
     { "id": "teff", "name": "Teff (whole grain)", "category": "grain_cereal",
       "is_liquid": false, "water_pct": 9, "salt_pct": 0, "sugar_pct": 2, "fat_pct": 2.4,
       "free_water_factor": 0.3, "density_g_per_cup": 145, "usda_fdc_id": 169747,
-      "notes": "Whole-grain teff; used in BB-PDC20 Multigrain Raisin Bread recipe." }
+      "notes": "Whole-grain teff; used in BB-PDC20 Multigrain Raisin Bread recipe." },
+
+    { "id": "milk_powder_nonfat", "name": "Milk powder, nonfat (dry milk)", "category": "specialty",
+      "is_liquid": false, "water_pct": 3.2, "salt_pct": 0.5, "sugar_pct": 52.0, "fat_pct": 0.8,
+      "free_water_factor": 0.3, "density_g_per_cup": 68, "usda_fdc_id": 172172,
+      "notes": "Nonfat dry milk powder; adds milk solids / tenderness to enriched bread. USDA FDC 172172." },
+
+    { "id": "olive_oil", "name": "Olive oil (extra virgin)", "category": "fats",
+      "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100,
+      "free_water_factor": 0, "density_g_per_cup": 216,
+      "notes": "Alias for oil_olive_extra_virgin; used in BB-PDC20 herb and lean-style recipes." },
+
+    { "id": "vegetable_oil", "name": "Vegetable oil (neutral)", "category": "fats",
+      "is_liquid": true, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100,
+      "free_water_factor": 0, "density_g_per_cup": 218,
+      "notes": "Neutral vegetable / soybean oil. USDA density 218 g/cup." },
+
+    { "id": "raisins", "name": "Raisins, seedless", "category": "dried_fruit",
+      "is_liquid": false, "water_pct": 15.4, "salt_pct": 0, "sugar_pct": 59.2, "fat_pct": 0.46,
+      "free_water_factor": 0.3, "density_g_per_cup": 145, "usda_fdc_id": 168165,
+      "flags": ["humectant_bound_water"],
+      "notes": "Alias for raisin_regular_seedless; used in BB-PDC20 Raisin, Multigrain Raisin, and Rapid Raisin recipes." },
+
+    { "id": "walnut_pieces", "name": "Walnut, pieces", "category": "nuts_seeds",
+      "is_liquid": false, "water_pct": 4.1, "salt_pct": 0, "sugar_pct": 2.6, "fat_pct": 65.2,
+      "free_water_factor": 0.2, "density_g_per_cup": 117, "usda_fdc_id": 170187,
+      "notes": "Walnut pieces / chopped; same macros as walnut_english. Used in BB-PDC20 WW Walnut and Cranberry Walnut recipes." },
+
+    { "id": "dried_cranberries", "name": "Cranberries, dried (unsweetened)", "category": "dried_fruit",
+      "is_liquid": false, "water_pct": 16.0, "salt_pct": 0, "sugar_pct": 64.0, "fat_pct": 1.1,
+      "free_water_factor": 0.3, "density_g_per_cup": 130,
+      "notes": "Dried cranberries. Similar macros to craisin_sweetened. Used in BB-PDC20 Cranberry Walnut Bread." },
+
+    { "id": "cocoa_powder", "name": "Cocoa powder (natural)", "category": "specialty",
+      "is_liquid": false, "water_pct": 3.0, "salt_pct": 0.05, "sugar_pct": 1.75, "fat_pct": 13.7,
+      "free_water_factor": 0.5, "density_g_per_cup": 86, "usda_fdc_id": 169593,
+      "notes": "Natural cocoa powder; alias for cocoa_powder_natural. Used in BB-PDC20 Chocolate Bread." },
+
+    { "id": "chocolate_chips", "name": "Chocolate chips, semisweet", "category": "specialty",
+      "is_liquid": false, "water_pct": 0.93, "salt_pct": 0.024, "sugar_pct": 51.5, "fat_pct": 31.0,
+      "free_water_factor": 0.5, "density_g_per_cup": 170, "usda_fdc_id": 169593,
+      "notes": "Semisweet chocolate chips; alias for chocolate_semisweet_chips. Used in BB-PDC20 Chocolate Bread." },
+
+    { "id": "molasses", "name": "Molasses, dark", "category": "sweeteners",
+      "is_liquid": false, "water_pct": 21.0, "salt_pct": 0.04, "sugar_pct": 75, "fat_pct": 0.1,
+      "free_water_factor": 0.4, "density_g_per_cup": 337, "usda_fdc_id": 168820,
+      "flags": ["humectant_bound_water"],
+      "notes": "Dark molasses; alias for molasses_dark. Used in BB-PDC20 Pumpernickel Bread." },
+
+    { "id": "dried_basil", "name": "Basil, dried", "category": "herbs_spices",
+      "is_liquid": false, "water_pct": 6.0, "salt_pct": 0.04, "sugar_pct": 1.7, "fat_pct": 4.0,
+      "free_water_factor": 0.2, "density_g_per_cup": 50, "usda_fdc_id": 172232,
+      "notes": "Dried basil herb. Used in BB-PDC20 Italian Herb, Rustic Herb, and GF Italian Herb recipes." },
+
+    { "id": "dried_tarragon", "name": "Tarragon, dried", "category": "herbs_spices",
+      "is_liquid": false, "water_pct": 7.7, "salt_pct": 0.06, "sugar_pct": 1.9, "fat_pct": 7.2,
+      "free_water_factor": 0.2, "density_g_per_cup": 50, "usda_fdc_id": 172238,
+      "notes": "Dried tarragon herb. Used in BB-PDC20 12 Grain Bread." },
+
+    { "id": "sesame_seeds", "name": "Sesame seeds, hulled", "category": "nuts_seeds",
+      "is_liquid": false, "water_pct": 4.7, "salt_pct": 0.01, "sugar_pct": 0.3, "fat_pct": 49.7,
+      "free_water_factor": 0.2, "density_g_per_cup": 144, "usda_fdc_id": 170150,
+      "notes": "Hulled sesame seeds. Used in BB-PDC20 Sesame Bread." },
+
+    { "id": "poppy_seed", "name": "Poppy seeds", "category": "nuts_seeds",
+      "is_liquid": false, "water_pct": 5.9, "salt_pct": 0.026, "sugar_pct": 2.99, "fat_pct": 41.6,
+      "free_water_factor": 0.2, "density_g_per_cup": 135, "usda_fdc_id": 169096,
+      "notes": "Poppy seeds. Used in BB-PDC20 12 Grain Bread." },
+
+    { "id": "cornmeal", "name": "Cornmeal, yellow", "category": "flour",
+      "is_liquid": false, "water_pct": 10.3, "salt_pct": 0.01, "sugar_pct": 0.6, "fat_pct": 3.6,
+      "free_water_factor": 0.3, "density_g_per_cup": 122, "usda_fdc_id": 169713,
+      "notes": "Yellow cornmeal (degerminated); used as flour/thickener. Treated as milled grain. Used in BB-PDC20 Pumpernickel Bread." },
+
+    { "id": "coffee_brewed", "name": "Coffee, brewed", "category": "liquids",
+      "is_liquid": true, "water_pct": 99.4, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 0.02,
+      "free_water_factor": 1.0, "density_g_per_cup": 237, "usda_fdc_id": 171882,
+      "notes": "Brewed black coffee; mostly water with trace minerals. Used in BB-PDC20 Pumpernickel Bread for color and mild bitterness." },
+
+    { "id": "bacon_cooked", "name": "Bacon, cooked (crumbled)", "category": "specialty",
+      "is_liquid": false, "water_pct": 13.0, "salt_pct": 2.0, "sugar_pct": 0.2, "fat_pct": 42.0,
+      "free_water_factor": 0.3, "density_g_per_cup": 114, "usda_fdc_id": 168321,
+      "flags": ["high_salt"],
+      "notes": "Cooked crumbled bacon. High fat and moderate salt. Used in BB-PDC20 Bacon Bread." },
+
+    { "id": "black_pepper_ground", "name": "Black pepper, ground", "category": "herbs_spices",
+      "is_liquid": false, "water_pct": 10.5, "salt_pct": 0.04, "sugar_pct": 0.6, "fat_pct": 3.3,
+      "free_water_factor": 0.2, "density_g_per_cup": 64, "usda_fdc_id": 170931,
+      "notes": "Ground black pepper. Used in BB-PDC20 Bacon Bread." }
   ]
 }

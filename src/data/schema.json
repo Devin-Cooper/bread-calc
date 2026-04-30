@@ -374,6 +374,30 @@
         }
       ]
     }
+    ,
+    "BBPDC20RecipeMatrix": {
+      "type": "object",
+      "required": ["schema_version", "entries"],
+      "additionalProperties": true,
+      "properties": {
+        "schema_version": { "type": "string" },
+        "_attribution": { "type": "string" },
+        "_methodology": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "canonical_course", "canonical_family", "recipe"],
+            "properties": {
+              "name": { "type": "string" },
+              "canonical_course": { "type": "string" },
+              "canonical_family": { "type": "array", "items": { "type": "string" } },
+              "recipe": { "$ref": "#/$defs/Recipe" }
+            }
+          }
+        }
+      }
+    }
   },
   "oneOf": [
     { "$ref": "#/$defs/Recipe" },
