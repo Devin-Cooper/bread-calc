@@ -370,7 +370,6 @@ describe("recommendCourse — lexicographic comparator (synthetic-stub tier brea
       crust_shades: ["medium"],
       inclusions_beep: false,
       dietary_modes: [],
-      recommended_for: [],
       yeast_compatibility: ["instant"],
       confidence: "verified",
       sources: [],

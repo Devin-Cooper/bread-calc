@@ -16,8 +16,8 @@ const minimalDb: Database = {
   ingredients: [], flours: [], references: [], machines: [],
   defaults: {} as never,
   courses: [
-    { id: "white", course_number: 1, name: "White", crust_shades: ["light","medium","dark"], loaf_sizes: ["1.5lb","2lb"], total_minutes: 205, stages: [], bakes: true, inclusions_beep: true, dietary_modes: [], recommended_for: [], yeast_compatibility: ["instant"], confidence: "verified", sources: [] },
-    { id: "whole_wheat", course_number: 2, name: "Whole Wheat", crust_shades: ["medium"], loaf_sizes: ["1.5lb","2lb"], total_minutes: 200, stages: [], bakes: true, inclusions_beep: true, dietary_modes: [], recommended_for: [], yeast_compatibility: ["instant"], confidence: "verified", sources: [] },
+    { id: "white", course_number: 1, name: "White", crust_shades: ["light","medium","dark"], loaf_sizes: ["1.5lb","2lb"], total_minutes: 205, stages: [], bakes: true, inclusions_beep: true, dietary_modes: [], yeast_compatibility: ["instant"], confidence: "verified", sources: [] },
+    { id: "whole_wheat", course_number: 2, name: "Whole Wheat", crust_shades: ["medium"], loaf_sizes: ["1.5lb","2lb"], total_minutes: 200, stages: [], bakes: true, inclusions_beep: true, dietary_modes: [], yeast_compatibility: ["instant"], confidence: "verified", sources: [] },
   ],
 };
 

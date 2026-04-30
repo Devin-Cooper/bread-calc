@@ -117,7 +117,6 @@ export interface BBPDC20Course {
   readonly inclusions_beep: boolean;
   readonly dietary_modes: readonly BBPDC20DietaryMode[];
 
-  readonly recommended_for: readonly string[];
   readonly recommended_for_notes?: string;
   readonly hydration_range?: {
     readonly min_pct: number;

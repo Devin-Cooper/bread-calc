@@ -19,7 +19,6 @@ interface CourseEntry {
   crust_shades: readonly string[];
   inclusions_beep: boolean;
   dietary_modes: readonly string[];
-  recommended_for: readonly string[];
   recommended_for_notes?: string;
   hydration_range?: { min_pct: number; max_pct: number; ideal_pct?: number };
   whole_wheat_max_pct?: number;
@@ -121,7 +120,6 @@ describe("bb_pdc20_courses.json shape invariants", () => {
       expect(Array.isArray(e.crust_shades)).toBe(true);
       expect(Array.isArray(e.dietary_modes)).toBe(true);
       expect(Array.isArray(e.yeast_compatibility)).toBe(true);
-      expect(Array.isArray(e.recommended_for)).toBe(true);
       expect(Array.isArray(e.sources)).toBe(true);
     }
   });

@@ -143,7 +143,7 @@
         "total_minutes", "stages",
         "bakes", "loaf_sizes", "crust_shades",
         "inclusions_beep", "dietary_modes",
-        "recommended_for", "yeast_compatibility",
+        "yeast_compatibility",
         "confidence", "sources"
       ],
       "additionalProperties": false,
@@ -175,10 +175,6 @@
             "enum": ["vegan", "salt_free", "sugar_free", "egg_free", "gluten_free"]
           },
           "uniqueItems": true
-        },
-        "recommended_for": {
-          "type": "array",
-          "items": { "type": "string" }
         },
         "recommended_for_notes": { "type": "string" },
         "hydration_range": {

@@ -10,7 +10,6 @@ function makeCourse(partial: Pick<BBPDC20Course, "id" | "course_number" | "name"
     bakes: true,
     inclusions_beep: true,
     dietary_modes: [],
-    recommended_for: [],
     yeast_compatibility: ["instant"],
     confidence: "verified",
     sources: [],

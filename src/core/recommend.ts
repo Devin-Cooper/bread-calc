@@ -432,23 +432,9 @@ function deriveRecipeTags(facts: RecipeFacts, dietary: DietaryFacts): ReadonlySe
   return tags;
 }
 
-function evaluateRecommendedFor(course: BBPDC20Course, recipeTags: ReadonlySet<string>): SoftTierResult {
-  let overlap = 0;
-  const matched: string[] = [];
-  for (const tag of course.recommended_for) {
-    if (recipeTags.has(tag) && RECIPE_TAG_VOCAB.has(tag)) {
-      overlap++;
-      matched.push(tag);
-    }
-  }
-  if (overlap > 0) {
-    return {
-      reason: { tier: "recommended_for", verdict: "match", evidence: `Tags overlap: ${matched.join(", ")}` },
-      score: overlap,
-    };
-  }
+function evaluateRecommendedFor(_course: BBPDC20Course, _recipeTags: ReadonlySet<string>): SoftTierResult {
   return {
-    reason: { tier: "recommended_for", verdict: "neutral", evidence: "No tag overlap with course" },
+    reason: { tier: "recommended_for", verdict: "neutral", evidence: "Disabled (engine rewrite in progress)" },
     score: 0,
   };
 }
