@@ -12,6 +12,11 @@
 @import url("./styles/warnings-panel.css");
 @import url("./styles/show-math.css");
 @import url("./styles/learn.css");
+@import url("./pdf/print.css");
+
+/* Kitchen card is print-only; hidden on screen via explicit CSS rather than the
+ * HTML `hidden` attribute (which fights with print-stylesheet overrides). */
+#kitchen-card { display: none; }
 
 * { box-sizing: border-box; }
 

@@ -10,7 +10,7 @@
 
 [role="row"] {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr auto auto;
+  grid-template-columns: minmax(0, 2fr) minmax(80px, 1fr) minmax(80px, 1fr) 120px 44px;
   gap: var(--space-2);
   align-items: center;
   padding: var(--space-2) 0;
@@ -20,6 +20,18 @@
   font-weight: 600;
   color: var(--color-fg-muted);
   border-bottom: 1px solid var(--color-border);
+}
+
+.row-header [role="columnheader"]:nth-child(2),
+.row-header [role="columnheader"]:nth-child(3) {
+  padding-left: var(--space-3);
+}
+.row-header [role="columnheader"]:nth-child(4) {
+  padding-left: var(--space-3);
+}
+
+[role="row"] .role-pill-host {
+  justify-self: start;
 }
 
 .solved-grams {
