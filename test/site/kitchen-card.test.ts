@@ -159,4 +159,11 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     expect(parent.querySelector(".kc-hints-block")).toBeNull();
   });
+
+  it("brand footer: renders the literal text 'breadmachine.io'", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    expect(parent.querySelector(".kc-footer")?.textContent?.trim()).toBe("breadmachine.io");
+  });
 });
