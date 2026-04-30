@@ -74,4 +74,14 @@ describe("createStore", () => {
     s.dispatch({ type: "set_notes", notes: "" });
     expect("notes" in s.getState()).toBe(false);
   });
+  it("dispatches set_course and sets the field", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_course", course: "white" });
+    expect(s.getState().course).toBe("white");
+  });
+  it("set_course(undefined) clears the field", () => {
+    const s = createStore({ schema_version: "2.0", course: "white", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_course", course: undefined });
+    expect("course" in s.getState()).toBe(false);
+  });
 });

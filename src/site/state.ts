@@ -1,4 +1,4 @@
-import type { Recipe, RecipeItem } from "../core/index.js";
+import type { CrustShade, LoafSize, Recipe, RecipeItem } from "../core/index.js";
 import { generateUid } from "../core/uid.js";
 
 export type Action =
@@ -11,6 +11,7 @@ export type Action =
   | { type: "set_bake_loss_pct"; pct: number }
   | { type: "set_name"; name: string }
   | { type: "set_notes"; notes: string }
+  | { type: "set_course"; course: string | undefined }
   | { type: "set_headline_metric"; metric: "effective" | "nominal" | "total_liquid" }
   | { type: "set_free_water_factor_override"; ingredient_id: string; factor: number | undefined }
   | { type: "load"; recipe: Recipe };
@@ -52,6 +53,14 @@ function reduce(state: Recipe, action: Action): Recipe {
         return rest;
       }
       return { ...state, notes: action.notes };
+    }
+    case "set_course": {
+      if (action.course === undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { course: _course, ...rest } = state;
+        return rest;
+      }
+      return { ...state, course: action.course };
     }
     case "set_headline_metric": return { ...state, headline_metric: action.metric };
     case "set_free_water_factor_override": {
