@@ -91,47 +91,53 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         </label>
         ${(() => {
           const recs = recommendCourse(r, db);
-          const top = recs.find((rec) => rec.eligible);
-          if (!top) {
+          const top3 = recs.filter((rec) => rec.eligible).slice(0, 3);
+          const eligibleCount = recs.filter((rec) => rec.eligible).length;
+          if (top3.length === 0) {
             return `<div class="recommendation-strip recommendation-empty">No compatible course found.</div>`;
           }
-          const topName = db.courses.find((c) => c.id === top.course_id)?.name ?? top.course_id;
-          const branchReason = top.reasons.find((r) => r.kind === "tree_branch");
-          const branchName: TreeBranch = branchReason?.kind === "tree_branch" ? branchReason.branch : "default_white";
-          const matchLabel = `(via ${branchLabel(branchName)})`;
+          const courseNameOf = (id: string) => db.courses.find((c) => c.id === id)?.name ?? id;
 
-          if (r.course === undefined) {
+          const top3Rows = top3.map((rec) => {
+            const courseName = courseNameOf(rec.course_id);
+            const branchReason = rec.reasons.find((rr) => rr.kind === "tree_branch");
+            const bName: TreeBranch = branchReason?.kind === "tree_branch" ? branchReason.branch : "default_white";
+            const isUserPick = rec.course_id === r.course;
+            const useBtn = isUserPick
+              ? `<span class="rec-user-marker" aria-label="Your pick">✓ your pick</span>`
+              : `<button type="button" class="rec-use" data-rec-id="${escapeHtml(rec.course_id)}" aria-label="Use ${escapeHtml(courseName)} for this recipe">Use</button>`;
             return `
-              <div class="recommendation-strip">
-                <span class="rec-label">Recommended: <strong>${escapeHtml(topName)}</strong> ${matchLabel}</span>
-                <button type="button" class="rec-use-this" data-rec-id="${escapeHtml(top.course_id)}">Use this</button>
-                <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all</button>
+              <div class="rec-row rec-row-${rec.rank}" data-course-id="${escapeHtml(rec.course_id)}">
+                <span class="rec-rank">#${rec.rank}</span>
+                <strong class="rec-name">${escapeHtml(courseName)}</strong>
+                <span class="rec-branch">via ${escapeHtml(branchLabel(bName))}</span>
+                ${useBtn}
               </div>
-              ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
             `;
-          }
-          if (r.course === top.course_id) {
-            return `
-              <div class="recommendation-strip">
-                <span class="rec-label">Top match: <strong>✓ ${escapeHtml(topName)}</strong> ${matchLabel}</span>
-                <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all</button>
-              </div>
-              ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
-            `;
-          }
-          // State C
-          const userRec = recs.find((rec) => rec.course_id === r.course);
-          const userRank = userRec?.rank ?? null;
-          const eligibleCount = recs.filter((rec) => rec.eligible).length;
-          const userCourseName = db.courses.find((c) => c.id === r.course)?.name ?? r.course;
-          const userBlurb = userRank !== null
-            ? `Your pick (${escapeHtml(userCourseName)}) is rank #${userRank} of ${eligibleCount} eligible`
-            : `Your pick (${escapeHtml(userCourseName)}) is ineligible`;
+          }).join("");
+
+          const userOutsideTop3 =
+            r.course !== undefined &&
+            !top3.some((rec) => rec.course_id === r.course);
+          const userPickFooter = userOutsideTop3
+            ? (() => {
+                const userRec = recs.find((rec) => rec.course_id === r.course);
+                const userRank = userRec?.rank ?? null;
+                const userCourseName = courseNameOf(r.course!);
+                const rankText = userRank !== null
+                  ? `(rank #${userRank} of ${eligibleCount})`
+                  : "(ineligible)";
+                return `<p class="rec-user-pick">Your pick: <strong>${escapeHtml(userCourseName)}</strong> ${rankText}</p>`;
+              })()
+            : "";
+
           return `
             <div class="recommendation-strip">
-              <span class="rec-label">Recommended: <strong>${escapeHtml(topName)}</strong> ${matchLabel} · ${userBlurb}</span>
-              <button type="button" class="rec-use-top" data-rec-id="${escapeHtml(top.course_id)}">Use top match</button>
-              <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all</button>
+              <div class="rec-top3">
+                ${top3Rows}
+              </div>
+              <button type="button" class="rec-see-all" aria-expanded="${seeAllOpen ? "true" : "false"}">See all 14</button>
+              ${userPickFooter}
             </div>
             ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
           `;
@@ -215,20 +221,12 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       ` : ""}
     `;
 
-    const useThisBtn = parent.querySelector(".rec-use-this") as HTMLButtonElement | null;
-    if (useThisBtn) {
-      useThisBtn.addEventListener("click", () => {
-        const id = useThisBtn.dataset.recId;
+    parent.querySelectorAll<HTMLButtonElement>(".rec-use").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.recId;
         if (id) store.dispatch({ type: "set_course", course: id });
       });
-    }
-    const useTopBtn = parent.querySelector(".rec-use-top") as HTMLButtonElement | null;
-    if (useTopBtn) {
-      useTopBtn.addEventListener("click", () => {
-        const id = useTopBtn.dataset.recId;
-        if (id) store.dispatch({ type: "set_course", course: id });
-      });
-    }
+    });
     const seeAllBtn = parent.querySelector(".rec-see-all") as HTMLButtonElement | null;
     if (seeAllBtn) {
       seeAllBtn.addEventListener("click", () => {
