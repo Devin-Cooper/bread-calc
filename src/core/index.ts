@@ -26,6 +26,6 @@ export type {
 export { RecipeValidationError } from "./types.js";
 export { recommendCourse, resolveCourse } from "./recommend.js";
 export type {
-  CourseRecommendation, RecommendationReason, RecommendationTier,
-  RecommendationVerdict, RecommendOpts, ResolvedCourse,
+  CourseRecommendation, RecommendationReason, RecommendOpts,
+  TreeBranch, ResolvedCourse,
 } from "./recommend.js";

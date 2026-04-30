@@ -24,6 +24,6 @@ export type {
   BBPDC20Course,
 } from "../core/types.js";
 export type {
-  CourseRecommendation, RecommendationReason, RecommendationTier,
-  RecommendationVerdict, RecommendOpts, ResolvedCourse,
+  CourseRecommendation, RecommendationReason, RecommendOpts,
+  TreeBranch, RecipeIntent, DietaryIntent, TimeIntent, OutputIntent, ResolvedCourse,
 } from "../core/recommend.js";
