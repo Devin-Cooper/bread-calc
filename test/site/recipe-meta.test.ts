@@ -223,5 +223,24 @@ describe("recipe-meta component", () => {
       expect(parent.querySelector(".rec-use-top")).toBeNull();
       expect(parent.querySelector(".rec-use-this")).toBeNull();
     });
+
+    it("State C: recipe.course differs from top — shows rank-of-N + [Use top match]", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe, course: "whole_wheat" });
+      mount(parent, store, minimalDb);
+      const strip = parent.querySelector(".recommendation-strip") as HTMLElement;
+      expect(strip.textContent).toContain("Recommended:");
+      expect(strip.textContent).toContain("Your pick");
+      const swap = parent.querySelector(".rec-use-top") as HTMLButtonElement | null;
+      expect(swap).not.toBeNull();
+    });
+
+    it("[Use top match] dispatches set_course with top recommendation's id", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe, course: "whole_wheat" });
+      mount(parent, store, minimalDb);
+      (parent.querySelector(".rec-use-top") as HTMLButtonElement).click();
+      expect(store.getState().course).toBe("white");
+    });
   });
 });
