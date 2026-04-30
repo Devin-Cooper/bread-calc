@@ -1,6 +1,6 @@
 import type { Store } from "../state.js";
-import type { Database } from "../../core/index.js";
-import { computeRecipe } from "../../core/index.js";
+import type { Database, Role } from "../../core/index.js";
+import { computeRecipe, inferRole } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { effectiveRecipe } from "../effective-recipe.js";
 import { sortItemsForPrint } from "./load-order.js";
@@ -37,41 +37,46 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     const includeRole = showRole();
 
     parent.innerHTML = `
-      <header class="kc-header">
-        <h1 class="kc-name">${escapeHtml(recipeName)}</h1>
-        ${notes ? `<p class="kc-notes">${escapeHtml(notes)}</p>` : ""}
-      </header>
+      <article class="kc-card">
+        <header class="kc-header">
+          <h1 class="kc-name">${escapeHtml(recipeName)}</h1>
+          ${notes ? `<p class="kc-notes">${escapeHtml(notes)}</p>` : ""}
+        </header>
 
-      <div class="kc-metric-strip">
-        <div class="kc-metric"><span class="kc-metric-label">Total dough</span><span class="kc-metric-value">${fmt(totalMass, "g")}</span></div>
-        <div class="kc-metric"><span class="kc-metric-label">Hydration</span><span class="kc-metric-value">${fmt(hyEff, "%")} effective</span></div>
-        <div class="kc-metric"><span class="kc-metric-label">Zone</span><span class="kc-metric-value">${escapeHtml(zoneLabel)}</span></div>
-      </div>
+        <div class="kc-metric-strip">
+          <div class="kc-metric"><span class="kc-metric-label">Total</span><span class="kc-metric-value">${fmt(totalMass, "g")}</span></div>
+          <div class="kc-metric"><span class="kc-metric-label">Hydration</span><span class="kc-metric-value">${fmt(hyEff, "%")}</span></div>
+          <div class="kc-metric"><span class="kc-metric-label">Zone</span><span class="kc-metric-value">${escapeHtml(zoneLabel)}</span></div>
+        </div>
 
-      <table class="kc-table">
-        <thead>
-          <tr>
-            <th class="kc-th-name">Ingredient</th>
-            <th class="kc-th-num">Baker's %</th>
-            ${includeRole ? `<th class="kc-th-role">Role</th>` : ""}
-            <th class="kc-th-num">Grams</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${ordered.map((item) => {
-            const grams = item.grams ?? 0;
-            const pct = pcts[item.uid] ?? null;
-            return `
-              <tr>
-                <td class="kc-td-name">${escapeHtml(prettyName(item.ingredient_id, db))}</td>
-                <td class="kc-td-num">${pct == null ? "—" : pct.toFixed(1) + " %"}</td>
-                ${includeRole ? `<td class="kc-td-role">${escapeHtml(item.role ?? "—")}</td>` : ""}
-                <td class="kc-td-num">${Math.round(grams)} g</td>
-              </tr>
-            `;
-          }).join("")}
-        </tbody>
-      </table>
+        <table class="kc-table">
+          <thead>
+            <tr>
+              <th class="kc-th-name">Ingredient</th>
+              <th class="kc-th-num">%</th>
+              ${includeRole ? `<th class="kc-th-role">Role</th>` : ""}
+              <th class="kc-th-num">Grams</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ordered.map((item) => {
+              const grams = item.grams ?? 0;
+              const pct = pcts[item.uid] ?? null;
+              const role = effectiveRole(item, db);
+              return `
+                <tr>
+                  <td class="kc-td-name">${escapeHtml(prettyName(item.ingredient_id, db))}</td>
+                  <td class="kc-td-num">${pct == null ? "—" : pct.toFixed(1)}</td>
+                  ${includeRole ? `<td class="kc-td-role">${escapeHtml(role ?? "—")}</td>` : ""}
+                  <td class="kc-td-num">${Math.round(grams)}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+
+        <footer class="kc-footer">breadmachine.io</footer>
+      </article>
     `;
   }
 
@@ -82,4 +87,13 @@ function prettyName(id: string, db: Database): string {
   const f = db.flours.find((x) => x.id === id); if (f) return f.name;
   const i = db.ingredients.find((x) => x.id === id); if (i) return i.name;
   return id;
+}
+
+function effectiveRole(item: { ingredient_id: string; role?: Role }, db: Database): Role | null {
+  if (item.role) return item.role;
+  const flour = db.flours.find((f) => f.id === item.ingredient_id);
+  if (flour) return "flour";
+  const ing = db.ingredients.find((i) => i.id === item.ingredient_id);
+  if (ing) return inferRole(ing.category, ing.is_liquid ?? false);
+  return null;
 }
