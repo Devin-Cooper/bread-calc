@@ -337,7 +337,12 @@
           "type": "object",
           "additionalProperties": { "$ref": "#/$defs/Factor" }
         },
-        "headline_metric": { "enum": ["effective", "nominal", "total_liquid"] }
+        "headline_metric": { "enum": ["effective", "nominal", "total_liquid"] },
+        "course": { "type": "string" },
+        "crust_shade": { "type": "string", "enum": ["light", "medium", "dark"] },
+        "loaf_size": { "type": "string", "enum": ["1lb", "1.5lb", "2lb"] },
+        "extended_notes": { "type": "string" },
+        "bake_hints": { "type": "array", "items": { "type": "string" } }
       },
       "additionalProperties": true,
       "allOf": [
