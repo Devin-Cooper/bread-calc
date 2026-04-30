@@ -3,5 +3,58 @@
   "_attribution": "Course timings and capabilities researched from public Zojirushi BB-PDC20 documentation and community sources. Machine-specification facts are not copyrightable; this notice is a courtesy.",
   "_methodology": "Each entry's 'confidence' field reflects source authority: 'verified' = Zojirushi-published spec; 'inferred' = derived from the manual's recipe instructions (e.g., add-ins beep timing); 'community' = Fresh Loaf / Reddit / bread-machine forum reports triangulated across at least two independent sources. The 'sources' array on each entry lists URLs (manual references where available; community thread URLs otherwise). Stage-level temperature targets are typically not published; entries that include 'target_temp_c' are inferred from heated-element duty cycles in community oscilloscope traces and are flagged as 'community' or 'inferred' confidence accordingly. Single-source community claims do not populate typed inferred-bucket fields (hydration_range, whole_wheat_max_pct); they land as a free-form sentence in the row's 'notes' field with the source URL inlined parenthetically.",
   "machine_id": "zojirushi_bb_pdc20",
-  "entries": []
+  "entries": [
+    {
+      "id": "white",
+      "course_number": 1,
+      "name": "White",
+      "total_minutes": 205,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "Manual's REST cycle: stabilizes ingredient temperature before kneading (manual page 19). Toggleable via REST OFF; skipping it drops the total cycle to 2:54 (manual page 13)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 14,
+          "target_temp_c": null,
+          "notes": "Manual shows a single Knead phase; no documented autolyse rest between knead halves. Duration derived from Add Beep timing (45 min from start) minus REST length (31 min)."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual's Add Beep fires at approximately 45 min from start, at the end of Knead and immediately before Rise begins (manual page 13). Beep sounds for 30 seconds; modeled here as a zero-duration event marker."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 110,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within the Rise band; sub-stage durations are not published. Modeled as a single rise_1 stage; duration = total_minutes - preheat - knead_1 - bake."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart visual proportions (manual page 13) and the residual after Rest, Knead, and Rise are accounted for. The manual does not publish bake duration explicitly."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["sandwich_loaf", "white_flour", "default_white_bread"],
+      "recommended_for_notes": "Default cycle for plain or lightly enriched white-flour loaves; the workhorse course of the BB-PDC20.",
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:25 (REST OFF: 2:54), Add Beep at approx. 45 min, separate 1-hour keep-warm hold (not included in total_minutes; model treats keep_warm as the post-cycle hold the user can cancel via the manual's page-16 step 8). Manual page 14 basic white recipe: 553g bread flour, 320g water, 6g rapid rise yeast — 57.9% hydration. Crust Control supports LIGHT/MEDIUM/DARK (manual page 18). Timer supported (manual page 17). Rest Off supported (manual page 12)."
+    }
+  ]
 }
