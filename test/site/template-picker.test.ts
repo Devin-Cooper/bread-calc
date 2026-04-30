@@ -89,4 +89,18 @@ describe("template-picker", () => {
       .map((opt) => opt.querySelector(".template-name")!.textContent!);
     expect(visibleNames).toContain("French Bread");
   });
+
+  // ===== Task 3.4: option-select =====
+  it("clicking an option dispatches load with a fresh-uid recipe", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    const firstOption = root.querySelector("[role='option']") as HTMLElement;
+    firstOption.click();
+    expect(store.getState().name).toBe("Basic White Bread");
+    expect(store.getState().items.length).toBeGreaterThan(0);
+    // Picker auto-closes after select
+    expect(root.querySelector(".template-popover")).toBeNull();
+  });
 });

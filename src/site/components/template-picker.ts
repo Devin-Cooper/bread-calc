@@ -1,7 +1,7 @@
 import type { Store } from "../state.js";
 import type { Database } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
-import { buildTemplates, type TemplateEntry } from "../templates.js";
+import { buildTemplates, loadTemplate, type TemplateEntry } from "../templates.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let isOpen = false;
@@ -55,6 +55,18 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       render();
       const restored = parent.querySelector<HTMLInputElement>(".template-filter");
       if (restored) { restored.focus(); restored.setSelectionRange(filter.length, filter.length); }
+    });
+
+    parent.querySelectorAll<HTMLElement>("[role='option']").forEach((opt) => {
+      opt.addEventListener("click", () => {
+        const id = opt.dataset["templateId"];
+        if (!id) return;
+        const entry = templates.find((t) => t.id === id);
+        if (!entry) return;
+        const loaded = loadTemplate(entry);
+        store.dispatch({ type: "load", recipe: loaded });
+        isOpen = false; filter = ""; render();
+      });
     });
   }
 
