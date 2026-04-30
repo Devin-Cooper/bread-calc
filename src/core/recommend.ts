@@ -116,6 +116,7 @@ type LeavenerKind = "chemical" | null;
 interface RecipeFacts {
   readonly hydration_pct: number | null;
   readonly ww_pct: number;
+  readonly has_flour: boolean;
   readonly yeast_kind: YeastKind;
   readonly leavener_kind: LeavenerKind;
 }
@@ -154,7 +155,7 @@ function deriveRecipeFacts(recipe: Recipe, db: Database): RecipeFacts {
   }
 
   const wwPct = totalFlour > 0 ? (wholeGrainFlour / totalFlour) * 100 : 0;
-  return { hydration_pct: hydration, ww_pct: wwPct, yeast_kind: yeastKind, leavener_kind: leavenerKind };
+  return { hydration_pct: hydration, ww_pct: wwPct, has_flour: totalFlour > 0, yeast_kind: yeastKind, leavener_kind: leavenerKind };
 }
 
 function evaluateDietaryGate(course: BBPDC20Course, dietary: DietaryFacts): RecommendationReason {
@@ -227,6 +228,12 @@ function evaluateWholeWheat(course: BBPDC20Course, facts: RecipeFacts): SoftTier
   if (course.whole_wheat_max_pct === undefined) {
     return {
       reason: { tier: "whole_wheat", verdict: "neutral", evidence: "Course has no whole-wheat cap" },
+      score: 0,
+    };
+  }
+  if (!facts.has_flour) {
+    return {
+      reason: { tier: "whole_wheat", verdict: "neutral", evidence: "Recipe has no flour" },
       score: 0,
     };
   }

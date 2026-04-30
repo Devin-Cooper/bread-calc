@@ -261,3 +261,69 @@ describe("recommendCourse — invariants and ranking", () => {
     expect(courseNumbers).toEqual(sorted);
   });
 });
+
+describe("recommendCourse — edge cases", () => {
+  it("empty items: hydration unknown; rankings fall back to confidence + course_number", () => {
+    const recipe: Recipe = { schema_version: "2.0", items: [] };
+    const recs = recommendCourse(recipe, db);
+    expect(recs.length).toBe(14);
+    const eligible = recs.filter((r) => r.eligible);
+    expect(eligible.length).toBeGreaterThan(0);
+    expect(eligible[0]!.course_id).toBe("white");
+  });
+
+  it("crust_shade tier fires only when recipe.crust_shade is set", () => {
+    const recipe1: Recipe = { schema_version: "2.0", items: [{ uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 }] };
+    const recipe2: Recipe = { ...recipe1, crust_shade: "light" };
+    const r1 = recommendCourse(recipe1, db).find((r) => r.course_id === "whole_wheat")!;
+    const r2 = recommendCourse(recipe2, db).find((r) => r.course_id === "whole_wheat")!;
+    const cs1 = r1.reasons.find((x) => x.tier === "crust_shade")!;
+    const cs2 = r2.reasons.find((x) => x.tier === "crust_shade")!;
+    expect(cs1.verdict).toBe("neutral");
+    expect(cs2.verdict).toBe("mismatch");
+  });
+
+  it("Cake course matches a recipe with baking powder and no yeast", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "ap_flour", grams: 250 },
+        { uid: "u_test_a01c", ingredient_id: "baking_powder", grams: 8 },
+        { uid: "u_test_a01d", ingredient_id: "sugar_granulated", grams: 200 },
+        { uid: "u_test_a01e", ingredient_id: "egg_whole_large", grams: 100 },
+        { uid: "u_test_a01f", ingredient_id: "milk_whole", grams: 200 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db, { intent: "bake" });
+    const cake = recs.find((r) => r.course_id === "cake")!;
+    expect(cake.eligible).toBe(true);
+    const yeastReason = cake.reasons.find((x) => x.tier === "yeast")!;
+    expect(yeastReason.verdict).toBe("match");
+  });
+
+  it("Course 12 Sourdough Starter mismatches yeast for any current recipe (no sourdough ingredient yet)", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "yeast_instant", grams: 6 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db, { intent: "dough" });
+    const sd = recs.find((r) => r.course_id === "sourdough_starter")!;
+    expect(sd.eligible).toBe(true);
+    const yeastReason = sd.reasons.find((x) => x.tier === "yeast")!;
+    expect(yeastReason.verdict).toBe("mismatch");
+  });
+
+  it("ineligible course's reasons array still has length 9 with neutral fillers after the failing gate", () => {
+    const recs = recommendCourse(baseRecipe, db);
+    const gf = recs.find((r) => r.course_id === "gluten_free")!;
+    expect(gf.reasons.length).toBe(9);
+    const dietaryIdx = gf.reasons.findIndex((x) => x.tier === "dietary");
+    for (let i = dietaryIdx + 1; i < gf.reasons.length; i++) {
+      expect(gf.reasons[i]!.verdict).toBe("neutral");
+      expect(gf.reasons[i]!.evidence).toBe("Not evaluated — eligibility failed");
+    }
+  });
+});
