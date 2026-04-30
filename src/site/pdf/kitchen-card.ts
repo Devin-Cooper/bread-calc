@@ -19,14 +19,13 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
 
   function render(): void {
     const r = effectiveRecipe(store.getState(), db);
-    let totalMass = 0, hyEff: number | null = null, zoneLabel = "—";
+    let totalMass = 0, hyEff: number | null = null;
     let pcts: Record<string, number | null> = {};
     let solvedItems = r.items;
     try {
       const c = computeRecipe(r, db);
       totalMass = c.metrics.total_mass_g;
       hyEff = c.hydration.effective_pct;
-      zoneLabel = c.hydration.zone?.label ?? "—";
       pcts = c.bakers_percents.by_uid;
       solvedItems = c.recipe.items;
     } catch { /* leave defaults */ }
@@ -38,7 +37,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
 
     parent.innerHTML = `
       <article class="kc-card">
-        ${renderHeader(recipeName, notes, totalMass, hyEff, zoneLabel)}
+        ${renderHeader(recipeName, notes, totalMass, hyEff)}
         <div class="kc-grid">
           ${renderIngredientsCol(ordered, db, pcts, includeRole)}
           ${renderRightCol(store.getState(), db)}
@@ -150,7 +149,7 @@ function renderCourseBlock(recipe: Recipe, db: Database): string | null {
   `;
 }
 
-function renderHeader(recipeName: string, notes: string, totalMass: number, hyEff: number | null, zoneLabel: string): string {
+function renderHeader(recipeName: string, notes: string, totalMass: number, hyEff: number | null): string {
   return `
     <header class="kc-header">
       <div class="kc-header-text">
@@ -160,7 +159,6 @@ function renderHeader(recipeName: string, notes: string, totalMass: number, hyEf
       <div class="kc-metric-strip">
         <div class="kc-metric"><span class="kc-metric-label">Total</span><span class="kc-metric-value">${fmt(totalMass, "g")}</span></div>
         <div class="kc-metric"><span class="kc-metric-label">Hydration</span><span class="kc-metric-value">${fmt(hyEff, "%")}</span></div>
-        <div class="kc-metric"><span class="kc-metric-label">Zone</span><span class="kc-metric-value">${escapeHtml(zoneLabel)}</span></div>
       </div>
     </header>
   `;

@@ -76,7 +76,7 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     expect(parent.querySelector(".kc-name")?.textContent).toContain("Test Recipe");
     expect(parent.querySelector(".kc-notes")?.textContent).toContain("one-line notes");
-    expect(parent.querySelectorAll(".kc-metric").length).toBe(3);
+    expect(parent.querySelectorAll(".kc-metric").length).toBe(2);
   });
 
   it("course block: shows user pick '<n> — <name>' when recipe.course is set + valid", () => {
