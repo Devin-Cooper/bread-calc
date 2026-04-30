@@ -242,5 +242,18 @@ describe("recipe-meta component", () => {
       (parent.querySelector(".rec-use-top") as HTMLButtonElement).click();
       expect(store.getState().course).toBe("white");
     });
+
+    it("[See all] toggles a ranking table with one row per course in db.courses", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe });
+      mount(parent, store, minimalDb);
+      const seeAll = parent.querySelector(".rec-see-all") as HTMLButtonElement;
+      expect(parent.querySelector(".recommendation-table")).toBeNull();
+      seeAll.click();
+      const table = parent.querySelector(".recommendation-table") as HTMLElement;
+      expect(table).not.toBeNull();
+      const rows = table.querySelectorAll("tr.rec-row");
+      expect(rows.length).toBe(minimalDb.courses.length);
+    });
   });
 });
