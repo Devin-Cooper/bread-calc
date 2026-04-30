@@ -52,6 +52,7 @@ function intentChipText(intent: { dietary?: DietaryIntent; time?: TimeIntent; ou
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let seeAllOpen = false;
   let intentManuallyToggled = false; // set by toggle handler; suppresses auto-open after manual interaction
+  let editingTarget = false; // when true, the target-weight input is shown instead of the "Set / Stop" affordance
   let lastRecipeRef: ReturnType<typeof store.getState> | null = null;
 
   function render() {
@@ -73,6 +74,8 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         restoreSelector = "textarea.recipe-meta-extended-notes";
       } else if (active instanceof HTMLInputElement && active.dataset.hintIdx !== undefined) {
         restoreSelector = `.bake-hints-list input[data-hint-idx="${active.dataset.hintIdx}"]`;
+      } else if (active instanceof HTMLInputElement && active.classList.contains("rm-target-input")) {
+        restoreSelector = "input.rm-target-input";
       }
       if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
         restoreStart = active.selectionStart ?? 0;
@@ -165,6 +168,28 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
             `).join("")}
           </div>
           <button type="button" class="recipe-meta-clear" data-clear="loaf_size">Clear</button>
+          ${(() => {
+            // Target-weight affordance below the Size segmented control. Three states:
+            //   editing             → input field (kept visible while user types, even
+            //                          after the first keystroke commits target_loaf_g)
+            //   target_loaf_g set   → "Target: {N}g  ← Stop using" (clickable to edit)
+            //   neither             → "+ Set custom weight" link
+            if (editingTarget) {
+              const v = r.target_loaf_g ?? 900;
+              return `<input type="text" class="rm-target-input" data-action="rm-target-input"
+                             inputmode="decimal" pattern="[0-9]*\\.?[0-9]*"
+                             value="${v}" aria-label="Target loaf weight in grams" />
+                       <button type="button" class="rm-target-done" data-action="rm-target-done">Done</button>`;
+            }
+            if (r.target_loaf_g != null) {
+              return `<button type="button" class="rm-target-current" data-action="rm-target-edit"
+                              aria-label="Edit target weight">Target: ${Math.round(r.target_loaf_g)}g</button>
+                       <button type="button" class="rm-target-stop" data-action="rm-target-stop"
+                               aria-label="Stop using target weight">← Stop</button>`;
+            }
+            return `<button type="button" class="rm-target-set" data-action="rm-target-edit"
+                            aria-label="Set custom target weight">+ Set custom weight</button>`;
+          })()}
         </fieldset>
         <details class="recipe-meta-intent" data-state="${r.intent && Object.keys(r.intent).length > 0 ? "set" : "unset"}"${(r.intent && Object.keys(r.intent).length > 0 && !intentManuallyToggled) ? " open" : ""}>
           <summary>Intent <span class="intent-chip" aria-hidden="${r.intent && Object.keys(r.intent).length > 0 ? "false" : "true"}">${escapeHtml(intentChipText(r.intent))}</span></summary>
@@ -290,7 +315,44 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       store.dispatch({ type: "set_loaf_size", loaf_size: undefined });
       // Also clear target_loaf_g so the recipe goes back to its baseline.
       store.dispatch({ type: "set_target_loaf_g", grams: undefined });
+      editingTarget = false;
     });
+
+    // Target weight controls (below the Size segmented buttons).
+    parent.querySelector<HTMLButtonElement>('[data-action="rm-target-edit"]')?.addEventListener("click", () => {
+      editingTarget = true;
+      render();
+      const input = parent.querySelector<HTMLInputElement>(".rm-target-input");
+      if (input) { input.focus(); input.select(); }
+    });
+    parent.querySelector<HTMLButtonElement>('[data-action="rm-target-stop"]')?.addEventListener("click", () => {
+      editingTarget = false;
+      store.dispatch({ type: "set_target_loaf_g", grams: undefined });
+    });
+    parent.querySelector<HTMLButtonElement>('[data-action="rm-target-done"]')?.addEventListener("click", () => {
+      editingTarget = false;
+      render();
+    });
+    const targetInput = parent.querySelector<HTMLInputElement>('[data-action="rm-target-input"]');
+    if (targetInput) {
+      targetInput.addEventListener("input", () => {
+        const n = parseFloat(targetInput.value);
+        if (Number.isFinite(n) && n > 0) {
+          store.dispatch({ type: "set_target_loaf_g", grams: n });
+        }
+      });
+      targetInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === "Escape") {
+          e.preventDefault();
+          editingTarget = false;
+          render();
+        }
+      });
+      targetInput.addEventListener("blur", () => {
+        // Defer so a click on the Done button fires before the blur tears down the input.
+        setTimeout(() => { editingTarget = false; render(); }, 0);
+      });
+    }
 
     parent.querySelectorAll<HTMLButtonElement>("[data-output]").forEach((b) => {
       b.addEventListener("click", () => {

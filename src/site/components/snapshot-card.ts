@@ -9,8 +9,6 @@ export interface SnapshotProps {
 }
 
 export function mount(parent: HTMLElement, store: Store, db: Database, props: SnapshotProps): void {
-  let editingTarget = false;
-
   function fmtPct(n: number | null | undefined): string {
     return n == null ? "—" : `${n.toFixed(1)} %`;
   }
@@ -75,7 +73,6 @@ export function mount(parent: HTMLElement, store: Store, db: Database, props: Sn
         <div class="snapshot-stat">
           <span class="snapshot-stat-label type-body-sm">Predicted loaf weight</span>
           <span class="type-numeric-display snapshot-stat-value">${fmtG(predictedG)}</span>
-          ${renderTargetAffordance(inTargetMode)}
         </div>
         <div class="snapshot-stat">
           <span class="snapshot-stat-label type-body-sm">Total dough weight</span>
@@ -92,42 +89,11 @@ export function mount(parent: HTMLElement, store: Store, db: Database, props: Sn
       props.onOpenSettings();
     });
 
-    parent.querySelector<HTMLButtonElement>("[data-action='set-target']")?.addEventListener("click", () => {
-      editingTarget = true;
-      render();
-      parent.querySelector<HTMLInputElement>("[data-action='target-input']")?.focus();
-    });
-
-    parent.querySelector<HTMLButtonElement>("[data-action='clear-target']")?.addEventListener("click", () => {
-      editingTarget = false;
-      store.dispatch({ type: "set_target_loaf_g", grams: undefined });
-    });
-
-    parent.querySelector<HTMLInputElement>("[data-action='target-input']")?.addEventListener("input", (e) => {
-      const n = parseFloat((e.target as HTMLInputElement).value);
-      if (Number.isFinite(n) && n > 0) {
-        store.dispatch({ type: "set_target_loaf_g", grams: n });
-      }
-    });
-
     // Wire help-icon tooltips
     parent.querySelectorAll<HTMLElement>("[data-help]").forEach((btn) => {
       const key = btn.dataset["help"]!;
       attachTooltip(btn, { content: tooltipText(key) });
     });
-  }
-
-  function renderTargetAffordance(inTargetMode: boolean): string {
-    if (inTargetMode) {
-      return `<button type="button" class="snapshot-target-link type-body-sm" data-action="clear-target">← Stop using target weight</button>`;
-    }
-    if (editingTarget) {
-      const v = store.getState().target_loaf_g ?? 900;
-      return `<input type="text" class="snapshot-target-input" data-action="target-input"
-                inputmode="decimal" pattern="[0-9]*\\.?[0-9]*" value="${v}"
-                aria-label="Target loaf weight in grams" />`;
-    }
-    return `<button type="button" class="snapshot-target-link type-body-sm" data-action="set-target">+ Set target weight</button>`;
   }
 
   function renderSecondary(label: string, value: number | null, helpKey: string): string {

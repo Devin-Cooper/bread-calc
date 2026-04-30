@@ -27,25 +27,7 @@ describe("snapshot-card", () => {
     expect(opened).toBe(1);
   });
 
-  it("dispatches set_target_loaf_g when '+ Set target weight' is clicked then submitted", () => {
-    const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "2.0", items: [] });
-    mountSnapshot(root, store, db, { onOpenSettings: () => {} });
-    const trigger = root.querySelector("[data-action='set-target']") as HTMLButtonElement;
-    trigger.click();
-    const input = root.querySelector("input[data-action='target-input']") as HTMLInputElement;
-    expect(input).not.toBeNull();
-    input.value = "950";
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    expect(store.getState().target_loaf_g).toBe(950);
-  });
-
-  it("dispatches set_target_loaf_g(undefined) when '← Stop using target weight' clicked", () => {
-    const root = document.createElement("div"); document.body.appendChild(root);
-    const store = createStore({ schema_version: "2.0", target_loaf_g: 900, items: [] });
-    mountSnapshot(root, store, db, { onOpenSettings: () => {} });
-    const stopBtn = root.querySelector("[data-action='clear-target']") as HTMLButtonElement;
-    stopBtn.click();
-    expect("target_loaf_g" in store.getState()).toBe(false);
-  });
+  // The target-weight affordance moved from snapshot-card to recipe-meta
+  // (below the Size segmented control). See test/site/recipe-meta.test.ts
+  // for coverage of "+ Set custom weight" / "← Stop" / inline input behavior.
 });

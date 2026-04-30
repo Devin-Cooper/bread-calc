@@ -237,6 +237,63 @@ input[type="text"]:focus-visible {
 }
 .recipe-meta-clear:hover { color: var(--color-accent-fg); }
 
+/* Target weight controls below the Size segmented buttons.
+ * Three states render in this slot: a "Set custom weight" link (no target),
+ * a "Target: Ng ← Stop" pair (target set, not editing), or an inline input +
+ * Done button (editing). Tokens match the rest of recipe-meta. */
+.rm-target-set,
+.rm-target-current,
+.rm-target-stop,
+.rm-target-done {
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  color: var(--color-accent-fg);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-1) 0;
+  margin-top: var(--space-1);
+  text-align: left;
+}
+.rm-target-set:hover,
+.rm-target-current:hover,
+.rm-target-stop:hover,
+.rm-target-done:hover { color: var(--color-accent-deep); text-decoration: underline; }
+
+.rm-target-current {
+  font-weight: var(--weight-black);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--type-small-size);
+  color: var(--color-fg-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+.rm-target-stop {
+  margin-left: var(--space-1);
+  color: var(--color-fg-muted);
+}
+.rm-target-stop:hover { color: var(--color-accent-fg); }
+
+.rm-target-input {
+  background: var(--color-bg-canvas);
+  border: var(--border-hairline) solid var(--color-accent-fg);
+  border-radius: var(--radius-sm);
+  padding: 2px var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--type-small-size);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  color: var(--color-fg-strong);
+  width: 80px;
+  margin-top: var(--space-1);
+  box-shadow: var(--shadow-stamp);
+}
+.rm-target-input:focus { outline: none; }
+
 .recipe-meta-details {
   margin-top: var(--space-4);
   color: var(--color-fg-default);

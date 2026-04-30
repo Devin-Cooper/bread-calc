@@ -135,8 +135,11 @@
 
 .zone-band-track {
   position: relative;
-  /* Reserve room above the band for the floating badge */
-  margin-top: calc(var(--space-12) + 4px);
+  /* Reserve room above the band for the floating badge — sized to fit
+   * the eyebrow tab + value stamp + ▼ pointer with 8px gap to band top.
+   * Tightened from --space-12 + 4px to keep the badge visually adjacent
+   * to the band rather than floating in negative space. */
+  margin-top: var(--space-8);
 }
 
 /* Bold "you are here" ribbon inside the band — full height, accent fill,
