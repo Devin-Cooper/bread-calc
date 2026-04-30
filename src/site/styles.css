@@ -4,6 +4,7 @@
 @import url("./styles/tip-strip.css");
 @import url("./styles/recipe-headline.css");
 @import url("./styles/tooltip.css");
+@import url("./styles/settings-drawer.css");
 
 * { box-sizing: border-box; }
 

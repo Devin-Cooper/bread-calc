@@ -9,6 +9,7 @@ import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
 import { mount as mountHeader, type HeaderActionId } from "./components/header.js";
 import { mount as mountTipStrip } from "./components/tip-strip.js";
+import { mount as mountDrawer, applyTheme } from "./components/settings-drawer.js";
 import { mount as mountHeadline } from "./components/recipe-headline.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
@@ -63,6 +64,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
 }
 
 (async () => {
+  applyTheme();
   const initial = await loadInitialRecipe();
   const store = createStore(initial);
 
@@ -94,12 +96,11 @@ async function loadInitialRecipe(): Promise<Recipe> {
     else if (id === "open") fileInput.click();
     else if (id === "share") void navigator.clipboard.writeText(location.href);
     else if (id === "pdf") window.print();
-    else if (id === "settings") {
-      // Phase 3 wires this up. For now, no-op.
-    }
+    else if (id === "settings") drawerCtl.open();
   }
   mountHeader(document.querySelector("#site-header") as HTMLElement, { onAction: handleHeaderAction });
   mountTipStrip(document.querySelector("#tip-strip") as HTMLElement);
+  const drawerCtl = mountDrawer(document.querySelector("#settings-drawer") as HTMLDialogElement, store);
 
   mountHeadline(document.querySelector("#recipe-headline") as HTMLElement, store);
   mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
