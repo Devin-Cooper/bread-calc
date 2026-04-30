@@ -1,13 +1,36 @@
+/* Recipe headline + metric strip — kitchen-card metric-tile pattern on screen.
+ * Per spec C §5 (recipe-headline.css row).
+ *
+ * Class names emitted by recipe-headline.ts:
+ *   #recipe-headline (ID on the host element)
+ *   .recipe-name            — h2, recipe title
+ *   .recipe-notes-row       — p, sub-row container
+ *   .recipe-notes           — contenteditable span, italic notes
+ *   .recipe-notes-clear     — × button
+ *   .recipe-notes-add       — dashed add-note button
+ *   .mode-badge             — build-mode pill
+ *
+ * .metric-strip / .metric-tile are CSS-ready for when the component
+ * gains its metric strip (spec §5 phase 3 kitchen-card tile pattern).
+ */
+
 #recipe-headline {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin-bottom: var(--space-4);
+  padding: var(--space-4) var(--space-4) var(--space-3);
 }
+
+/* ─── Recipe name ─────────────────────────────────────────────────────────── */
 
 .recipe-name {
   margin: 0;
-  color: var(--color-emphasis);
+  font-family: var(--font-editorial);
+  font-size: var(--type-h1-size);
+  font-weight: var(--weight-bold);
+  line-height: var(--type-h1-lh);
+  color: var(--color-fg-strong);
+  letter-spacing: -0.01em;
 }
 
 .recipe-name [data-role="name"] {
@@ -33,6 +56,8 @@
   outline-offset: 2px;
 }
 
+/* ─── Notes row ───────────────────────────────────────────────────────────── */
+
 .recipe-notes-row {
   display: flex;
   align-items: center;
@@ -42,8 +67,11 @@
 }
 
 .recipe-notes {
-  color: var(--color-fg-muted);
+  font-family: var(--font-editorial);
   font-style: italic;
+  font-size: var(--type-small-size);
+  line-height: 1.3;
+  color: var(--color-fg-muted);
   outline: none;
   border-radius: var(--radius-sm);
   padding: 0 var(--space-1);
@@ -64,6 +92,7 @@
   color: var(--color-fg-subtle);
   font-size: 16px;
   padding: 0;
+  cursor: pointer;
 }
 .recipe-notes-clear:hover { background: var(--color-bg-muted); color: var(--color-fg-default); }
 
@@ -77,6 +106,8 @@
 }
 .recipe-notes-add:hover { color: var(--color-accent-fg); border-color: var(--color-accent-fg); }
 
+/* ─── Mode badge ──────────────────────────────────────────────────────────── */
+
 .mode-badge {
   display: inline-block;
   align-self: flex-start;
@@ -84,4 +115,52 @@
   background: var(--color-bg-muted);
   color: var(--color-fg-muted);
   border-radius: var(--radius-pill);
+}
+
+/* ─── Metric strip: 3 dot-textured tiles ─────────────────────────────────── */
+
+.metric-strip {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.metric-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 84px;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-fg-strong);
+  background-image: var(--pattern-benday);
+  background-size: var(--pattern-benday-size);
+  color: var(--color-bg-canvas);
+  border: var(--border-hairline) solid var(--color-fg-strong);
+  text-align: center;
+}
+
+.metric-tile-label {
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-semibold);
+  color: var(--color-bg-canvas);
+  opacity: 0.85;
+}
+
+.metric-tile-value {
+  font-size: 1.375rem;
+  font-weight: var(--weight-black);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  margin-top: 2px;
+  color: var(--color-bg-canvas);
+}
+
+@media (max-width: 480px) {
+  .metric-tile { min-width: 64px; padding: var(--space-1) var(--space-2); }
+  .metric-tile-value { font-size: 1.125rem; }
 }

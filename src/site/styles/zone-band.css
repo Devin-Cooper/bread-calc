@@ -1,3 +1,23 @@
+/* Zone band — 4-segment horizontal strip; active zone highlighted with
+ * accent fill + Ben-Day dots. Per spec C §5 (zone-band.css row).
+ *
+ * Class names emitted by zone-band.ts:
+ *   #zone-band              — ID on the host element
+ *   .zone-band-heading      — h2, section heading
+ *   .zone-band              — the track container (position: relative, fixed height)
+ *   .zone-segment           — absolute-positioned div per zone (left/width via inline style)
+ *   .zone-segment.is-active — active zone modifier
+ *   .zone-segment-label     — label span inside each segment
+ *   .zone-tick              — button ticks for reference recipes
+ *   .zone-marker            — floating arrow + value above the track
+ *   .zone-marker-value      — numeric hydration display
+ *   .zone-note              — prose note below the band
+ *
+ * NOTE: .zone-segment uses position: absolute (left/width set inline by the
+ * component). The spec's flex-layout template has been adapted to maintain that
+ * absolute-positioned structure while applying the art-pop visual treatment.
+ */
+
 #zone-band { display: flex; flex-direction: column; gap: var(--space-3); }
 
 .zone-band-heading {
@@ -5,12 +25,16 @@
   display: flex; align-items: center; gap: var(--space-1);
 }
 
+/* ─── Band track ──────────────────────────────────────────────────────────── */
+
 .zone-band {
   position: relative;
   width: 100%;
   height: 48px;
   background: var(--color-bg-muted);
-  border-radius: var(--radius-md);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
   margin-top: var(--space-6);
 }
 
@@ -18,32 +42,46 @@
   .zone-band { height: 64px; }
 }
 
+/* ─── Zone segments ───────────────────────────────────────────────────────── */
+
 .zone-segment {
   position: absolute;
   top: 0; bottom: 0;
-  border-right: 1px solid var(--color-border);
+  border-right: var(--border-hairline) solid var(--color-border);
   display: flex; align-items: center; justify-content: center;
-  color: var(--color-fg-subtle);
+  font-size: var(--type-small-size);
+  font-weight: var(--weight-semibold);
+  color: var(--color-fg-muted);
+  background: var(--color-bg-muted);
   pointer-events: none;
   z-index: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
 }
 .zone-segment:last-of-type { border-right: none; }
+
 .zone-segment.is-active {
-  background: var(--color-accent-bg);
-  color: var(--crust-700);
+  background-color: var(--color-accent-fg);
+  background-image: var(--pattern-benday);
+  background-size: var(--pattern-benday-size);
+  color: var(--color-fg-on-accent);
 }
+
+/* ─── Segment label ───────────────────────────────────────────────────────── */
+
 .zone-segment-label {
-  font-variant: small-caps;
-  letter-spacing: 0.04em;
-  background: var(--color-bg-muted);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: 0.06em;
+  font-weight: var(--weight-semibold);
   padding: 2px var(--space-2);
   border-radius: var(--radius-sm);
   position: relative;
   z-index: 2;
+  /* inherit color from .zone-segment / .zone-segment.is-active */
 }
-.zone-segment.is-active .zone-segment-label {
-  background: var(--color-accent-bg);
-}
+
+/* ─── Reference ticks ─────────────────────────────────────────────────────── */
 
 .zone-tick {
   position: absolute;
@@ -63,6 +101,8 @@
   outline-offset: 2px;
 }
 
+/* ─── User hydration marker ───────────────────────────────────────────────── */
+
 .zone-marker {
   position: absolute;
   bottom: calc(100% + 4px);
@@ -81,10 +121,14 @@
   margin-bottom: -2px;
 }
 
+/* ─── Zone note ───────────────────────────────────────────────────────────── */
+
 .zone-note {
   margin: 0;
   color: var(--color-fg-muted);
 }
+
+/* ─── Forced colors ───────────────────────────────────────────────────────── */
 
 @media (forced-colors: active) {
   .zone-segment { border: 1px solid CanvasText; }
