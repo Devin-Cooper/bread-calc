@@ -91,19 +91,20 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
 
     parent.innerHTML = `
       <div class="recipe-meta-strip">
-        <label class="recipe-meta-control">
-          <span class="recipe-meta-label">Course</span>
-          <select class="recipe-meta-course">
-            <option value=""${r.course === undefined ? " selected" : ""}>— none —</option>
-            ${courseOptions}
-          </select>
-        </label>
         ${(() => {
           const recs = recommendCourse(r, db);
           const top3 = recs.filter((rec) => rec.eligible).slice(0, 3);
           const eligibleCount = recs.filter((rec) => rec.eligible).length;
+          const sectionTitle = `
+            <h3 class="recipe-meta-section-title">Course recommendations
+              <span class="recipe-meta-section-hint">— bread-machine programs that fit this recipe</span>
+            </h3>
+          `;
           if (top3.length === 0) {
-            return `<div class="recommendation-strip recommendation-empty">No compatible course found.</div>`;
+            return `
+              ${sectionTitle}
+              <div class="recommendation-strip recommendation-empty">No compatible course found.</div>
+            `;
           }
           const courseNameOf = (id: string) => db.courses.find((c) => c.id === id)?.name ?? id;
 
@@ -141,6 +142,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
             : "";
 
           return `
+            ${sectionTitle}
             <div class="recommendation-strip">
               <div class="rec-top3">
                 ${top3Rows}
@@ -151,6 +153,13 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
             ${seeAllOpen ? renderSeeAllTable(recs, db) : ""}
           `;
         })()}
+        <label class="recipe-meta-control">
+          <span class="recipe-meta-label">Or pick a course manually</span>
+          <select class="recipe-meta-course">
+            <option value=""${r.course === undefined ? " selected" : ""}>— none —</option>
+            ${courseOptions}
+          </select>
+        </label>
         <fieldset class="recipe-meta-control">
           <legend class="recipe-meta-label">Crust</legend>
           <div class="segmented" role="radiogroup" aria-label="Crust shade">

@@ -162,6 +162,35 @@ input[type="text"]:focus-visible {
   border-bottom: var(--border-rule) solid var(--color-fg-strong);
   position: relative;
 }
+
+/* Section title for the recommendation block — full-width header above
+ * the recommendation strip so users understand what the list represents.
+ * The hint sub-text is shown only on viewports wide enough to fit it. */
+.recipe-meta-section-title {
+  flex-basis: 100%;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  color: var(--color-fg-strong);
+  padding-bottom: var(--space-1);
+  border-bottom: var(--border-hairline) solid var(--color-accent-fg);
+}
+.recipe-meta-section-hint {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--type-small-size);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-fg-muted);
+  font-weight: var(--weight-regular);
+  margin-left: var(--space-1);
+}
+@media (max-width: 480px) {
+  .recipe-meta-section-hint { display: none; }
+}
 .recipe-meta-strip::after {
   content: "";
   position: absolute;
