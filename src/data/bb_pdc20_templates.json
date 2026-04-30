@@ -9,7 +9,7 @@
       "notes": "Bread-machine basic; soft sandwich crumb.",
       "items": [
         { "ingredient_id": "bread_flour",       "grams": 553 },
-        { "ingredient_id": "water_tap",         "grams": 321 },
+        { "ingredient_id": "water_tap",         "grams": 326 },
         { "ingredient_id": "sugar_granulated",  "grams": 30  },
         { "ingredient_id": "salt_table",        "grams": 9   },
         { "ingredient_id": "butter_unsalted",   "grams": 28  },
@@ -23,7 +23,7 @@
       "notes": "Lean dough; crisper crust than the basic white.",
       "items": [
         { "ingredient_id": "bread_flour",       "grams": 553 },
-        { "ingredient_id": "water_tap",         "grams": 317 },
+        { "ingredient_id": "water_tap",         "grams": 320 },
         { "ingredient_id": "sugar_granulated",  "grams": 12  },
         { "ingredient_id": "salt_table",        "grams": 9   },
         { "ingredient_id": "butter_unsalted",   "grams": 14  },
@@ -64,7 +64,7 @@
       "notes": "Slightly sweeter; honey replaces granulated sugar.",
       "items": [
         { "ingredient_id": "bread_flour",       "grams": 553 },
-        { "ingredient_id": "water_tap",         "grams": 326 },
+        { "ingredient_id": "water_tap",         "grams": 336 },
         { "ingredient_id": "honey",             "grams": 28  },
         { "ingredient_id": "salt_table",        "grams": 9   },
         { "ingredient_id": "butter_unsalted",   "grams": 28  },
