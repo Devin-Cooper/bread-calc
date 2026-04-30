@@ -2,6 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import type { Database, Recipe } from "../../src/core/index.js";
 import { createStore } from "../../src/site/state.js";
 import { mount } from "../../src/site/components/recipe-meta.js";
+import ingredientsFile from "../../src/data/ingredients.json" with { type: "json" };
+import floursFile from "../../src/data/flours.json" with { type: "json" };
+import coursesFile from "../../src/data/bb_pdc20_courses.json" with { type: "json" };
+import machinesFile from "../../src/data/machines.json" with { type: "json" };
+import defaultsRaw from "../../src/data/defaults.json" with { type: "json" };
 
 vi.mock("../../src/core/uid.js", () => {
   let n = 0;
@@ -20,6 +25,17 @@ const minimalDb: Database = {
     { id: "whole_wheat", course_number: 2, name: "Whole Wheat", crust_shades: ["medium"], loaf_sizes: ["1.5lb","2lb"], total_minutes: 200, stages: [], bakes: true, inclusions_beep: true, dietary_modes: [], yeast_compatibility: ["instant"], confidence: "verified", sources: [] },
   ],
 };
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const db: Database = {
+  ingredients: (ingredientsFile as any).entries,
+  flours:      (floursFile as any).entries,
+  references:  [],
+  machines:    (machinesFile as any).entries,
+  courses:     (coursesFile as any).entries,
+  defaults:    defaultsRaw as any,
+};
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const baseRecipe: Recipe = {
   schema_version: "2.0",
@@ -193,67 +209,166 @@ describe("recipe-meta component", () => {
     expect(active?.selectionStart).toBe(2);
     document.body.removeChild(parent);
   });
+});
 
-  describe("recommendation strip", () => {
-    it("State A: no course set — renders 'Recommended: <top course>' with [Use this] button", () => {
-      const parent = document.createElement("div");
-      const store = createStore({ ...baseRecipe });
-      mount(parent, store, minimalDb);
-      const strip = parent.querySelector(".recommendation-strip") as HTMLElement | null;
-      expect(strip).not.toBeNull();
-      expect(strip!.textContent).toContain("Recommended: White");
-      const useBtn = parent.querySelector(".rec-use-this") as HTMLButtonElement | null;
-      expect(useBtn).not.toBeNull();
-    });
+describe("recipe-meta — intent disclosure", () => {
+  it("renders the intent disclosure collapsed when no intent is set", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    const details = parent.querySelector(".recipe-meta-intent") as HTMLDetailsElement | null;
+    expect(details).not.toBeNull();
+    expect(details!.dataset.state).toBe("unset");
+    expect(details!.open).toBe(false);
+  });
 
-    it("[Use this] dispatches set_course with the top recommendation's id", () => {
-      const parent = document.createElement("div");
-      const store = createStore({ ...baseRecipe });
-      mount(parent, store, minimalDb);
-      (parent.querySelector(".rec-use-this") as HTMLButtonElement).click();
-      expect(store.getState().course).toBe("white");
-    });
+  it("auto-opens the intent disclosure when recipe.intent has any key set", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, intent: { dietary: "vegan" } });
+    mount(parent, store, db);
+    const details = parent.querySelector(".recipe-meta-intent") as HTMLDetailsElement;
+    expect(details.dataset.state).toBe("set");
+    expect(details.open).toBe(true);
+  });
 
-    it("State B: recipe.course matches top — shows ✓ badge, no swap button", () => {
-      const parent = document.createElement("div");
-      const store = createStore({ ...baseRecipe, course: "white" });
-      mount(parent, store, minimalDb);
-      const strip = parent.querySelector(".recommendation-strip") as HTMLElement;
-      expect(strip.textContent).toContain("Top match");
-      expect(parent.querySelector(".rec-use-top")).toBeNull();
-      expect(parent.querySelector(".rec-use-this")).toBeNull();
-    });
+  it("intent chip text reflects current intent (vegan + rapid → '· vegan, rapid')", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, intent: { dietary: "vegan", time: "rapid" } });
+    mount(parent, store, db);
+    const chip = parent.querySelector(".intent-chip") as HTMLSpanElement;
+    expect(chip.textContent).toBe("· vegan, rapid");
+  });
 
-    it("State C: recipe.course differs from top — shows rank-of-N + [Use top match]", () => {
-      const parent = document.createElement("div");
-      const store = createStore({ ...baseRecipe, course: "whole_wheat" });
-      mount(parent, store, minimalDb);
-      const strip = parent.querySelector(".recommendation-strip") as HTMLElement;
-      expect(strip.textContent).toContain("Recommended:");
-      expect(strip.textContent).toContain("Your pick");
-      const swap = parent.querySelector(".rec-use-top") as HTMLButtonElement | null;
-      expect(swap).not.toBeNull();
-    });
+  it("clicking dietary='sugar_free' button dispatches set_intent_dietary action", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    const btn = parent.querySelector('[data-dietary="sugar_free"]') as HTMLButtonElement;
+    btn.click();
+    expect(store.getState().intent?.dietary).toBe("sugar_free");
+  });
 
-    it("[Use top match] dispatches set_course with top recommendation's id", () => {
-      const parent = document.createElement("div");
-      const store = createStore({ ...baseRecipe, course: "whole_wheat" });
-      mount(parent, store, minimalDb);
-      (parent.querySelector(".rec-use-top") as HTMLButtonElement).click();
-      expect(store.getState().course).toBe("white");
-    });
+  it("clicking 'None' on dietary clears intent.dietary", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, intent: { dietary: "vegan" } });
+    mount(parent, store, db);
+    const btn = parent.querySelector('[data-clear="intent_dietary"]') as HTMLButtonElement;
+    btn.click();
+    expect(store.getState().intent?.dietary).toBeUndefined();
+  });
 
-    it("[See all] toggles a ranking table with one row per course in db.courses", () => {
-      const parent = document.createElement("div");
-      const store = createStore({ ...baseRecipe });
-      mount(parent, store, minimalDb);
-      const seeAll = parent.querySelector(".rec-see-all") as HTMLButtonElement;
-      expect(parent.querySelector(".recommendation-table")).toBeNull();
-      seeAll.click();
-      const table = parent.querySelector(".recommendation-table") as HTMLElement;
-      expect(table).not.toBeNull();
-      const rows = table.querySelectorAll("tr.rec-row");
-      expect(rows.length).toBe(minimalDb.courses.length);
+  it("setting intent.dietary='sugar_free' on a sweetenerless recipe flips top-1 to Sugar Free", () => {
+    const parent = document.createElement("div");
+    // butter at 3% of flour pushes past the European structural threshold (>2%) so the
+    // tree routes to White (default) rather than European. No sweeteners means
+    // is_sugar_free_structural=true, so setting intent.dietary='sugar_free' flips top-1.
+    const sweetenerlessRecipe = {
+      schema_version: "2.0" as const,
+      items: [
+        { uid: "u_sl_a", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_sl_b", ingredient_id: "yeast_instant", grams: 6 },
+        { uid: "u_sl_c", ingredient_id: "butter_unsalted", grams: 15 },
+      ],
+    };
+    const store = createStore(sweetenerlessRecipe);
+    mount(parent, store, db);
+    const beforeTop = parent.querySelector(".rec-row-1 .rec-name")?.textContent;
+    expect(beforeTop).toBe("White");
+    store.dispatch({ type: "set_intent_dietary", dietary: "sugar_free" });
+    const afterTop = parent.querySelector(".rec-row-1 .rec-name")?.textContent;
+    expect(afterTop).toBe("Sugar Free");
+  });
+});
+
+describe("recipe-meta — top-3 recommendation list", () => {
+  it("renders three eligible courses with rank, name, branch label", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    const rows = parent.querySelectorAll(".rec-top3 .rec-row");
+    expect(rows.length).toBe(3);
+    rows.forEach((row, i) => {
+      const rankText = row.querySelector(".rec-rank")?.textContent;
+      expect(rankText).toBe(`#${i + 1}`);
+      expect(row.querySelector(".rec-name")?.textContent).toBeTruthy();
+      expect(row.querySelector(".rec-branch")?.textContent).toMatch(/^via /);
     });
+  });
+
+  it("each top-3 row has a [Use] button when the row is not the user's already-set course", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    parent.querySelectorAll(".rec-top3 .rec-row").forEach((row) => {
+      expect(row.querySelector(".rec-use")).not.toBeNull();
+    });
+  });
+
+  it("user's already-set course (when in top-3) shows '✓ your pick' marker, not [Use] button", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "white" });
+    mount(parent, store, db);
+    const userRow = parent.querySelector('.rec-top3 .rec-row[data-course-id="white"]');
+    expect(userRow).not.toBeNull();
+    expect(userRow!.querySelector(".rec-use")).toBeNull();
+    expect(userRow!.querySelector(".rec-user-marker")?.textContent).toContain("your pick");
+  });
+
+  it("when user.course is outside top-3, footer shows 'Your pick: X (rank #N of M)'", () => {
+    const parent = document.createElement("div");
+    // jam is non-baking; for a typical bread recipe it's eligible (no intent.output set) but won't be in top-3
+    const store = createStore({ ...baseRecipe, course: "jam" });
+    mount(parent, store, db);
+    const top3Ids = Array.from(parent.querySelectorAll(".rec-top3 .rec-row"))
+      .map((r) => (r as HTMLElement).dataset.courseId);
+    expect(top3Ids).not.toContain("jam");
+    const footer = parent.querySelector(".rec-user-pick");
+    expect(footer).not.toBeNull();
+    expect(footer!.textContent).toContain("Jam");
+  });
+
+  it("clicking [Use] button dispatches set_course with that course id", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    const useBtn = parent.querySelector('.rec-top3 .rec-row-2 .rec-use') as HTMLButtonElement;
+    expect(useBtn).not.toBeNull();
+    const targetId = (useBtn.closest(".rec-row") as HTMLElement).dataset.courseId;
+    useBtn.click();
+    expect(store.getState().course).toBe(targetId);
+  });
+});
+
+describe("recipe-meta — See-all per-row expander", () => {
+  it("clicking a row expander toggles aria-expanded and reveals the detail row", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    (parent.querySelector(".rec-see-all") as HTMLButtonElement).click();
+    const expandBtn = parent.querySelector(".rec-row-expand") as HTMLButtonElement;
+    expect(expandBtn.getAttribute("aria-expanded")).toBe("false");
+    const detailId = expandBtn.getAttribute("aria-controls")!;
+    const detail = parent.querySelector(`#${detailId}`) as HTMLElement;
+    expect(detail.hasAttribute("hidden")).toBe(true);
+    expandBtn.click();
+    expect(expandBtn.getAttribute("aria-expanded")).toBe("true");
+    expect(detail.hasAttribute("hidden")).toBe(false);
+  });
+
+  it("per-course detail contains recommended_for_notes and the fingerprint list", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    (parent.querySelector(".rec-see-all") as HTMLButtonElement).click();
+    const detail = parent.querySelector("#rec-row-detail-white") as HTMLElement;
+    expect(detail).not.toBeNull();
+    expect(detail.querySelector(".rec-row-notes")?.textContent).toBeTruthy();
+    const fingerprintItems = detail.querySelectorAll(".rec-row-fingerprint li");
+    expect(fingerprintItems.length).toBeGreaterThan(0);
+    const fingerprintText = Array.from(fingerprintItems).map((li) => li.textContent ?? "").join(" ");
+    expect(fingerprintText).toMatch(/Hydration: \d+/);
+    expect(fingerprintText).toMatch(/Yeast:/);
+    expect(fingerprintText).toMatch(/Loaf sizes:/);
+    expect(fingerprintText).toMatch(/Total time: \d+:\d{2}/);
   });
 });
