@@ -2,7 +2,7 @@ import type { Store } from "../state.js";
 import type { Database } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { recommendCourse } from "../../core/recommend.js";
-import type { CourseRecommendation, TreeBranch } from "../../core/recommend.js";
+import type { CourseRecommendation, TreeBranch, DietaryIntent, OutputIntent, TimeIntent } from "../../core/recommend.js";
 
 const BRANCH_LABEL: Record<TreeBranch, string> = {
   intent_output_dough:   "dough output intent",
@@ -24,8 +24,34 @@ function branchLabel(branch: TreeBranch): string {
   return BRANCH_LABEL[branch] ?? branch;
 }
 
+const DIETARY_LABEL: Record<DietaryIntent, string> = {
+  salt_free: "salt-free",
+  sugar_free: "sugar-free",
+  vegan: "vegan",
+  gluten_free: "gluten-free",
+};
+
+const OUTPUT_LABEL: Record<OutputIntent, string> = {
+  bake: "bake output",
+  dough: "dough output",
+};
+
+const TIME_LABEL: Record<TimeIntent, string> = {
+  rapid: "rapid",
+};
+
+function intentChipText(intent: { dietary?: DietaryIntent; time?: TimeIntent; output?: OutputIntent } | undefined): string {
+  if (!intent) return "";
+  const parts: string[] = [];
+  if (intent.dietary) parts.push(DIETARY_LABEL[intent.dietary]);
+  if (intent.time) parts.push(TIME_LABEL[intent.time]);
+  if (intent.output) parts.push(OUTPUT_LABEL[intent.output]);
+  return parts.length === 0 ? "" : `· ${parts.join(", ")}`;
+}
+
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let seeAllOpen = false;
+  let intentManuallyToggled = false; // set by toggle handler; suppresses auto-open after manual interaction
 
   function render() {
     const r = store.getState();
@@ -128,6 +154,36 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
           </div>
           <button type="button" class="recipe-meta-clear" data-clear="loaf_size">Clear</button>
         </fieldset>
+        <details class="recipe-meta-intent" data-state="${r.intent && Object.keys(r.intent).length > 0 ? "set" : "unset"}"${(r.intent && Object.keys(r.intent).length > 0 && !intentManuallyToggled) ? " open" : ""}>
+          <summary>Intent <span class="intent-chip" aria-hidden="${r.intent && Object.keys(r.intent).length > 0 ? "false" : "true"}">${escapeHtml(intentChipText(r.intent))}</span></summary>
+          <div class="intent-controls">
+            <fieldset class="recipe-meta-control">
+              <legend class="recipe-meta-label">Output</legend>
+              <div class="segmented" role="radiogroup" aria-label="Output intent">
+                ${(["bake", "dough"] as const).map((s) => `
+                  <button type="button" role="radio" aria-checked="${r.intent?.output === s}" data-output="${s}" class="${r.intent?.output === s ? "is-on" : ""}">${s[0]!.toUpperCase()}${s.slice(1)}</button>
+                `).join("")}
+              </div>
+              <button type="button" class="recipe-meta-clear" data-clear="intent_output">Auto</button>
+            </fieldset>
+            <fieldset class="recipe-meta-control">
+              <legend class="recipe-meta-label">Dietary</legend>
+              <div class="segmented" role="radiogroup" aria-label="Dietary intent">
+                ${(["salt_free", "sugar_free", "vegan", "gluten_free"] as const).map((d) => `
+                  <button type="button" role="radio" aria-checked="${r.intent?.dietary === d}" data-dietary="${d}" class="${r.intent?.dietary === d ? "is-on" : ""}">${DIETARY_LABEL[d].replace(/^./, (c) => c.toUpperCase())}</button>
+                `).join("")}
+              </div>
+              <button type="button" class="recipe-meta-clear" data-clear="intent_dietary">None</button>
+            </fieldset>
+            <fieldset class="recipe-meta-control">
+              <legend class="recipe-meta-label">Speed</legend>
+              <div class="segmented" role="radiogroup" aria-label="Speed intent">
+                <button type="button" role="radio" aria-checked="${r.intent?.time === "rapid"}" data-time="rapid" class="${r.intent?.time === "rapid" ? "is-on" : ""}">Rapid</button>
+              </div>
+              <button type="button" class="recipe-meta-clear" data-clear="intent_time">Standard</button>
+            </fieldset>
+          </div>
+        </details>
       </div>
       <details class="recipe-meta-details"${(r.extended_notes !== undefined || (r.bake_hints && r.bake_hints.length > 0)) ? " open" : ""}>
         <summary>More details</summary>
@@ -206,6 +262,44 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     (parent.querySelector('[data-clear="loaf_size"]') as HTMLButtonElement).addEventListener("click", () => {
       store.dispatch({ type: "set_loaf_size", loaf_size: undefined });
     });
+
+    parent.querySelectorAll<HTMLButtonElement>("[data-output]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const v = b.dataset.output as "bake" | "dough";
+        store.dispatch({ type: "set_intent_output", output: v });
+      });
+    });
+    parent.querySelectorAll<HTMLButtonElement>("[data-dietary]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const v = b.dataset.dietary as "salt_free" | "sugar_free" | "vegan" | "gluten_free";
+        store.dispatch({ type: "set_intent_dietary", dietary: v });
+      });
+    });
+    parent.querySelectorAll<HTMLButtonElement>("[data-time]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const v = b.dataset.time as "rapid";
+        store.dispatch({ type: "set_intent_time", time: v });
+      });
+    });
+    const clearOutputBtn = parent.querySelector('[data-clear="intent_output"]') as HTMLButtonElement | null;
+    if (clearOutputBtn) clearOutputBtn.addEventListener("click", () => {
+      store.dispatch({ type: "set_intent_output", output: undefined });
+    });
+    const clearDietaryBtn = parent.querySelector('[data-clear="intent_dietary"]') as HTMLButtonElement | null;
+    if (clearDietaryBtn) clearDietaryBtn.addEventListener("click", () => {
+      store.dispatch({ type: "set_intent_dietary", dietary: undefined });
+    });
+    const clearTimeBtn = parent.querySelector('[data-clear="intent_time"]') as HTMLButtonElement | null;
+    if (clearTimeBtn) clearTimeBtn.addEventListener("click", () => {
+      store.dispatch({ type: "set_intent_time", time: undefined });
+    });
+
+    const intentDetails = parent.querySelector(".recipe-meta-intent") as HTMLDetailsElement | null;
+    if (intentDetails) {
+      intentDetails.addEventListener("toggle", () => {
+        intentManuallyToggled = true;
+      });
+    }
 
     const ta = parent.querySelector("textarea.recipe-meta-extended-notes") as HTMLTextAreaElement;
     ta.addEventListener("input", () => {
