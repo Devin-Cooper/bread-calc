@@ -123,8 +123,8 @@ export function mount(parent: HTMLElement, store: Store, db: Database, props: Sn
     }
     if (editingTarget) {
       const v = store.getState().target_loaf_g ?? 900;
-      return `<input type="number" class="snapshot-target-input" data-action="target-input"
-                inputmode="decimal" step="1" min="100" value="${v}"
+      return `<input type="text" class="snapshot-target-input" data-action="target-input"
+                inputmode="decimal" pattern="[0-9]*\\.?[0-9]*" value="${v}"
                 aria-label="Target loaf weight in grams" />`;
     }
     return `<button type="button" class="snapshot-target-link type-body-sm" data-action="set-target">+ Set target weight</button>`;

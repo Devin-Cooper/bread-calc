@@ -72,7 +72,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       // wrap value-rendering in escapeHtml.
       const gramsCell = targetMode
         ? `<span role="cell" class="solved-grams" aria-label="solved grams for ${escapeHtml(item.ingredient_id)}">${solvedItem.grams != null ? `${Math.round(solvedItem.grams)} g` : "—"}</span>`
-        : `<input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
+        : `<input role="cell" type="text" inputmode="decimal" pattern="[0-9]*\\.?[0-9]*"
                  data-field="grams" data-index="${i}" value="${item.grams ?? ""}"
                  aria-label="grams for ${escapeHtml(item.ingredient_id)}" />`;
       const derivedPct = derivedPcts[item.uid];
@@ -84,7 +84,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       row.innerHTML = `
         <span role="cell">${escapeHtml(item.ingredient_id)}</span>
         ${gramsCell}
-        <input role="cell" type="number" inputmode="decimal" step="0.1" min="0"
+        <input role="cell" type="text" inputmode="decimal" pattern="[0-9]*\\.?[0-9]*"
                data-field="bakers_pct" data-index="${i}" value="${pctValue}" class="${pctClass}"
                title="${pctIsDerived ? "Derived from grams. Type to override." : "User-set baker's percent."}"
                aria-label="bakers percent for ${escapeHtml(item.ingredient_id)}" />

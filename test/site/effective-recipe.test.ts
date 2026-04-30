@@ -19,10 +19,34 @@ describe("effectiveRecipe", () => {
     expect(effectiveRecipe(r, db)).toBe(r);
   });
 
-  it("returns the input recipe unchanged when no item has bakers_pct", () => {
+  it("proportionally rescales grams when target_loaf_g is set on a grams-only recipe", () => {
+    // Single flour item; target=900g (baked). With default bake_loss applied,
+    // total_mass_target = 900 / (1 - bake_loss_pct/100). We assert the scale
+    // factor was applied uniformly rather than the absolute target — keeps
+    // the test independent of any future bake_loss default change.
     const r: Recipe = {
       schema_version: "2.0", target_loaf_g: 900,
-      items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 }],
+      items: [
+        { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_water001", ingredient_id: "water_tap", grams: 300 },
+      ],
+    };
+    const scaled = effectiveRecipe(r, db);
+    expect(scaled).not.toBe(r);
+    const flourGrams = scaled.items[0]!.grams!;
+    const waterGrams = scaled.items[1]!.grams!;
+    // Original ratio 500:300 must be preserved.
+    expect(waterGrams / flourGrams).toBeCloseTo(300 / 500, 6);
+    // Total post-rescale must equal target_loaf_g / (1 - bake_loss / 100).
+    const bakeLoss = db.defaults.default_bake_loss_pct;
+    const expectedTotal = 900 / (1 - bakeLoss / 100);
+    expect(flourGrams + waterGrams).toBeCloseTo(expectedTotal, 1);
+  });
+
+  it("preserves the recipe when grams-only AND current_total is 0", () => {
+    const r: Recipe = {
+      schema_version: "2.0", target_loaf_g: 900,
+      items: [{ uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 0 }],
     };
     expect(effectiveRecipe(r, db)).toBe(r);
   });
