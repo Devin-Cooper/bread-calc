@@ -1,3 +1,9 @@
+/* Template picker — gallery-frame popover with masthead-style titles. */
+/* Note: component uses #template-picker (ID), .template-trigger, .template-popover,
+   .template-search-row, .template-close, .template-list, .template-group,
+   .template-group-label, [role="option"], .template-name, .template-meta,
+   #template-confirm dialog. */
+
 #template-picker {
   margin-bottom: var(--space-3);
 }
@@ -5,28 +11,34 @@
 .template-trigger {
   display: inline-flex; align-items: center; gap: var(--space-1);
   padding: var(--space-2) var(--space-3);
-  background: var(--color-bg-surface);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-pill);
+  background: var(--color-bg-canvas);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
   color: var(--color-fg-muted);
   font: inherit;
   cursor: pointer;
   min-height: 36px;
-  font-size: 13px;
+  font-size: var(--type-small-size);
+  font-family: var(--font-sans);
+  font-weight: var(--weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--type-eyebrow-tracking);
+  transition: box-shadow var(--duration-fast) var(--easing-standard);
 }
 .template-trigger:hover {
   background: var(--color-bg-muted);
   color: var(--color-accent-fg);
   border-color: var(--color-accent-fg);
+  box-shadow: var(--shadow-stamp);
 }
 
 .template-popover {
   position: relative;
   margin-top: var(--space-2);
   background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-overlay);
+  border: var(--border-frame) solid var(--color-fg-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: 4px 4px 0 var(--color-accent-fg);
   padding: var(--space-2);
   z-index: var(--z-popover);
 }
@@ -37,20 +49,25 @@
   gap: var(--space-2);
   align-items: center;
   padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: var(--border-rule) solid var(--color-accent-fg);
   margin-bottom: var(--space-2);
 }
 
 .template-close {
-  width: 44px; height: 44px;
-  background: transparent;
-  border: none;
+  width: 36px; height: 36px;
+  background: var(--color-bg-canvas);
+  border: var(--border-hairline) solid var(--color-border-strong);
   border-radius: var(--radius-sm);
-  font-size: 20px;
+  font-size: 18px;
   color: var(--color-fg-muted);
   cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
 }
-.template-close:hover { background: var(--color-bg-muted); color: var(--color-fg-default); }
+.template-close:hover {
+  background: var(--color-bg-muted);
+  box-shadow: var(--shadow-stamp);
+  color: var(--color-fg-default);
+}
 
 .template-list {
   max-height: 60vh;
@@ -67,11 +84,12 @@
 .template-group-label {
   list-style: none;
   padding: var(--space-2) var(--space-2) var(--space-1);
-  font-size: 12px;
-  letter-spacing: 0.05em;
+  font-family: var(--font-display);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
   text-transform: uppercase;
+  font-weight: var(--weight-black);
   color: var(--color-fg-subtle);
-  font-style: italic;
 }
 
 [role="option"] {
@@ -84,49 +102,91 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   min-height: 36px;
+  transition: transform var(--duration-fast) var(--easing-standard),
+              box-shadow var(--duration-fast) var(--easing-standard);
 }
 [role="option"]:hover {
   background: var(--color-bg-muted);
-}
-.template-list[aria-activedescendant] [role="option"][id] {
-  /* No-op base; the active highlight is per-id below. */
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-stamp);
 }
 [role="option"]:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
+  outline: var(--border-rule) solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
-.template-name { font-weight: 500; color: var(--color-fg-default); }
-.template-meta { color: var(--color-fg-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+.template-name {
+  font-family: var(--font-display);
+  font-size: var(--type-small-size);
+  font-weight: var(--weight-black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-fg-strong);
+}
 
+.template-meta {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  color: var(--color-fg-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Confirmation dialog */
 #template-confirm {
-  border: none;
+  border: var(--border-frame) solid var(--color-fg-strong);
   padding: 0;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--color-bg-surface);
   color: var(--color-fg-default);
-  box-shadow: var(--shadow-overlay);
+  box-shadow: 4px 4px 0 var(--color-accent-fg);
   width: min(420px, calc(100vw - 32px));
   max-width: 420px;
   padding: var(--space-5) var(--space-6);
 }
 #template-confirm::backdrop { background: rgba(31, 28, 22, 0.4); }
-#template-confirm h2 { margin: 0 0 var(--space-3); font-size: 18px; }
-#template-confirm p { margin: 0 0 var(--space-4); color: var(--color-fg-muted); }
+#template-confirm h2 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  color: var(--color-fg-strong);
+}
+#template-confirm p {
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--type-small-size);
+  color: var(--color-fg-muted);
+}
 #template-confirm .dialog-actions {
   display: flex; gap: var(--space-2); justify-content: flex-end;
 }
 #template-confirm button {
   padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-border);
+  border: var(--border-hairline) solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   background: var(--color-bg-canvas);
   color: var(--color-fg-default);
   font: inherit;
+  font-size: var(--type-small-size);
   cursor: pointer;
+}
+#template-confirm button:hover {
+  box-shadow: var(--shadow-stamp);
 }
 #template-confirm button.primary {
   background: var(--color-accent-fg);
   color: var(--color-bg-canvas);
   border-color: var(--color-accent-fg);
+  font-weight: var(--weight-bold);
+}
+
+@media (forced-colors: active) {
+  .template-trigger { border-color: ButtonText; }
+  .template-popover { border-color: ButtonText; box-shadow: none; }
+  [role="option"]:hover { transform: none; box-shadow: none; }
+  #template-confirm { border-color: ButtonText; box-shadow: none; }
 }

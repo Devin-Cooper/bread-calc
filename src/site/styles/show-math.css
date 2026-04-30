@@ -1,7 +1,32 @@
-#show-math-section h2 { margin: 0 0 var(--space-1); }
+/* Show-math — editorial derivation panel with art-pop chrome. */
+/* Note: component uses #show-math-section h2, .show-math-item (<details>/<summary>),
+   .show-math-body, .show-math-line, .show-math-term, .show-math-term-leaf,
+   .show-math-term-label, .show-math-nested. No step-list structure — uses <details>. */
 
+#show-math-section h2 {
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  color: var(--color-fg-strong);
+  margin: 0 0 var(--space-1);
+  padding-bottom: var(--space-1);
+  border-bottom: var(--border-rule) solid var(--color-accent-fg);
+  position: relative;
+}
+#show-math-section h2::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -3px;
+  height: 0.5px;
+  background: var(--color-fg-strong);
+}
+
+/* Each metric slot is a <details> — accordion-style panel. */
 .show-math-item {
-  border-top: 1px solid var(--color-border);
+  border-top: var(--border-hairline) solid var(--color-border);
   padding: var(--space-3) 0;
 }
 .show-math-item:first-of-type { border-top: none; }
@@ -10,14 +35,32 @@
   cursor: pointer;
   list-style: none;
   display: flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-weight: var(--weight-semibold);
+  color: var(--color-fg-strong);
 }
 .show-math-item summary::-webkit-details-marker { display: none; }
+
+/* Comic-numbered disclosure marker. */
 .show-math-item summary::before {
-  content: "▸";
-  color: var(--color-fg-subtle);
-  font-size: 12px;
+  content: "";
+  display: inline-block;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-fg-strong);
+  background-image: var(--pattern-benday);
+  background-size: var(--pattern-benday-size);
+  box-shadow: 1px 1px 0 var(--color-accent-fg);
+  flex-shrink: 0;
+  /* Closed-state: right-pointing triangle via clip */
+  clip-path: polygon(30% 20%, 80% 50%, 30% 80%);
 }
-.show-math-item[open] summary::before { content: "▾"; }
+.show-math-item[open] summary::before {
+  /* Open-state: down-pointing triangle */
+  clip-path: polygon(20% 30%, 80% 30%, 50% 80%);
+  background-color: var(--color-accent-fg);
+}
 
 .show-math-body {
   padding: var(--space-2) 0 0 var(--space-4);
@@ -26,11 +69,13 @@
 
 .show-math-line {
   font-family: var(--font-sans);
-  font-size: 15px; line-height: 24px;
+  font-size: var(--type-small-size);
+  line-height: 1.5;
   color: var(--color-fg-default);
   word-break: break-word;
 }
 
+/* Drillable term button — accent highlight on hover/open. */
 .show-math-term {
   display: inline-flex; align-items: baseline; gap: 4px;
   background: transparent;
@@ -40,22 +85,57 @@
   cursor: pointer;
   color: var(--color-accent-fg);
   font: inherit;
+  font-size: var(--type-small-size);
+  transition: box-shadow var(--duration-fast) var(--easing-standard);
 }
-.show-math-term:hover { background: var(--color-accent-bg); }
-.show-math-term.is-open { background: var(--color-accent-bg); }
+.show-math-term:hover {
+  background: var(--color-accent-bg);
+  box-shadow: var(--shadow-stamp);
+}
+.show-math-term.is-open {
+  background: var(--color-accent-bg);
+  box-shadow: var(--shadow-stamp);
+}
 
+/* Leaf (non-drillable) term — plain inline span. */
 .show-math-term-leaf {
   display: inline-flex; align-items: baseline; gap: 4px;
   color: var(--color-fg-default);
+  font-size: var(--type-small-size);
 }
 
 .show-math-term-label {
   color: var(--color-fg-muted);
+  font-family: var(--font-editorial);
+  font-style: italic;
 }
 
+/* Nested drill-down — accent left rule. */
 .show-math-nested {
   margin-left: var(--space-3);
   padding-left: var(--space-3);
-  border-left: 2px solid var(--color-border);
+  border-left: 3px solid var(--color-accent-fg);
   display: flex; flex-direction: column; gap: var(--space-2);
+  background-image: var(--pattern-benday-soft);
+  background-size: var(--pattern-benday-size);
+}
+
+/* Result / summary value — accented bottom-rule. */
+.show-math-result {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: var(--border-rule) solid var(--color-accent-fg);
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  font-weight: var(--weight-bold);
+  color: var(--color-accent-fg);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (forced-colors: active) {
+  .show-math-item summary::before { forced-color-adjust: none; }
+  .show-math-nested { border-left-color: Highlight; }
+  .show-math-term { border: 1px solid transparent; }
+  .show-math-term:hover,
+  .show-math-term.is-open { border-color: Highlight; box-shadow: none; }
 }

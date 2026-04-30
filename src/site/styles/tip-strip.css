@@ -1,23 +1,45 @@
+/* Tip strip — accent left-rule callout with soft Ben-Day wash. */
+/* Note: component uses #tip-strip (ID container), .tip-strip-inner (inner wrapper), .tip-strip-dismiss. */
+
 #tip-strip:empty { display: none; }
 
 .tip-strip-inner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
-  background: var(--color-bg-surface);
-  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-2) var(--space-4) var(--space-2) calc(var(--space-4) + 3px);
+  background-color: var(--color-bg-surface);
+  background-image: var(--pattern-benday-soft);
+  background-size: var(--pattern-benday-size);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+  border-left: 3px solid var(--color-accent-fg);
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--type-small-size);
   color: var(--color-fg-default);
+  line-height: 1.4;
 }
 
 .tip-strip-dismiss {
-  width: 44px; height: 44px;
+  flex-shrink: 0;
+  width: 28px; height: 28px;
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent;
-  border: none;
+  border: var(--border-hairline) solid var(--color-border);
   border-radius: var(--radius-sm);
-  font-size: 20px;
+  font-size: 16px;
   color: var(--color-fg-muted);
+  cursor: pointer;
 }
-.tip-strip-dismiss:hover { background: var(--color-bg-muted); color: var(--color-fg-default); }
+.tip-strip-dismiss:hover {
+  background: var(--color-bg-muted);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-stamp);
+  color: var(--color-fg-strong);
+}
+
+@media (forced-colors: active) {
+  .tip-strip-inner { border-left-color: Highlight; }
+}
