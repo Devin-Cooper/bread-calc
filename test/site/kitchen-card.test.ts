@@ -40,13 +40,17 @@ const db: Database = {
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
+// Canonical white-bread hydration (~58 %, matching Course 1 White's
+// ideal_pct=58). Keeping the recipe at 58 % ensures the recommendation
+// engine surfaces White as the top match in the recommendation-fallback
+// test, which is the typical case a user printing this recipe expects.
 const baseRecipe: Recipe = {
   schema_version: "2.0",
   name: "Test Recipe",
   notes: "one-line notes",
   items: [
     { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
-    { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 320 },
+    { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 290 },
     { uid: "u_test_a01d", ingredient_id: "salt_table", grams: 9 },
     { uid: "u_test_a01e", ingredient_id: "yeast_instant", grams: 6 },
   ],
@@ -87,10 +91,11 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     const courseBlock = parent.querySelector(".kc-course-block");
     expect(courseBlock).not.toBeNull();
-    // recommendCourse ranks dough first for this recipe because dough has no hydration_range
-    // (neutral score) whereas white's 64% hydration sits 6 pp outside its ideal of 58%
+    // baseRecipe is 58 % hydration (290 g water / 500 g bread flour) — exact
+    // match for Course 1 White's ideal_pct=58, so White wins via the in-range
+    // hydration score.
     expect(courseBlock!.textContent).toContain("Recommended:");
-    expect(courseBlock!.textContent).toContain("11 — Dough");
+    expect(courseBlock!.textContent).toContain("1 — White");
   });
 
   it("course block: omitted when recipe.course is set to unknown id", () => {

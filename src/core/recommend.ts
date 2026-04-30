@@ -26,6 +26,9 @@ const VEGAN_EGG_SUBSTITUTE_IDS: ReadonlySet<string> = new Set([
 const RECIPE_TAG_VOCAB: ReadonlySet<string> = new Set([
   "high_hydration", "whole_wheat", "multigrain",
   "white_flour", "sandwich_loaf",
+  "salt_free", "low_sodium", "sugar_free", "diabetic_friendly",
+  "vegan", "egg_free", "dairy_free",
+  "gluten_free",
 ]);
 
 const DAIRY_ID_PATTERN = /milk|cream|butter|whey/;
@@ -67,13 +70,21 @@ interface DietaryFacts {
   readonly is_sugar_free: boolean;
 }
 
+// Tolerance thresholds for dietary classification — recipes with trace
+// amounts of salt/sugar from incidental sources (e.g., butter_unsalted's
+// 0.05 % salt content, ~0.018 g per 35 g) should still classify as
+// salt-free / sugar-free. Real intentional sugar/salt is one or two
+// orders of magnitude above these thresholds.
+const SALT_TOLERANCE_G = 0.5;
+const SUGAR_TOLERANCE_G = 2.0;
+
 function deriveDietary(recipe: Recipe, db: Database): DietaryFacts {
   const flourLookup = new Map(db.flours.map((f) => [f.id, f]));
   const ingrLookup = new Map(db.ingredients.map((i) => [i.id, i]));
 
   let isGlutenFree = true;
-  let isSaltFree = true;
-  let isSugarFree = true;
+  let saltGrams = 0;
+  let sugarGrams = 0;
   let hasEggIngredient = false;
   let hasDairyIngredient = false;
 
@@ -86,8 +97,9 @@ function deriveDietary(recipe: Recipe, db: Database): DietaryFacts {
     const ingr = ingrLookup.get(item.ingredient_id);
     if (!ingr) continue;
 
-    if (ingr.salt_pct > 0) isSaltFree = false;
-    if (ingr.sugar_pct > 0) isSugarFree = false;
+    const grams = item.grams ?? 0;
+    saltGrams += grams * (ingr.salt_pct / 100);
+    sugarGrams += grams * (ingr.sugar_pct / 100);
 
     if (ingr.category === "eggs" && !VEGAN_EGG_SUBSTITUTE_IDS.has(ingr.id)) {
       hasEggIngredient = true;
@@ -104,6 +116,8 @@ function deriveDietary(recipe: Recipe, db: Database): DietaryFacts {
     }
   }
 
+  const isSaltFree = saltGrams < SALT_TOLERANCE_G;
+  const isSugarFree = sugarGrams < SUGAR_TOLERANCE_G;
   const isEggFree = !hasEggIngredient;
   const isVegan = isEggFree && !hasDairyIngredient;
 
@@ -119,6 +133,15 @@ interface RecipeFacts {
   readonly has_flour: boolean;
   readonly yeast_kind: YeastKind;
   readonly leavener_kind: LeavenerKind;
+  // Affirmative dietary-intent signals — used by deriveRecipeTags to
+  // distinguish "recipe was authored for a dietary course" from "recipe
+  // happens to be incidentally compatible". E.g., a plain bread-flour-water
+  // recipe is technically vegan + salt-free, but doesn't signal dietary
+  // intent unless an affirmative substitute (plant milk, apple cider
+  // vinegar) is present.
+  readonly has_acv_compensator: boolean;
+  readonly has_plant_milk: boolean;
+  readonly has_gf_flour: boolean;
 }
 
 function deriveRecipeFacts(recipe: Recipe, db: Database): RecipeFacts {
@@ -129,12 +152,16 @@ function deriveRecipeFacts(recipe: Recipe, db: Database): RecipeFacts {
   let wholeGrainFlour = 0;
   let yeastKind: YeastKind = null;
   let leavenerKind: LeavenerKind = null;
+  let hasAcvCompensator = false;
+  let hasPlantMilk = false;
+  let hasGfFlour = false;
 
   for (const item of recipe.items) {
     const flour = flourLookup.get(item.ingredient_id);
     if (flour) {
       totalFlour += item.grams ?? 0;
       if (WHOLE_GRAIN_FLOUR_IDS.has(flour.id)) wholeGrainFlour += item.grams ?? 0;
+      if (GF_FLOUR_IDS.has(flour.id)) hasGfFlour = true;
       continue;
     }
     const ingr = ingrLookup.get(item.ingredient_id);
@@ -145,6 +172,8 @@ function deriveRecipeFacts(recipe: Recipe, db: Database): RecipeFacts {
     } else if (ingr.category === "leavener") {
       leavenerKind = "chemical";
     }
+    if (ingr.id === "vinegar_apple_cider") hasAcvCompensator = true;
+    if (PLANT_MILK_ALLOWLIST.has(ingr.id)) hasPlantMilk = true;
   }
 
   let hydration: number | null = null;
@@ -155,7 +184,16 @@ function deriveRecipeFacts(recipe: Recipe, db: Database): RecipeFacts {
   }
 
   const wwPct = totalFlour > 0 ? (wholeGrainFlour / totalFlour) * 100 : 0;
-  return { hydration_pct: hydration, ww_pct: wwPct, has_flour: totalFlour > 0, yeast_kind: yeastKind, leavener_kind: leavenerKind };
+  return {
+    hydration_pct: hydration,
+    ww_pct: wwPct,
+    has_flour: totalFlour > 0,
+    yeast_kind: yeastKind,
+    leavener_kind: leavenerKind,
+    has_acv_compensator: hasAcvCompensator,
+    has_plant_milk: hasPlantMilk,
+    has_gf_flour: hasGfFlour,
+  };
 }
 
 function evaluateDietaryGate(course: BBPDC20Course, dietary: DietaryFacts): RecommendationReason {
@@ -197,14 +235,29 @@ function evaluateConfidence(course: BBPDC20Course): SoftTierResult {
   };
 }
 
-// Note: courses without a published `hydration_range` (Course 11 Dough,
-// Course 12 Sourdough Starter, Course 13 Cake, Course 14 Jam) score 0 here,
-// which can outrank baking courses that score negative when the recipe
-// hydration sits outside their range. A typical bread recipe with no
-// `recipe.course` set may therefore surface a non-baking course as the top
-// recommendation. The kitchen card and recipe-meta strip handle this cleanly
-// (sub-line omits for non-baking courses) but the UX is suboptimal — see
-// PR #14 description for the follow-up tuning opportunity.
+// Hydration tier scoring stratifies into three bands AND buckets the in-range
+// distance so close-but-not-identical hydration matches do not artificially
+// break ties at tier 2. Without bucketing, two baking courses both in-range
+// for the same recipe would split on sub-percent distance differences,
+// preventing tier 3 (whole_wheat) from arbitrating between them.
+//
+//   in-range courses    →  +100 - floor(distance / 5) * 5   (buckets of 5pp)
+//   no-range courses    →                                0   (neutral)
+//   out-of-range course →               -distance_from_ideal (negative)
+//
+// Bucket size is 5pp — typical bread-machine measurement noise is about
+// 2-3pp; 5pp groups "essentially identical" matches into the same bucket
+// so the whole_wheat / yeast / recommended_for tiers can decide.
+//
+// This stratification (rather than a single-distance metric) ensures:
+//   • in-range baking course > no-range course (Dough/Cake/Jam)
+//   • no-range course > out-of-range baking course
+//   • close-fit-by-hydration courses tie, letting whole-wheat or other
+//     downstream tiers separate them.
+//
+// Earlier single-distance scoring caused Course 11 Dough to win for typical
+// white-bread recipes (Dough scored 0 on tier 2, beating White's negative
+// distance score). The current scoring picks White correctly.
 function evaluateHydration(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
   const range = course.hydration_range;
   if (!range) {
@@ -221,8 +274,8 @@ function evaluateHydration(course: BBPDC20Course, facts: RecipeFacts): SoftTierR
   }
   const target = range.ideal_pct ?? (range.min_pct + range.max_pct) / 2;
   const distance = Math.abs(facts.hydration_pct - target);
-  const score = -distance;
   const inRange = facts.hydration_pct >= range.min_pct && facts.hydration_pct <= range.max_pct;
+  const score = inRange ? 100 - Math.floor(distance / 5) * 5 : -distance;
   return {
     reason: {
       tier: "hydration",
@@ -345,8 +398,9 @@ function evaluateLoafSize(course: BBPDC20Course, recipe: Recipe): SoftTierResult
   };
 }
 
-function deriveRecipeTags(facts: RecipeFacts): ReadonlySet<string> {
+function deriveRecipeTags(facts: RecipeFacts, dietary: DietaryFacts): ReadonlySet<string> {
   const tags = new Set<string>();
+  // Hydration / whole-grain / structural tags
   if (facts.hydration_pct !== null && facts.hydration_pct > 70) tags.add("high_hydration");
   if (facts.ww_pct > 50) tags.add("whole_wheat");
   if (facts.ww_pct > 30 && facts.ww_pct <= 50) tags.add("multigrain");
@@ -354,6 +408,27 @@ function deriveRecipeTags(facts: RecipeFacts): ReadonlySet<string> {
     tags.add("white_flour");
     tags.add("sandwich_loaf");
   }
+  // Dietary-derived tags — emitted ONLY when the recipe carries an affirmative
+  // intent signal, not on absence alone. A plain water-flour-yeast-salt recipe
+  // is technically vegan + sugar-free, but isn't authored for those courses.
+  // Affirmative signals:
+  //   salt_free: apple cider vinegar (a common gluten-stabilizing salt
+  //              substitute in salt-free bread recipes)
+  //   vegan:    a plant-milk ingredient (almond_milk_unsweetened etc.)
+  //   gluten_free: a GF flour ingredient (gf_flour_blend etc.)
+  // No affirmative-signal heuristic exists for sugar_free or for incidental
+  // egg_free; recipes targeting those courses must set recipe.course
+  // explicitly to surface the dietary-formulation cycle.
+  if (dietary.is_salt_free && facts.has_acv_compensator) {
+    tags.add("salt_free");
+    tags.add("low_sodium");
+  }
+  if (dietary.is_vegan && facts.has_plant_milk) {
+    tags.add("vegan");
+    tags.add("egg_free");
+    tags.add("dairy_free");
+  }
+  if (dietary.is_gluten_free && facts.has_gf_flour) tags.add("gluten_free");
   return tags;
 }
 
@@ -403,7 +478,7 @@ export function recommendCourse(
 ): readonly CourseRecommendation[] {
   const dietary = deriveDietary(recipe, db);
   const facts = deriveRecipeFacts(recipe, db);
-  const recipeTags = deriveRecipeTags(facts);
+  const recipeTags = deriveRecipeTags(facts, dietary);
 
   type Row = {
     course: BBPDC20Course;
