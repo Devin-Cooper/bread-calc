@@ -140,4 +140,23 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     expect(parent.querySelector(".kc-notes-block")).toBeNull();
   });
+
+  it("bake hints block: bake_hints renders as <ul> with one <li> per hint", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, bake_hints: ["Watch crust at minute 50", "Brush with egg wash"] });
+    mount(parent, store, db);
+    const hintsBlock = parent.querySelector(".kc-hints-block");
+    expect(hintsBlock).not.toBeNull();
+    const lis = hintsBlock!.querySelectorAll("li");
+    expect(lis.length).toBe(2);
+    expect(lis[0]!.textContent).toBe("Watch crust at minute 50");
+    expect(lis[1]!.textContent).toBe("Brush with egg wash");
+  });
+
+  it("bake hints block: omitted when bake_hints is undefined or empty", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    expect(parent.querySelector(".kc-hints-block")).toBeNull();
+  });
 });

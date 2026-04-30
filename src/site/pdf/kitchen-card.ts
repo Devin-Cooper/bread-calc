@@ -52,6 +52,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
 
         ${renderCourseBlock(store.getState(), db) ?? ""}
         ${renderNotesBlock(store.getState()) ?? ""}
+        ${renderHintsBlock(store.getState()) ?? ""}
 
         <table class="kc-table">
           <thead>
@@ -133,6 +134,18 @@ function renderCrustSizeSubline(recipe: Recipe, course: BBPDC20Course): string |
   if (size) parts.push(`Size:&nbsp;${escapeHtml(size)}`);
   if (parts.length === 0) return null;
   return parts.join("&nbsp;·&nbsp;");
+}
+
+function renderHintsBlock(recipe: Recipe): string | null {
+  const hints = (recipe.bake_hints ?? []).filter((h) => h.trim().length > 0);
+  if (hints.length === 0) return null;
+  const lis = hints.map((h) => `<li>${escapeHtml(h)}</li>`).join("");
+  return `
+    <div class="kc-hints-block">
+      <h2 class="kc-section-heading">Bake hints</h2>
+      <ul class="kc-hints-list">${lis}</ul>
+    </div>
+  `;
 }
 
 function renderNotesBlock(recipe: Recipe): string | null {
