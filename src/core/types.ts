@@ -150,6 +150,9 @@ export interface RecipeItem {
   role?: Role;
 }
 
+export type CrustShade = "light" | "medium" | "dark";
+export type LoafSize = "1lb" | "1.5lb" | "2lb";
+
 export interface Recipe {
   schema_version: "2.0";
   name?: string;
@@ -160,6 +163,13 @@ export interface Recipe {
   items: RecipeItem[];
   free_water_factor_overrides?: Record<string, number>;
   headline_metric?: "effective" | "nominal" | "total_liquid";
+
+  // Sub-project B: recipe metadata expansion
+  course?: string;
+  crust_shade?: CrustShade;
+  loaf_size?: LoafSize;
+  extended_notes?: string;
+  bake_hints?: string[];
 }
 
 export type WarningCode =
@@ -170,7 +180,11 @@ export type WarningCode =
   | "alcohol_yeast_inhibition" | "no_yeast_or_leavener"
   | "pan_underfill_predicted" | "late_water_release_present" | "humectant_overestimate_risk"
   | "flour_quantity_atypical" | "no_salt" | "salt_inherent_dominant"
-  | "target_loaf_g_ignored_no_pcts";
+  | "target_loaf_g_ignored_no_pcts"
+  // Sub-project B
+  | "course_crust_shade_unsupported"
+  | "course_loaf_size_unsupported"
+  | "unknown_course_id";
 
 export interface Warning {
   code: WarningCode;
