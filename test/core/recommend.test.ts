@@ -151,3 +151,30 @@ describe("recommendCourse — dietary gate", () => {
     expect(gf!.eligible).toBe(true);
   });
 });
+
+describe("recommendCourse — intent gate", () => {
+  it("intent='bake' excludes non-baking courses (Dough, Sourdough Starter, Jam)", () => {
+    const recs = recommendCourse(baseRecipe, db, { intent: "bake" });
+    expect(recOf("dough", recs)!.eligible).toBe(false);
+    expect(recOf("sourdough_starter", recs)!.eligible).toBe(false);
+    expect(recOf("jam", recs)!.eligible).toBe(false);
+    expect(recOf("white", recs)!.eligible).toBe(true);
+  });
+
+  it("intent='dough' excludes baking courses; only Dough/Sourdough Starter/Jam eligible", () => {
+    const recs = recommendCourse(baseRecipe, db, { intent: "dough" });
+    expect(recOf("dough", recs)!.eligible).toBe(true);
+    expect(recOf("sourdough_starter", recs)!.eligible).toBe(true);
+    expect(recOf("jam", recs)!.eligible).toBe(true);
+    expect(recOf("white", recs)!.eligible).toBe(false);
+    expect(recOf("cake", recs)!.eligible).toBe(false);
+  });
+
+  it("intent unset: gate emits neutral; never excludes on intent alone", () => {
+    const recs = recommendCourse(baseRecipe, db);
+    for (const r of recs) {
+      const intentReason = r.reasons.find((x) => x.tier === "intent");
+      if (intentReason) expect(intentReason.verdict).not.toBe("mismatch");
+    }
+  });
+});
