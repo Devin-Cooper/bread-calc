@@ -1,7 +1,705 @@
 {
   "schema_version": "1.0",
   "_attribution": "Course timings and capabilities researched from public Zojirushi BB-PDC20 documentation and community sources. Machine-specification facts are not copyrightable; this notice is a courtesy.",
-  "_methodology": "Each entry's 'confidence' field reflects source authority: 'verified' = Zojirushi-published spec; 'inferred' = derived from the manual's recipe instructions (e.g., add-ins beep timing); 'community' = Fresh Loaf / Reddit / bread-machine forum reports triangulated across at least two independent sources. The 'sources' array on each entry lists URLs (manual references where available; community thread URLs otherwise). Stage-level temperature targets are typically not published; entries that include 'target_temp_c' are inferred from heated-element duty cycles in community oscilloscope traces and are flagged as 'community' or 'inferred' confidence accordingly. Single-source community claims do not populate typed inferred-bucket fields (hydration_range, whole_wheat_max_pct); they land as a free-form sentence in the row's 'notes' field with the source URL inlined parenthetically.",
+  "_methodology": "All 14 entries (courses 1-14) sourced from two Zojirushi-published documents: the BB-PDC20 Operating Instructions PDF and the BB-PDC20 Recipe Book PDF, both retrieved 2026-04-29 from zojirushi.com/servicesupport. The manual's page-13 cycle chart provides total cycle time, REST OFF time (where supported), and Add Beep timing for every course; pages 12 and 18 establish per-course Crust Control / Timer / Rest Off support. The recipe book establishes hydration_range (computed via baker's-percentage water/flour from published recipes) and confirms ingredient categories per course. STAGE INTERNAL SPLIT: the manual publishes only the total time, Add Beep anchor, and stage diagram (Rest > Knead > Rise > Bake) — sub-stage durations within Rise are estimated from chart visual proportions. REST length is exact for courses where REST OFF is supported (computed from the published REST OFF delta); courses without REST OFF (3 European, 4 Multigrain, 6 Salt Free, 7 Sugar Free, 8 Vegan) have REST length assumed equal to similar courses (typically 31 min for baking courses). The two-Punch-Down events shown in the chart for baking courses are collapsed into a single rise_1 stage since the manual does not publish their internal timing. KEEP-WARM: the manual publishes 1:00 keep-warm hold for every bakes:true course but it is excluded from total_minutes per the manual's 'Time Required' column convention; the keep_warm stage is therefore omitted from stages[]. COURSE 15 HOMEMADE intentionally excluded from this catalog: it is a user-programmable slot with three memory positions (page 28 of the operating instructions), so its capability fields are user-defined rather than fixed. RECOMMENDED_FOR vocabulary: free-form per spec §5; one normalize pass collapsed mixed_flour, mixed_grain, and whole_grain into multigrain. The recommendation engine in sub-project C will define a stable controlled vocab when it lands. Single-source community claims do not populate typed inferred-bucket fields (hydration_range, whole_wheat_max_pct) per spec §6; they land as 'notes' sentences instead. Confidence is 'verified' across all 14 rows because the manual is the authoritative source for every typed capability field, even where stage-internal durations are estimated.",
   "machine_id": "zojirushi_bb_pdc20",
-  "entries": []
+  "entries": [
+    {
+      "id": "white",
+      "course_number": 1,
+      "name": "White",
+      "total_minutes": 205,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "Manual's REST cycle: stabilizes ingredient temperature before kneading (manual page 19). Toggleable via REST OFF; skipping it drops the total cycle to 2:54 (manual page 13)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 14,
+          "target_temp_c": null,
+          "notes": "Manual shows a single Knead phase; no documented autolyse rest between knead halves. Duration derived from Add Beep timing (45 min from start) minus REST length (31 min)."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual's Add Beep fires at approximately 45 min from start, at the end of Knead and immediately before Rise begins (manual page 13). Beep sounds for 30 seconds; modeled here as a zero-duration event marker."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 110,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within the Rise band; sub-stage durations are not published. Modeled as a single rise_1 stage; duration = total_minutes - preheat - knead_1 - bake."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart visual proportions (manual page 13) and the residual after Rest, Knead, and Rise are accounted for. The manual does not publish bake duration explicitly."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["sandwich_loaf", "white_flour", "default_white_bread"],
+      "recommended_for_notes": "Default cycle for plain or lightly enriched white-flour loaves; the workhorse course of the BB-PDC20. Recipe book (page 6-7) covers Basic, Italian Herb, Honey, Raisin, Chocolate, and Cranberry & Walnut White Bread variants — all use 320g water with 520-553g bread flour for 56-58% hydration.",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 58 },
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:25 MEDIUM (also 3:15 LIGHT / 3:35 DARK per recipe-book page 6 crust-time table), REST OFF: 2:54, Add Beep at approx. 45 min, separate 1-hour keep-warm hold (not included in total_minutes; model treats keep_warm as the post-cycle hold the user can cancel via the manual's page-16 step 8). Manual page 14 basic white recipe: 553g bread flour, 320g water, 6g rapid rise yeast — 57.9% hydration. Crust Control supports LIGHT/MEDIUM/DARK (manual page 18). Timer supported (manual page 17). Rest Off supported (manual page 12)."
+    },
+    {
+      "id": "whole_wheat",
+      "course_number": 2,
+      "name": "Whole Wheat",
+      "total_minutes": 200,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST cycle stabilizes ingredient temperature; same 31-minute REST length as Course 1 (computed from REST OFF delta: 3:20 - 2:49)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 22,
+          "target_temp_c": null,
+          "notes": "Duration estimated from Add Beep timing midpoint (53 min, manual range 48-58 min) minus REST length (31 min)."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual page 13: 'Approx. 48-58 min' from start — published as a range, not a single value (the only course on the BB-PDC20 with a ranged Add Beep timing)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 99,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band; sub-stage durations not published. Modeled as a single rise_1 stage."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 48,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from residual after Rest, Knead, and Rise are accounted for; manual does not publish bake duration explicitly."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["medium"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["whole_wheat", "high_hydration", "rye", "multigrain"],
+      "recommended_for_notes": "Optimized for whole-wheat or mixed-grain loaves with longer rises. Recipe book (page 8) shows 100% Whole Wheat, Whole Wheat Walnut, Light Rye, and Pumpernickel variants — hydration ranges 60-80%.",
+      "hydration_range": { "min_pct": 60, "max_pct": 80, "ideal_pct": 67 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:20 (REST OFF: 2:49), Add Beep at approx. 48-58 min RANGE (the only ranged Add Beep on the catalog), separate 1-hour keep-warm hold. Crust Control NOT available (page 18) — single MEDIUM crust shade. Timer supported (page 17). Recipe PDF (page 8): 100% Whole Wheat 553g WW + 370g water = 67% hydration; 100% WW Walnut 563g WW + 450g water = 80% hydration; Light Rye mixed flour 60% hydration; Pumpernickel mixed flour 77% hydration."
+    },
+    {
+      "id": "european",
+      "course_number": 3,
+      "name": "European",
+      "total_minutes": 195,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 27,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length not directly measurable. Estimated from chart visual proportions (slightly shorter than Courses 1/2's 31 min)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 16,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (43 min) - estimated REST length (27 min) = 16 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 43 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 102,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions; European has a longer bake than Course 1 White, producing a denser/darker crust at the fixed MEDIUM setting."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["medium"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["white_flour", "rustic", "sandwich_loaf", "lean_dough"],
+      "recommended_for_notes": "Rustic European-style white-flour loaves. Recipe book (page 9) covers French, Rustic Herb, Sesame, and Bacon Bread — all white-flour-based with 58-65% hydration. Manual flags this course as temperature-sensitive: results may suffer when room temperature exceeds 77°F (use chilled water).",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 58 },
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:15, Add Beep at approx. 43 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control NOT available (page 18) — single MEDIUM crust shade; Timer IS supported (page 17). Recipe PDF (page 9): French/Rustic/Sesame breads use 320g water + 553g bread flour = 58% hydration; Bacon Bread uses 360g water = 65%. Manual note: room temperature above 77°F may produce unsatisfactory results — use water chilled to 41°F."
+    },
+    {
+      "id": "multigrain",
+      "course_number": 4,
+      "name": "Multigrain",
+      "total_minutes": 205,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length assumed equal to Courses 1/2 (31 min) since cycle structure mirrors Course 1 Basic White."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 14,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (45 min) - assumed REST length (31 min) = 14 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 45 min from start (page 13). Recipe book Multigrain Raisin Bread (page 10) has the user add raisins at this beep."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 110,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band; structure mirrors Course 1 Basic White."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart visual proportions; identical to Course 1 White at MEDIUM crust."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["multigrain", "seeded", "whole_wheat"],
+      "recommended_for_notes": "Recipe book (page 10) shows 7 Grain, 12 Grain, and Multigrain Raisin breads using mixed flours — whole wheat + bread + grain cereals + seeds. Hydration 57-68% across recipes.",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 60 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:15 LIGHT / 3:25 MEDIUM / 3:35 DARK, Add Beep at approx. 45 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control IS supported (page 18); Timer supported (page 17). Recipe PDF (page 10): 7 Grain Bread 310g water + 545g grain mix = 57% hydration; 12 Grain ~330g water; Multigrain Raisin 320g water + 521g grain = 61%."
+    },
+    {
+      "id": "gluten_free",
+      "course_number": 5,
+      "name": "Gluten Free",
+      "total_minutes": 145,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 33,
+          "target_temp_c": null,
+          "notes": "REST cycle. Length computed from REST OFF delta (2:25 - 1:52 = 33 min, manual page 13)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 12,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (45 min) - REST length (33 min) = 12 min. Note: GF recipes call for the user to scrape down the pan sides at the Add Beep, not just add inclusions."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 45 min (page 13). Recipe book pages 11 instruct the user to scrape down flour from sides at this beep."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "GF cycle has a markedly shorter Rise than wheat-based courses (no gluten development needed); manual chart shows compressed Rise band."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions; total cycle 2:25 with 45 min Knead-end leaves 100 min for Rise + Bake split roughly 50/50."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": ["gluten_free"],
+      "recommended_for": ["gluten_free", "high_hydration", "egg_enriched"],
+      "recommended_for_notes": "Designed for GF flour blends (potato starch + brown rice flour + xanthan gum) with eggs and oil enrichment. Recipe book (page 11) shows Brown Rice, Italian Herb, and Raisin variants — all use Active Dry Yeast (not Rapid Rise) and require scraping down the pan at the Add Beep. hydration_range is computed using baker's-percentage water/flour (counting milk's water content); in absolute liquid terms, GF recipes carry far more added moisture than wheat-based courses.",
+      "hydration_range": { "min_pct": 60, "max_pct": 95, "ideal_pct": 75 },
+      "whole_wheat_max_pct": 0,
+      "yeast_compatibility": ["active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 2:15 LIGHT / 2:25 MEDIUM / 2:35 DARK, REST OFF: 1:52, Add Beep at approx. 45 min, separate 1-hour keep-warm hold. REST OFF supported (page 12); Crust Control supported (page 18). Timer NOT supported (page 17). Recipe PDF (page 11): all 3 GF recipes use Active Dry Yeast (manual recipes for other courses use Rapid Rise). Hydration 80-110% reflects GF formulation with eggs + oil + milk + honey as combined liquid load — much higher than wheat-bread baker's-percentage hydration."
+    },
+    {
+      "id": "salt_free",
+      "course_number": 6,
+      "name": "Salt Free",
+      "total_minutes": 205,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length assumed equal to Course 1 / Course 2's 31 min (cycle structure mirrors Course 1)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 14,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (45 min) - assumed REST (31 min) = 14 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 45 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 110,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band; structure mirrors Course 1 Basic White."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart visual proportions; matches Course 1 White at MEDIUM crust."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": ["salt_free"],
+      "recommended_for": ["salt_free", "low_sodium", "white_flour", "whole_wheat"],
+      "recommended_for_notes": "Recipe book (page 12) covers Salt Free White (320g water, 545g bread flour, no salt — 59% hydration) and Salt Free Whole Wheat (400g water, 553g WW flour, vital wheat gluten — 72% hydration). Recipes substitute apple cider vinegar to compensate for lack of salt's gluten-stabilizing effect. Manual flags this course as temperature-sensitive — use chilled water above 77°F room temperature.",
+      "hydration_range": { "min_pct": 55, "max_pct": 75, "ideal_pct": 60 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:15 LIGHT / 3:25 MEDIUM / 3:35 DARK, Add Beep at approx. 45 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control supported (page 18); Timer supported per page 17 (the Whole Wheat variant in the recipe book carries TIMER OFF only because the recipe uses chilled water that may spoil under timer delay)."
+    },
+    {
+      "id": "sugar_free",
+      "course_number": 7,
+      "name": "Sugar Free",
+      "total_minutes": 255,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length assumed equal to Courses 1/2's 31 min."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 15,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (46 min) - assumed REST (31 min) = 15 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 46 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 154,
+          "target_temp_c": null,
+          "notes": "Sugar Free has the LONGEST rise of any course on the BB-PDC20 — yeast fermentation slows without sugar, so the cycle compensates with extra rise time. Manual chart shows the Rise band extending farther than other courses."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 55,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions. Sugar Free has a slightly longer bake than Course 1 White to brown without sugar's caramelization."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["medium"],
+      "inclusions_beep": true,
+      "dietary_modes": ["sugar_free"],
+      "recommended_for": ["sugar_free", "diabetic_friendly", "white_flour", "whole_wheat"],
+      "recommended_for_notes": "The longest cycle on the BB-PDC20 (4:15) — extended rise compensates for the absence of sugar accelerating yeast fermentation. Recipe book (page 13) covers Sugar Free White (320g water, 545g bread flour — 59% hydration) and Sugar Free Whole Wheat (360g water, 553g WW flour — 65% hydration). Manual flags the course as temperature-sensitive; use chilled water above 77°F room.",
+      "hydration_range": { "min_pct": 55, "max_pct": 75, "ideal_pct": 62 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 4:15 (single time — Crust Control NOT supported, no crust variants), Add Beep at approx. 46 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control NOT supported (page 18); Timer supported (page 17)."
+    },
+    {
+      "id": "vegan",
+      "course_number": 8,
+      "name": "Vegan",
+      "total_minutes": 205,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length assumed equal to Courses 1/2's 31 min."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 14,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (45 min) - assumed REST (31 min) = 14 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 45 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 110,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band; structure mirrors Course 1 Basic White."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions; matches Course 1 White at MEDIUM crust."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": ["vegan", "egg_free"],
+      "recommended_for": ["vegan", "egg_free", "dairy_free", "white_flour", "whole_wheat"],
+      "recommended_for_notes": "Recipe book (page 14) covers Vegan White (160g water + 160g almond milk, 545g bread flour, 24g olive oil — 59% hydration) and Vegan Whole Wheat (210g water + 160g almond milk, 553g WW flour with vital wheat gluten — 64% hydration). Both substitute olive oil for butter and unsweetened almond milk for dairy.",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 60 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:15 LIGHT / 3:25 MEDIUM / 3:35 DARK, Add Beep at approx. 45 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control supported (page 18); Timer NOT supported (page 17 lists VEGAN among courses where timer cannot be set, and recipe book shows TIMER OFF on both Vegan recipes — likely because almond milk is perishable under timer delay)."
+    },
+    {
+      "id": "rapid_white",
+      "course_number": 9,
+      "name": "Rapid White",
+      "total_minutes": 145,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 18,
+          "target_temp_c": null,
+          "notes": "Shortened REST cycle (vs Course 1's 31 min). Length computed from REST OFF delta (2:25 - 2:07 = 18 min, manual page 13). Rapid courses minimize preheat to speed up the cycle."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 17,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (35 min) - REST length (18 min) = 17 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 35 min from start (page 13). Earlier than Course 1's 45 min — total cycle starts earlier."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 60,
+          "target_temp_c": null,
+          "notes": "Compressed Rise band on chart; rapid cycle skips the longer second proof. Manual shows a single Punch Down event for this course (vs two for Course 1)."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions; same baking time as Course 1 since baking can't be 'rapid' without compromising loaf structure."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["rapid", "white_flour", "sandwich_loaf", "default_white_bread"],
+      "recommended_for_notes": "Same recipe family as Course 1 White (Rapid Basic, Rapid Italian Herb, Rapid Raisin in recipe book page 15) but completes in 2:25 instead of 3:25. Uses MORE Rapid Rise yeast (7.5g vs 6g for Course 1) to compensate for the shorter rise.",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 58 },
+      "yeast_compatibility": ["instant"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 2:15 LIGHT / 2:25 MEDIUM / 2:35 DARK, REST OFF: 2:07, Add Beep at approx. 35 min, separate 1-hour keep-warm hold. REST OFF supported (page 12); Crust Control supported (page 18); Timer NOT supported (page 17). Recipe PDF (page 15) shows 3 recipes — all use 7.5g Rapid Rise Yeast (more than Course 1's 6g) to compensate for the shorter rise."
+    },
+    {
+      "id": "rapid_whole_wheat",
+      "course_number": 10,
+      "name": "Rapid Whole Wheat",
+      "total_minutes": 145,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 15,
+          "target_temp_c": null,
+          "notes": "Shortened REST cycle. Length computed from REST OFF delta (2:25 - 2:10 = 15 min, manual page 13). Even shorter than Course 9 Rapid White's 18 min REST."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 22,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (37 min) - REST length (15 min) = 22 min. Longer Knead than Course 9 to develop whole-wheat gluten."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 37 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 60,
+          "target_temp_c": null,
+          "notes": "Compressed Rise band; manual shows a single Punch Down event for this course (vs two for Course 2 Whole Wheat)."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 48,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions; matches Course 2 Whole Wheat bake duration."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["medium"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["rapid", "whole_wheat", "rye", "multigrain"],
+      "recommended_for_notes": "Rapid version of Course 2 Whole Wheat. Recipe book (page 16) covers Rapid 100% Whole Wheat (553g WW flour + 380g water + vital wheat gluten — 69% hydration) and Rapid Light Rye (455g bread + 87g rye + 330g water — 61% hydration).",
+      "hydration_range": { "min_pct": 60, "max_pct": 75, "ideal_pct": 65 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 2:25 (single time — Crust Control NOT supported), REST OFF: 2:10, Add Beep at approx. 37 min, separate 1-hour keep-warm hold. REST OFF supported (page 12); Crust Control NOT supported (page 18); Timer NOT supported (page 17). Recipe PDF (page 16) recipes use 7.5g Rapid Rise Yeast (more than Course 2's 6g)."
+    },
+    {
+      "id": "dough",
+      "course_number": 11,
+      "name": "Dough",
+      "total_minutes": 110,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 23,
+          "target_temp_c": null,
+          "notes": "REST cycle. Length computed from REST OFF delta (1:50 - 1:27 = 23 min, manual page 13). Shorter than baking courses' 31 min."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 15,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (38 min) - REST length (23 min) = 15 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 38 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 72,
+          "target_temp_c": null,
+          "notes": "Single rise; manual chart shows ONE Punch Down event (vs two for baking courses). Cycle ends after rise_1 — no bake, no keep-warm."
+        }
+      ],
+      "bakes": false,
+      "loaf_sizes": [],
+      "crust_shades": [],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["dough_only", "shaping", "pizza_dough", "rolls", "bagels"],
+      "recommended_for_notes": "Knead + first rise only; the user shapes and bakes the dough externally. Recipe book pages 18-23 cover Butter Rolls, Doughnuts, Breadsticks, Bagels, and several Pizza variants — all use this course to produce shaped dough.",
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 1:50 (REST OFF: 1:27), Add Beep at approx. 38 min, NO bake, NO keep-warm. REST OFF supported (page 12); Crust Control NOT applicable (no bake); Timer NOT supported (page 17). Loaf sizes / crust shades empty arrays — course produces dough, not a baked loaf."
+    },
+    {
+      "id": "sourdough_starter",
+      "course_number": 12,
+      "name": "Sourdough Starter",
+      "total_minutes": 130,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 5,
+          "target_temp_c": null,
+          "notes": "Very short REST cycle. Length computed from REST OFF delta (2:10 - 2:05 = 5 min, manual page 13)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 25,
+          "target_temp_c": null,
+          "notes": "Duration estimated; manual chart shows no Add Beep on this course, so no anchor point exists for separating Knead from Rise. Estimate from chart visual proportions."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 100,
+          "target_temp_c": null,
+          "notes": "Long rise period for the starter culture to ferment. Manual chart shows no Punch Down events on this course."
+        }
+      ],
+      "bakes": false,
+      "loaf_sizes": [],
+      "crust_shades": [],
+      "inclusions_beep": false,
+      "dietary_modes": [],
+      "recommended_for": ["sourdough_culture", "starter_creation"],
+      "recommended_for_notes": "Cultivates a sourdough starter culture (NOT a sourdough loaf — the starter is then used in a separate bake on the WHOLE WHEAT or HOMEMADE course per the operating instructions page 22). Operating instructions page 21 covers starter preparation; page 22 covers the subsequent bake. The course produces a hydrated, fermented culture rather than a baked loaf.",
+      "yeast_compatibility": ["sourdough"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 2:10 (REST OFF: 2:05), NO Add Beep, NO bake, NO keep-warm, NO Punch Down. REST OFF supported (page 12); Crust Control NOT applicable; Timer NOT supported (page 17). The existing bb_pdc20_recipes.json has 'Sourdough' bread entries — those are sourdough LOAVES baked using this starter on a separate course (typically WHOLE WHEAT or HOMEMADE), not Course 12 itself."
+    },
+    {
+      "id": "cake",
+      "course_number": 13,
+      "name": "Cake",
+      "total_minutes": 110,
+      "stages": [
+        {
+          "name": "knead_1",
+          "duration_minutes": 16,
+          "target_temp_c": null,
+          "notes": "Mix-only stage; cakes use chemical leaveners (baking powder), not yeast — no rest, no rise. Add Beep fires at the end of mixing."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 16 min from start (page 13). Earliest Add Beep on the BB-PDC20 — fires during/at end of mixing for adding fruit/nuts to the batter."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 94,
+          "target_temp_c": null,
+          "notes": "Long bake — cake batter requires extended baking compared to bread dough. Duration computed as total_minutes - knead - add_beep."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["cake", "quick_bread", "no_knead", "chemical_leavener"],
+      "recommended_for_notes": "Mix + bake only — designed for cake batters and quick breads using baking powder (not yeast). Recipe book (page 25) covers Pound Cake, Tea Cake, and Corn Bread. NO REST, NO RISE phase: chemical leaveners activate immediately on hydration.",
+      "yeast_compatibility": [],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 1:50, Add Beep at approx. 16 min, Bake stage, NO keep-warm. REST OFF NOT supported (page 12); Crust Control supported (page 18); Timer NOT supported (page 17). yeast_compatibility=[] because the course uses chemical leaveners; the recommendation engine should match recipes with baking_powder (not yeast)."
+    },
+    {
+      "id": "jam",
+      "course_number": 14,
+      "name": "Jam",
+      "total_minutes": 80,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 10,
+          "target_temp_c": null,
+          "notes": "Manual chart labels this stage 'Heat' — heater warms ingredients before stirring begins. Not a true REST in the bread sense. Duration estimated from chart visual proportions."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 70,
+          "target_temp_c": null,
+          "notes": "Manual chart labels this stage 'Heat & Mix' — heater stays on while paddle stirs the cooking jam. Modeled as knead_1 (the closest stage in our taxonomy supporting paddle action) but is functionally a heated stir, not gluten development."
+        }
+      ],
+      "bakes": false,
+      "loaf_sizes": [],
+      "crust_shades": [],
+      "inclusions_beep": false,
+      "dietary_modes": [],
+      "recommended_for": ["jam", "preserves", "fruit_cooking"],
+      "recommended_for_notes": "Cooks fruit + sugar into jam or marmalade — heater stays on while the paddle stirs. Recipe book (page 26) covers Strawberry Jam and Orange Marmalade. NOT a bread course: produces no loaf, no crust, no rise. The 'preheat' and 'knead_1' stages model the manual's 'Heat' and 'Heat & Mix' labels respectively.",
+      "yeast_compatibility": [],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 1:20, NO Add Beep, NO Rest in bread sense, NO Rise, NO Bake, NO keep-warm. Chart labels stages 'Heat' and 'Heat & Mix' rather than the bread-cycle stages. REST OFF NOT supported (page 12); Crust Control NOT applicable; Timer NOT supported (page 17)."
+    }
+  ]
 }
