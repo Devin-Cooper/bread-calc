@@ -35,7 +35,10 @@
   border: var(--border-hairline) solid var(--color-border-strong);
   border-radius: var(--radius-sm);
   overflow: hidden;
-  margin-top: var(--space-6);
+  /* No margin-top here — the .zone-band-track wrapper supplies outer
+   * spacing for the floating badge above. A margin-top inside the wrapper
+   * would push the band away from the track-top, leaving a gap between
+   * the badge's ▼ arrow tip (which points at track-top) and the band itself. */
 }
 
 @media (max-width: 767px) {
