@@ -13,6 +13,8 @@ import { convert } from "../agent/convert.js";
 import { lookupIngredient } from "../agent/lookup.js";
 import { applyFix } from "../agent/fix.js";
 import { verifyClaims } from "../agent/verify.js";
+import { recommend } from "../agent/recommend.js";
+import { formatRecommend } from "./format/recommend.js";
 import type { Fix } from "../core/types.js";
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -51,6 +53,7 @@ Usage:
   bread-calc lookup    <query> [--limit=N] [--json]
   bread-calc apply     <recipe.json> [<fix.json>] [--fix=- | --fix-id=CODE.N] [--out=...]
   bread-calc verify    <claim.json> [--json]
+  bread-calc recommend <recipe.json> [--intent=bake|dough] [--limit=N] [--json]
   bread-calc --version
   bread-calc --help
 
@@ -90,6 +93,8 @@ const ALL_OPTIONS = {
   // apply
   fix:        { type: "string"  as const },
   "fix-id":   { type: "string"  as const },
+  // recommend
+  intent:     { type: "string"  as const },
 };
 
 // Per-subcommand allow-list of flags. parseArgs is strict at the syntax level
@@ -110,6 +115,7 @@ const ALLOWED: Record<string, ReadonlyArray<keyof typeof ALL_OPTIONS>> = {
   lookup:     ["limit", "json"],
   apply:      ["fix", "fix-id", "out", "json"],
   verify:     ["json"],
+  recommend:  ["intent", "limit", "json", "no-color"],
 };
 
 const SUBCOMMANDS = Object.keys(ALLOWED);
@@ -520,6 +526,31 @@ function dispatchVerify(positionals: string[]) {
   process.exit(report.all_match ? 0 : 6);
 }
 
+function dispatchRecommend(positionals: string[]) {
+  const path = positionals[1];
+  if (!path) {
+    process.stderr.write("usage: bread-calc recommend <recipe.json> [--intent=bake|dough] [--limit=N] [--json]\n");
+    process.exit(64);
+  }
+  const recipeText = path === "-" ? readFileSync(0, "utf8") : readFileSync(path, "utf8");
+  const recipe = JSON.parse(recipeText) as Recipe;
+  const intentFlag = values["intent"];
+  const intent: "bake" | "dough" | undefined =
+    intentFlag === "bake" ? "bake" : intentFlag === "dough" ? "dough" : undefined;
+  const limit = values["limit"] !== undefined ? parseInt(String(values["limit"]), 10) : undefined;
+  const result = recommend(recipe, db, intent !== undefined ? { intent } : undefined);
+  const allIneligible = result.recommendations.every((r) => !r.eligible);
+  if (values["json"]) {
+    console.log(JSON.stringify(wrap("recommend", readPkg().version, result), null, 2));
+  } else {
+    const noColor = Boolean(values["no-color"]);
+    const formatOpts: { limit?: number; noColor?: boolean } = { noColor };
+    if (limit !== undefined) formatOpts.limit = limit;
+    console.log(formatRecommend(result.recommendations, db, formatOpts));
+  }
+  process.exit(allIneligible ? 4 : 0);
+}
+
 type Handler = (positionals: string[]) => void;
 const HANDLERS: Record<string, Handler> = {
   compute:     dispatchCompute,
@@ -536,6 +567,7 @@ const HANDLERS: Record<string, Handler> = {
   lookup:      dispatchLookup,
   apply:       dispatchApply,
   verify:      dispatchVerify,
+  recommend:   dispatchRecommend,
 };
 const handler = HANDLERS[sub];
 if (handler) handler(positionals);

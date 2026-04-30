@@ -1,6 +1,7 @@
 export type SubcommandName =
   | "compute" | "solve" | "validate" | "ingredients" | "reference" | "schema"
-  | "describe" | "examples" | "parse" | "convert" | "lookup" | "apply" | "verify";
+  | "describe" | "examples" | "parse" | "convert" | "lookup" | "apply" | "verify"
+  | "recommend";
 
 export interface Meta {
   tool_version: string;
