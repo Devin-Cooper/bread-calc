@@ -1,5 +1,6 @@
 import type { Store } from "../state.js";
 import { escapeHtml } from "../../core/escape.js";
+import { attachTooltip } from "./tooltip.js";
 
 export function mount(parent: HTMLElement, store: Store): void {
   function render(): void {
@@ -25,8 +26,13 @@ export function mount(parent: HTMLElement, store: Store): void {
           : `<button type="button" class="recipe-notes-add type-body-sm" data-action="add-notes">+ Add note</button>`
         }
       </p>
-      <div class="mode-badge type-body-sm" aria-live="polite">${badge}</div>
+      <div class="mode-badge type-body-sm" aria-live="polite">${badge}<button type="button" class="help-icon" data-help="mode-badge" aria-label="Explain mode">?</button></div>
     `;
+    parent.querySelectorAll<HTMLElement>(".mode-badge [data-help]").forEach((btn) => {
+      attachTooltip(btn, {
+        content: `<strong>Build by ingredients:</strong> type grams directly. <strong>Build by target weight:</strong> set a loaf size and the calculator solves for grams from your baker's percentages. Switch by clicking <em>+ Set target weight</em> in the snapshot card. <a href="/learn.html#bakers-percent">Read more</a>`,
+      });
+    });
   }
 
   // Use event delegation on parent with capture to handle blur events even

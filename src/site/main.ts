@@ -35,7 +35,10 @@ const db: Database = {
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 const STARTER: Recipe = {
-  schema_version: "2.0", name: "Classic White (BB-PDC20)", machine: "zojirushi_bb_pdc20",
+  schema_version: "2.0",
+  name: "Classic White (BB-PDC20)",
+  notes: "Bread-machine basic; baseline for tweaking hydration.",
+  machine: "zojirushi_bb_pdc20",
   items: [
     { uid: generateUid(), ingredient_id: "bread_flour",      grams: 553 },
     { uid: generateUid(), ingredient_id: "water_tap",        grams: 326 },

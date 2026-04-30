@@ -4,6 +4,7 @@ import { computeRecipe, inferRole } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { effectiveRecipe } from "../effective-recipe.js";
 import { mount as mountRolePill, type Role } from "./role-pill.js";
+import { attachTooltip } from "./tooltip.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   function render() {
@@ -44,8 +45,15 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     header.className = "row-header";
     header.setAttribute("role", "row");
     const gramsHeader = targetMode ? "Solved g" : "Grams";
-    header.innerHTML = `<span role="columnheader">Ingredient</span><span role="columnheader">${gramsHeader}</span><span role="columnheader">Baker's %</span><span role="columnheader">Role</span><span role="columnheader" aria-label="actions"></span>`;
+    header.innerHTML = `<span role="columnheader">Ingredient</span><span role="columnheader">${gramsHeader}</span><span role="columnheader">Baker's %<button type="button" class="help-icon" data-help="bakers-percent-col" aria-label="Explain Baker's percent">?</button></span><span role="columnheader">Role<button type="button" class="help-icon" data-help="role-col" aria-label="Explain Role">?</button></span><span role="columnheader" aria-label="actions"></span>`;
     parent.appendChild(header);
+    parent.querySelectorAll<HTMLElement>(".row-header [data-help]").forEach((btn) => {
+      const key = btn.dataset["help"]!;
+      const content = key === "bakers-percent-col"
+        ? `Each ingredient as a percentage of total flour weight. <a href="/learn.html#bakers-percent">Read more</a>`
+        : `The category an ingredient belongs to (flour, wet, salt, etc.). Used to compute hydration and to order ingredients in the printed kitchen card. <a href="/learn.html#bakers-percent">Read more</a>`;
+      attachTooltip(btn, { content });
+    });
     for (let i = 0; i < state.items.length; i++) {
       const item = state.items[i]!;
       const solvedItem = solved.items[i]!;
