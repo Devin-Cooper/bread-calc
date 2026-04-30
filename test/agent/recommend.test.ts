@@ -37,4 +37,11 @@ describe("agent/recommend", () => {
     const white = result.recommendations.find((r) => r.course_id === "white");
     expect(white?.eligible).toBe(false);
   });
+
+  it("is re-exported from src/agent/index.ts (public agent API surface)", async () => {
+    const agentMod = await import("../../src/agent/index.js");
+    expect(typeof agentMod.recommend).toBe("function");
+    const result = agentMod.recommend(recipe, db);
+    expect(result.recommendations.length).toBe(14);
+  });
 });

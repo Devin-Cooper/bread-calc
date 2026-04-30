@@ -12,6 +12,8 @@ export { describe } from "./describe.js";
 export type { CapabilityManifest, SubcommandSpec, WarningRuleSpec, FixKindSpec, ExplainNodeTypeSpec } from "./describe.js";
 export { getExamples } from "./examples.js";
 export type { ExampleEntry } from "./examples.js";
+export { recommend } from "./recommend.js";
+export type { RecommendReport } from "./recommend.js";
 
 // Re-export core types referenced in agent function signatures so consumers
 // of bread-calc/agent can type their inputs/outputs without reaching into
@@ -19,4 +21,9 @@ export type { ExampleEntry } from "./examples.js";
 export type {
   Recipe, RecipeItem, Database, Fix, ApplyFixResult, ApplyFixError, ApplyFixErrorCode,
   ZoneId, HydrationZone, Category, Role, Warning, WarningCode, ComputedRecipe,
+  BBPDC20Course,
 } from "../core/types.js";
+export type {
+  CourseRecommendation, RecommendationReason, RecommendationTier,
+  RecommendationVerdict, RecommendOpts, ResolvedCourse,
+} from "../core/recommend.js";
