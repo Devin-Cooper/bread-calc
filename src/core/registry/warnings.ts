@@ -514,6 +514,28 @@ warningRules.register({
 });
 
 warningRules.register({
+  code: "course_loaf_size_unsupported",
+  severity_default: "warn",
+  description: "Selected loaf size is not supported by the chosen course on this machine.",
+  category: "machine",
+  consumes: ["recipe.course", "recipe.loaf_size", "db.courses"],
+  has_fixes: false,
+  evaluate({ computed, db }) {
+    const r = computed.recipe;
+    if (r.course === undefined || r.loaf_size === undefined) return { fired: false };
+    const course = db.courses.find((c) => c.id === r.course);
+    if (!course) return { fired: false };
+    if (course.loaf_sizes.length === 0) return { fired: false }; // non-baking course
+    if (course.loaf_sizes.includes(r.loaf_size)) return { fired: false };
+    return {
+      fired: true,
+      message: `Course "${course.name}" does not support "${r.loaf_size}" loaf (supported: ${course.loaf_sizes.join(", ")}).`,
+    };
+  },
+  fixes() { return []; },
+});
+
+warningRules.register({
   code: "course_crust_shade_unsupported",
   severity_default: "warn",
   description: "Selected crust shade is not supported by the chosen course on this machine.",

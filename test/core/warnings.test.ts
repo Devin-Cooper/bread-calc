@@ -158,4 +158,18 @@ describe("warnings", () => {
     const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "made_up", crust_shade: "light" }), db);
     expect(c.warnings.find((w) => w.code === "course_crust_shade_unsupported")).toBeUndefined();
   });
+
+  // --- course_loaf_size_unsupported ---
+  it("emits course_loaf_size_unsupported when loaf_size not in course.loaf_sizes", () => {
+    const white = makeCourse({ id: "white", course_number: 1, name: "White", crust_shades: ["light", "medium", "dark"], loaf_sizes: ["1.5lb", "2lb"] });
+    const dbWithCourses: Database = { ...db, courses: [white] };
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "white", loaf_size: "1lb" }), dbWithCourses);
+    expect(c.warnings.find((w) => w.code === "course_loaf_size_unsupported")).toBeDefined();
+  });
+  it("does NOT emit course_loaf_size_unsupported when course.loaf_sizes is empty (non-baking course)", () => {
+    const dough = makeCourse({ id: "dough", course_number: 8, name: "Dough", crust_shades: [], loaf_sizes: [] });
+    const dbWithCourses: Database = { ...db, courses: [dough] };
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "dough", loaf_size: "1lb" }), dbWithCourses);
+    expect(c.warnings.find((w) => w.code === "course_loaf_size_unsupported")).toBeUndefined();
+  });
 });
