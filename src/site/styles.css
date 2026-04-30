@@ -140,3 +140,56 @@ input[type="text"]:focus-visible {
   #recipe-pane { grid-column: 1; }
   #results-pane { grid-column: 2; }
 }
+
+/* Recipe meta — sub-project B */
+.recipe-meta-strip {
+  display: flex;
+  gap: var(--space-md, 1rem);
+  flex-wrap: wrap;
+  margin: var(--space-md, 1rem) 0;
+}
+.recipe-meta-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border: 0;
+  padding: 0;
+}
+.recipe-meta-label {
+  font-size: var(--type-body-sm, 0.875rem);
+  font-weight: 500;
+}
+.recipe-meta-clear {
+  font-size: 0.8125rem;
+  background: transparent;
+  border: 1px solid var(--border, #ccc);
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  align-self: flex-start;
+  margin-top: 4px;
+}
+.recipe-meta-details {
+  margin-top: var(--space-md, 1rem);
+}
+.recipe-meta-details summary {
+  cursor: pointer;
+  font-weight: 500;
+}
+.recipe-meta-extended { display: flex; flex-direction: column; gap: 0.25rem; margin: 0.5rem 0; }
+.recipe-meta-extended-notes { width: 100%; resize: vertical; min-height: 6rem; }
+.bake-hints-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.bake-hints-list li { display: flex; gap: 0.5rem; align-items: center; }
+.bake-hints-list input[type='text'] { flex: 1; }
+.bake-hint-add, .bake-hint-remove {
+  font-size: 0.8125rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
