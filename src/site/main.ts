@@ -3,7 +3,7 @@ import { generateUid } from "../core/uid.js";
 import { createStore } from "./state.js";
 import { mount as mountPicker } from "./components/ingredient-picker.js";
 import { mount as mountTable } from "./components/recipe-table.js";
-import { mount as mountResults } from "./components/results-panel.js";
+import { mount as mountSnapshot } from "./components/snapshot-card.js";
 import { mount as mountWarnings } from "./components/warnings-panel.js";
 import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
@@ -106,7 +106,9 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
   mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
-  mountResults(document.querySelector("#snapshot-card") as HTMLElement, store, db);
+  mountSnapshot(document.querySelector("#snapshot-card") as HTMLElement, store, db, {
+    onOpenSettings: () => drawerCtl.open(),
+  });
   mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
 
   let timer: number | undefined;
