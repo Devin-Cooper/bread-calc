@@ -9,6 +9,9 @@ export { escapeXml, escapeHtml } from "./escape.js";
 export { computeWeightedDdtWa } from "./flour.js";
 export { renderHydrationChart } from "./plot.js";
 export type { ChartOptions } from "./plot.js";
+export { generateUid } from "./uid.js";
+export { templateToRecipe, deriveTemplateTotals } from "./templates-projection.js";
+export type { RawTemplateEntry, RawTemplateItem, TemplateTotals } from "./templates-projection.js";
 export type {
   Recipe, RecipeItem, ComputedRecipe, Ingredient, Flour, Database, Defaults, Machine,
   Warning, WarningCode, IngredientFlag, Role, Category, ZoneId, HydrationZone, BBPDC20Recipe,

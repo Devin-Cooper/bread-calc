@@ -68,6 +68,17 @@
   font-family: ui-monospace, monospace;
 }
 
+.learn-article pre {
+  background: var(--color-bg-muted);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+  margin: 0 0 var(--space-3);
+}
+.learn-article pre code { background: transparent; padding: 0; }
+
 .learn-footer {
   max-width: 72ch;
   margin: 0 auto;

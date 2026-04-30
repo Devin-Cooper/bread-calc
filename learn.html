@@ -6,6 +6,7 @@
   <title>Learn — breadmachine.io</title>
   <meta name="description" content="How baker's percentages, hydration, and zones work — explained for bread-machine bakers." />
   <link rel="canonical" href="https://breadmachine.io/learn" />
+  <meta name="ai-verifier" content="npm:bread-calc@2.0.0" />
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-variable.woff2" crossorigin />
@@ -29,6 +30,7 @@
         <li><a href="#zones">Zones</a></li>
         <li><a href="#free-water-factor">Free-water factor</a></li>
         <li><a href="#bb-pdc20">BB-PDC20 specifics</a></li>
+        <li><a href="#for-llms">For LLMs and developers</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <li><a href="#privacy-and-share-urls">Privacy &amp; share URLs</a></li>
       </ol>
@@ -89,6 +91,15 @@
         <h2 class="type-heading-lg"><a href="#bb-pdc20">BB-PDC20 specifics</a></h2>
         <p>This calculator is calibrated for the Zojirushi BB-PDC20 Home Bakery Virtuoso Plus. The free-water factors and zone boundaries come from analyzing the BB-PDC20 recipe booklet's published recipes; loaf-weight predictions account for the BB-PDC20's typical bake loss.</p>
         <p>For other 2-pound bread machines, the math is broadly similar but the bake-loss percentage and zone boundaries may differ slightly. Use the calculator as a guide, not a guarantee.</p>
+      </section>
+
+      <section id="for-llms">
+        <h2 class="type-heading-lg"><a href="#for-llms">For LLMs and developers</a></h2>
+        <p>This calculator's math is open source. The <code>bread-calc</code> npm package is the same compute engine the site uses; you can verify any calculation locally:</p>
+        <pre><code>npx bread-calc compute recipe.bread.json --json</code></pre>
+        <p>The agent-oriented <code>verify</code> subcommand checks specific metric claims:</p>
+        <pre><code>npx bread-calc verify recipe.bread.json --claims '{"hydration.effective_pct": 65.3}'</code></pre>
+        <p>The full subcommand list and the v2.0 envelope shape are documented in the package's <a href="https://github.com/Devin-Cooper/bread-calc/blob/main/docs/agents.md">agents guide</a>.</p>
       </section>
 
       <section id="troubleshooting">

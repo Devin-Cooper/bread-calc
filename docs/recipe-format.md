@@ -96,7 +96,9 @@ The net effect: for any ingredient whose density comes from USDA data (effective
 
 ## Reference data
 
-`bb_pdc20_recipes.json` stores summary statistics only (name, course, total_water_g, total_flour_g, hydration_pct_nominal, zone) derived from the Zojirushi BB-PDC20 recipe booklet. Only aggregate values are stored — no full ingredient lists — to keep the dataset in factual/non-creative-expression territory.
+`bb_pdc20_recipes.json` stores summary statistics (name, course, total_water_g, total_flour_g, hydration_pct_nominal, zone) for the Zojirushi BB-PDC20 recipe booklet's published recipes. The zone-band visualizer on the site reads this file for its reference ticks.
+
+`bb_pdc20_templates.json` (new) carries full ingredient lists with grams for a curated subset of those recipes. The site's "Templates" picker drops a starter recipe into the calculator from this file. Recipes themselves are not copyrightable in the US/EU; the file's top-level `attribution` field credits the Zojirushi BB-PDC20 booklet as a courtesy. Templates are validated against the v2.0 ingredient catalog at module load and cross-checked against `bb_pdc20_recipes.json`'s totals via `test/core/templates-cross-check.test.ts` so transcription drift can't ship silently. The templates file is the source of truth for new entries; the totals file is currently authoritative for the zone-band ticks but is expected to be regenerated from templates in a follow-up PR (once all 30+ recipes are transcribed).
 
 ## JSON Schema
 
