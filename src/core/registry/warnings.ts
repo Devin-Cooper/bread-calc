@@ -513,6 +513,28 @@ warningRules.register({
   fixes() { return []; },
 });
 
+warningRules.register({
+  code: "course_crust_shade_unsupported",
+  severity_default: "warn",
+  description: "Selected crust shade is not supported by the chosen course on this machine.",
+  category: "machine",
+  consumes: ["recipe.course", "recipe.crust_shade", "db.courses"],
+  has_fixes: false,
+  evaluate({ computed, db }) {
+    const r = computed.recipe;
+    if (r.course === undefined || r.crust_shade === undefined) return { fired: false };
+    const course = db.courses.find((c) => c.id === r.course);
+    if (!course) return { fired: false }; // unknown_course_id rule handles this
+    if (course.crust_shades.length === 0) return { fired: false }; // course doesn't bake
+    if (course.crust_shades.includes(r.crust_shade)) return { fired: false };
+    return {
+      fired: true,
+      message: `Course "${course.name}" does not support "${r.crust_shade}" crust (supported: ${course.crust_shades.join(", ")}).`,
+    };
+  },
+  fixes() { return []; },
+});
+
 export function runWarnings(ctx: WarningCtx): { warnings: import("../types.js").Warning[] } {
   const out: import("../types.js").Warning[] = [];
   for (const rule of warningRules.list()) {

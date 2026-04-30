@@ -1,6 +1,22 @@
 import { describe, it, expect } from "vitest";
 import { computeRecipe } from "../../src/core/compute.js";
 import type { Recipe, Database, Ingredient, Flour, Defaults, Machine } from "../../src/core/types.js";
+import type { BBPDC20Course } from "../../src/core/index.js";
+
+function makeCourse(partial: Pick<BBPDC20Course, "id" | "course_number" | "name" | "crust_shades" | "loaf_sizes">): BBPDC20Course {
+  return {
+    total_minutes: 200,
+    stages: [],
+    bakes: true,
+    inclusions_beep: true,
+    dietary_modes: [],
+    recommended_for: [],
+    yeast_compatibility: ["instant"],
+    confidence: "verified",
+    sources: [],
+    ...partial,
+  };
+}
 
 const flour: Flour = { id: "bread_flour", name: "Bread Flour", category: "flour", protein_pct: 12, ddt_water_absorption_pct: 62, density_g_per_cup: 130 };
 const water: Ingredient = { id: "water_tap", name: "Water", category: "liquids", is_liquid: true, water_pct: 100, salt_pct: 0, sugar_pct: 0, fat_pct: 0, free_water_factor: 1, density_g_per_cup: 237 };
@@ -123,5 +139,23 @@ describe("warnings", () => {
   it("emits under_developed_gluten when effective_pct < ddt_wa_pct", () => {
     const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 250 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }]), db);
     expect(c.warnings.find((w) => w.code === "under_developed_gluten")).toBeDefined();
+  });
+
+  // --- course_crust_shade_unsupported ---
+  it("emits course_crust_shade_unsupported when crust_shade not in course.crust_shades", () => {
+    const wholeWheat = makeCourse({ id: "whole_wheat", course_number: 2, name: "Whole Wheat", crust_shades: ["medium"], loaf_sizes: ["1.5lb", "2lb"] });
+    const dbWithCourses: Database = { ...db, courses: [wholeWheat] };
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "whole_wheat", crust_shade: "light" }), dbWithCourses);
+    expect(c.warnings.find((w) => w.code === "course_crust_shade_unsupported")).toBeDefined();
+  });
+  it("does NOT emit course_crust_shade_unsupported when crust_shade is supported", () => {
+    const white = makeCourse({ id: "white", course_number: 1, name: "White", crust_shades: ["light", "medium", "dark"], loaf_sizes: ["1lb", "1.5lb", "2lb"] });
+    const dbWithCourses: Database = { ...db, courses: [white] };
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "white", crust_shade: "dark" }), dbWithCourses);
+    expect(c.warnings.find((w) => w.code === "course_crust_shade_unsupported")).toBeUndefined();
+  });
+  it("does NOT emit course_crust_shade_unsupported when course is unknown", () => {
+    const c = computeRecipe(recipeOf([{ uid: uid(), ingredient_id: "bread_flour", grams: 500 }, { uid: uid(), ingredient_id: "water_tap", grams: 320 }, { uid: uid(), ingredient_id: "yeast_instant", grams: 5 }, { uid: uid(), ingredient_id: "salt_table", grams: 9 }], { course: "made_up", crust_shade: "light" }), db);
+    expect(c.warnings.find((w) => w.code === "course_crust_shade_unsupported")).toBeUndefined();
   });
 });
