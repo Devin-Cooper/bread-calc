@@ -20,7 +20,7 @@ export function mount(parent: HTMLElement, props: HeaderProps): void {
       <div class="header-row">
         <a class="header-wordmark type-display-md" href="/">breadmachine.io</a>
         <nav class="header-nav">
-          <a href="/learn" class="header-learn type-body-md">Learn</a>
+          <a href="/learn.html" class="header-learn type-body-md">Learn</a>
           <button type="button" class="header-overflow"
                   data-action="overflow"
                   aria-label="Recipe actions menu"

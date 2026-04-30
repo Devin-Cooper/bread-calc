@@ -101,7 +101,7 @@ function ariaLabel(userHy: number | null, activeZoneId: string | null, refCount:
 
 function helpText(key: string): string {
   if (key === "zones") {
-    return `Bread doughs are grouped into four hydration zones: dry, sandwich, wet, very wet. <a href="/learn#zones">Read more</a>`;
+    return `Bread doughs are grouped into four hydration zones: dry, sandwich, wet, very wet. <a href="/learn.html#zones">Read more</a>`;
   }
   return "";
 }

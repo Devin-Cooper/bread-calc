@@ -146,15 +146,15 @@ export function mount(parent: HTMLElement, store: Store, db: Database, props: Sn
 function tooltipText(key: string): string {
   switch (key) {
     case "effective":
-      return `Effective hydration counts water from every ingredient, not just plain water. <a href="/learn#effective-hydration">Read more</a>`;
+      return `Effective hydration counts water from every ingredient, not just plain water. <a href="/learn.html#effective-hydration">Read more</a>`;
     case "nominal":
     case "nominal-hydration":
-      return `The simple water ÷ flour view. Water-only, ignores hidden water from milk, eggs, etc. <a href="/learn#nominal-hydration">Read more</a>`;
+      return `The simple water ÷ flour view. Water-only, ignores hidden water from milk, eggs, etc. <a href="/learn.html#nominal-hydration">Read more</a>`;
     case "total_liquid":
     case "total-liquid":
-      return `The broadest read: every liquid ingredient counted, not just water. <a href="/learn#total-liquid">Read more</a>`;
+      return `The broadest read: every liquid ingredient counted, not just water. <a href="/learn.html#total-liquid">Read more</a>`;
     case "bakers-percent":
-      return `Each ingredient as a percentage of total flour weight. <a href="/learn#bakers-percent">Read more</a>`;
+      return `Each ingredient as a percentage of total flour weight. <a href="/learn.html#bakers-percent">Read more</a>`;
   }
   return "";
 }

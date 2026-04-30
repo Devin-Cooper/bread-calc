@@ -11,6 +11,7 @@
 @import url("./styles/recipe-table.css");
 @import url("./styles/warnings-panel.css");
 @import url("./styles/show-math.css");
+@import url("./styles/learn.css");
 
 * { box-sizing: border-box; }
 

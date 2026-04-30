@@ -9,7 +9,7 @@ describe("header", () => {
     const root = document.createElement("header"); document.body.appendChild(root);
     mountHeader(root, { onAction: () => {} });
     expect(root.textContent).toContain("breadmachine.io");
-    expect(root.querySelector("a[href='/learn']")).not.toBeNull();
+    expect(root.querySelector("a[href='/learn.html']")).not.toBeNull();
   });
 
   it("renders an overflow menu button", () => {
