@@ -213,5 +213,15 @@ describe("recipe-meta component", () => {
       (parent.querySelector(".rec-use-this") as HTMLButtonElement).click();
       expect(store.getState().course).toBe("white");
     });
+
+    it("State B: recipe.course matches top — shows ✓ badge, no swap button", () => {
+      const parent = document.createElement("div");
+      const store = createStore({ ...baseRecipe, course: "white" });
+      mount(parent, store, minimalDb);
+      const strip = parent.querySelector(".recommendation-strip") as HTMLElement;
+      expect(strip.textContent).toContain("Top match");
+      expect(parent.querySelector(".rec-use-top")).toBeNull();
+      expect(parent.querySelector(".rec-use-this")).toBeNull();
+    });
   });
 });
