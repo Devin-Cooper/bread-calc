@@ -26,6 +26,7 @@ const db: Database = {
   machines: [
     { id: "zojirushi_bb_pdc20", name: "Zojirushi BB-PDC20", bake_loss_pct: 13 } as never,
   ] as never,
+  courses: [],
   defaults: {
     default_machine_id: "zojirushi_bb_pdc20",
     default_bake_loss_pct: 13,

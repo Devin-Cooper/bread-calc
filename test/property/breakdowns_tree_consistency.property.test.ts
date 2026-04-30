@@ -22,6 +22,7 @@ const db: Database = {
   flours:      (floursFile as any).entries,
   references:  (refsFile as any).entries,
   machines:    (machinesFile as any).entries,
+  courses:     [],
   defaults:    defaultsRaw as any,
 };
 
