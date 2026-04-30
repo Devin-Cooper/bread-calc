@@ -34,52 +34,15 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     const ordered = sortItemsForPrint(solvedItems, db);
     const recipeName = store.getState().name ?? "Recipe";
     const notes = store.getState().notes ?? "";
-
     const includeRole = showRole();
 
     parent.innerHTML = `
       <article class="kc-card">
-        <header class="kc-header">
-          <h1 class="kc-name">${escapeHtml(recipeName)}</h1>
-          ${notes ? `<p class="kc-notes">${escapeHtml(notes)}</p>` : ""}
-        </header>
-
-        <div class="kc-metric-strip">
-          <div class="kc-metric"><span class="kc-metric-label">Total</span><span class="kc-metric-value">${fmt(totalMass, "g")}</span></div>
-          <div class="kc-metric"><span class="kc-metric-label">Hydration</span><span class="kc-metric-value">${fmt(hyEff, "%")}</span></div>
-          <div class="kc-metric"><span class="kc-metric-label">Zone</span><span class="kc-metric-value">${escapeHtml(zoneLabel)}</span></div>
+        ${renderHeader(recipeName, notes, totalMass, hyEff, zoneLabel)}
+        <div class="kc-grid">
+          ${renderIngredientsCol(ordered, db, pcts, includeRole)}
+          ${renderRightCol(store.getState(), db)}
         </div>
-
-        ${renderCourseBlock(store.getState(), db) ?? ""}
-        ${renderNotesBlock(store.getState()) ?? ""}
-        ${renderHintsBlock(store.getState()) ?? ""}
-
-        <table class="kc-table">
-          <thead>
-            <tr>
-              <th class="kc-th-name">Ingredient</th>
-              <th class="kc-th-num">%</th>
-              ${includeRole ? `<th class="kc-th-role">Role</th>` : ""}
-              <th class="kc-th-num">Grams</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${ordered.map((item) => {
-              const grams = item.grams ?? 0;
-              const pct = pcts[item.uid] ?? null;
-              const role = effectiveRole(item, db);
-              return `
-                <tr>
-                  <td class="kc-td-name">${escapeHtml(prettyName(item.ingredient_id, db))}</td>
-                  <td class="kc-td-num">${pct == null ? "—" : pct.toFixed(1)}</td>
-                  ${includeRole ? `<td class="kc-td-role">${escapeHtml(role ?? "—")}</td>` : ""}
-                  <td class="kc-td-num">${Math.round(grams)}</td>
-                </tr>
-              `;
-            }).join("")}
-          </tbody>
-        </table>
-
         <footer class="kc-footer">breadmachine.io</footer>
       </article>
     `;
@@ -196,4 +159,68 @@ function renderCourseBlock(recipe: Recipe, db: Database): string | null {
       ${subline ? `<p class="kc-course-subline">${subline}</p>` : ""}
     </div>
   `;
+}
+
+function renderHeader(recipeName: string, notes: string, totalMass: number, hyEff: number | null, zoneLabel: string): string {
+  return `
+    <header class="kc-header">
+      <div class="kc-header-text">
+        <h1 class="kc-name">${escapeHtml(recipeName)}</h1>
+        ${notes ? `<p class="kc-notes">${escapeHtml(notes)}</p>` : ""}
+      </div>
+      <div class="kc-metric-strip">
+        <div class="kc-metric"><span class="kc-metric-label">Total</span><span class="kc-metric-value">${fmt(totalMass, "g")}</span></div>
+        <div class="kc-metric"><span class="kc-metric-label">Hydration</span><span class="kc-metric-value">${fmt(hyEff, "%")}</span></div>
+        <div class="kc-metric"><span class="kc-metric-label">Zone</span><span class="kc-metric-value">${escapeHtml(zoneLabel)}</span></div>
+      </div>
+    </header>
+  `;
+}
+
+function renderIngredientsCol(
+  ordered: ReadonlyArray<{ uid: string; ingredient_id: string; grams?: number; role?: Role }>,
+  db: Database,
+  pcts: Record<string, number | null>,
+  includeRole: boolean,
+): string {
+  return `
+    <div class="kc-col-left">
+      <table class="kc-table">
+        <thead>
+          <tr>
+            <th class="kc-th-name">Ingredient</th>
+            <th class="kc-th-num">%</th>
+            ${includeRole ? `<th class="kc-th-role">Role</th>` : ""}
+            <th class="kc-th-num">Grams</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${ordered.map((item) => {
+            const grams = item.grams ?? 0;
+            const pct = pcts[item.uid] ?? null;
+            const role = effectiveRole(item, db);
+            return `
+              <tr>
+                <td class="kc-td-name">${escapeHtml(prettyName(item.ingredient_id, db))}</td>
+                <td class="kc-td-num">${pct == null ? "—" : pct.toFixed(1)}</td>
+                ${includeRole ? `<td class="kc-td-role">${escapeHtml(role ?? "—")}</td>` : ""}
+                <td class="kc-td-num">${Math.round(grams)}</td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderRightCol(recipe: Recipe, db: Database): string {
+  const blocks: string[] = [];
+  const c = renderCourseBlock(recipe, db);
+  if (c) blocks.push(c);
+  const n = renderNotesBlock(recipe);
+  if (n) blocks.push(n);
+  const h = renderHintsBlock(recipe);
+  if (h) blocks.push(h);
+  return `<div class="kc-col-right">${blocks.join("")}</div>`;
 }
