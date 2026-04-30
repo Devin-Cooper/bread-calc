@@ -15,6 +15,7 @@ import { mount as mountZoneBand } from "./components/zone-band.js";
 import { mount as mountShowMath } from "./components/show-math.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 import { mount as mountKitchenCard } from "./pdf/kitchen-card.js";
+import { mount as mountTemplatePicker } from "./components/template-picker.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
 import floursFile from "../data/flours.json" with { type: "json" };
@@ -108,6 +109,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountTipStrip(document.querySelector("#tip-strip") as HTMLElement);
   const drawerCtl = mountDrawer(document.querySelector("#settings-drawer") as HTMLDialogElement, store);
 
+  mountTemplatePicker(document.querySelector("#template-picker") as HTMLElement, store, db);
   mountHeadline(document.querySelector("#recipe-headline") as HTMLElement, store);
   mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
