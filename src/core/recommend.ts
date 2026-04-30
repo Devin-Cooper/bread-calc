@@ -197,14 +197,29 @@ function evaluateConfidence(course: BBPDC20Course): SoftTierResult {
   };
 }
 
-// Note: courses without a published `hydration_range` (Course 11 Dough,
-// Course 12 Sourdough Starter, Course 13 Cake, Course 14 Jam) score 0 here,
-// which can outrank baking courses that score negative when the recipe
-// hydration sits outside their range. A typical bread recipe with no
-// `recipe.course` set may therefore surface a non-baking course as the top
-// recommendation. The kitchen card and recipe-meta strip handle this cleanly
-// (sub-line omits for non-baking courses) but the UX is suboptimal — see
-// PR #14 description for the follow-up tuning opportunity.
+// Hydration tier scoring stratifies into three bands AND buckets the in-range
+// distance so close-but-not-identical hydration matches do not artificially
+// break ties at tier 2. Without bucketing, two baking courses both in-range
+// for the same recipe would split on sub-percent distance differences,
+// preventing tier 3 (whole_wheat) from arbitrating between them.
+//
+//   in-range courses    →  +100 - floor(distance / 5) * 5   (buckets of 5pp)
+//   no-range courses    →                                0   (neutral)
+//   out-of-range course →               -distance_from_ideal (negative)
+//
+// Bucket size is 5pp — typical bread-machine measurement noise is about
+// 2-3pp; 5pp groups "essentially identical" matches into the same bucket
+// so the whole_wheat / yeast / recommended_for tiers can decide.
+//
+// This stratification (rather than a single-distance metric) ensures:
+//   • in-range baking course > no-range course (Dough/Cake/Jam)
+//   • no-range course > out-of-range baking course
+//   • close-fit-by-hydration courses tie, letting whole-wheat or other
+//     downstream tiers separate them.
+//
+// Earlier single-distance scoring caused Course 11 Dough to win for typical
+// white-bread recipes (Dough scored 0 on tier 2, beating White's negative
+// distance score). The current scoring picks White correctly.
 function evaluateHydration(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
   const range = course.hydration_range;
   if (!range) {
@@ -221,8 +236,8 @@ function evaluateHydration(course: BBPDC20Course, facts: RecipeFacts): SoftTierR
   }
   const target = range.ideal_pct ?? (range.min_pct + range.max_pct) / 2;
   const distance = Math.abs(facts.hydration_pct - target);
-  const score = -distance;
   const inRange = facts.hydration_pct >= range.min_pct && facts.hydration_pct <= range.max_pct;
+  const score = inRange ? 100 - Math.floor(distance / 5) * 5 : -distance;
   return {
     reason: {
       tier: "hydration",
