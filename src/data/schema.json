@@ -407,6 +407,7 @@
     { "$ref": "#/$defs/BBPDC20TemplatesFile" },
     { "$ref": "#/$defs/MachinesFile" },
     { "$ref": "#/$defs/Defaults" },
-    { "$ref": "#/$defs/BBPDC20CoursesFile" }
+    { "$ref": "#/$defs/BBPDC20CoursesFile" },
+    { "$ref": "#/$defs/BBPDC20RecipeMatrix" }
   ]
 }
