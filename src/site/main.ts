@@ -9,6 +9,7 @@ import { mount as mountMeta } from "./components/recipe-meta.js";
 import { encodeRecipeHash, decodeRecipeHash } from "./persistence/url-hash.js";
 import { mount as mountHeader, type HeaderActionId } from "./components/header.js";
 import { mount as mountTipStrip } from "./components/tip-strip.js";
+import { mount as mountHeadline } from "./components/recipe-headline.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
@@ -100,6 +101,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
   mountHeader(document.querySelector("#site-header") as HTMLElement, { onAction: handleHeaderAction });
   mountTipStrip(document.querySelector("#tip-strip") as HTMLElement);
 
+  mountHeadline(document.querySelector("#recipe-headline") as HTMLElement, store);
   mountMeta(document.querySelector("#recipe-meta") as HTMLElement, store);
   mountPicker(document.querySelector("#ingredient-picker") as HTMLElement, store, db);
   mountTable(document.querySelector("#recipe-table") as HTMLElement, store, db);
