@@ -1,7 +1,7 @@
 #zone-band { display: flex; flex-direction: column; gap: var(--space-3); }
 
 .zone-band-heading {
-  margin: 0;
+  margin: 0 0 var(--space-6);
   display: flex; align-items: center; gap: var(--space-1);
 }
 
@@ -11,6 +11,7 @@
   height: 48px;
   background: var(--color-bg-muted);
   border-radius: var(--radius-md);
+  margin-top: var(--space-6);
 }
 
 @media (max-width: 767px) {
@@ -24,6 +25,7 @@
   display: flex; align-items: center; justify-content: center;
   color: var(--color-fg-subtle);
   pointer-events: none;
+  z-index: 2;
 }
 .zone-segment:last-of-type { border-right: none; }
 .zone-segment.is-active {
@@ -37,12 +39,14 @@
 
 .zone-tick {
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 4px; height: 60%;
+  bottom: 4px;
+  transform: translateX(-50%);
+  width: 3px; height: 30%;
   background: var(--color-fg-subtle);
   border: none; padding: 0;
   cursor: pointer;
+  z-index: 1;
+  border-radius: 2px;
 }
 .zone-tick:hover { background: var(--color-fg-default); }
 .zone-tick:focus-visible {
@@ -52,11 +56,12 @@
 
 .zone-marker {
   position: absolute;
-  bottom: 100%;
+  bottom: calc(100% + 4px);
   transform: translateX(-50%);
   display: flex; flex-direction: column; align-items: center;
   color: var(--color-accent-fg);
   cursor: default;
+  z-index: 3;
 }
 .zone-marker:focus-visible {
   outline: 3px solid var(--color-focus-ring);
