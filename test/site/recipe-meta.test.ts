@@ -162,4 +162,35 @@ describe("recipe-meta component", () => {
     inputs[1]!.dispatchEvent(new Event("input"));
     expect(store.getState().bake_hints).toEqual(["a", "B-edited"]);
   });
+  it("preserves focus + caret on extended_notes textarea across rerender", () => {
+    const parent = document.createElement("div");
+    document.body.appendChild(parent);
+    const store = createStore({ ...baseRecipe, extended_notes: "hello" });
+    mount(parent, store, minimalDb);
+    const ta = parent.querySelector("textarea.recipe-meta-extended-notes") as HTMLTextAreaElement;
+    ta.focus();
+    ta.setSelectionRange(3, 3);
+    // Trigger a rerender by dispatching a non-related action
+    store.dispatch({ type: "set_course", course: "white" });
+    const active = document.activeElement as HTMLTextAreaElement | null;
+    expect(active?.classList.contains("recipe-meta-extended-notes")).toBe(true);
+    expect(active?.selectionStart).toBe(3);
+    document.body.removeChild(parent);
+  });
+  it("preserves focus + caret on a bake-hint input across rerender", () => {
+    const parent = document.createElement("div");
+    document.body.appendChild(parent);
+    const store = createStore({ ...baseRecipe, bake_hints: ["alpha", "beta"] });
+    mount(parent, store, minimalDb);
+    const inputs = parent.querySelectorAll(".bake-hints-list input[type='text']") as NodeListOf<HTMLInputElement>;
+    const target = inputs[1]!;
+    target.focus();
+    target.setSelectionRange(2, 2);
+    // Trigger a rerender
+    store.dispatch({ type: "set_course", course: "white" });
+    const active = document.activeElement as HTMLInputElement | null;
+    expect(active?.dataset.hintIdx).toBe("1");
+    expect(active?.selectionStart).toBe(2);
+    document.body.removeChild(parent);
+  });
 });

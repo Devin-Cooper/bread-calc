@@ -7,6 +7,23 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     const r = store.getState();
     const targetMode = r.target_loaf_g != null;
 
+    // Focus restoration: capture active element BEFORE clearing innerHTML.
+    const active = document.activeElement;
+    let restoreSelector: string | null = null;
+    let restoreStart = 0;
+    let restoreEnd = 0;
+    if (active && parent.contains(active)) {
+      if (active.classList.contains("recipe-meta-extended-notes")) {
+        restoreSelector = "textarea.recipe-meta-extended-notes";
+      } else if (active instanceof HTMLInputElement && active.dataset.hintIdx !== undefined) {
+        restoreSelector = `.bake-hints-list input[data-hint-idx="${active.dataset.hintIdx}"]`;
+      }
+      if (active instanceof HTMLInputElement || active instanceof HTMLTextAreaElement) {
+        restoreStart = active.selectionStart ?? 0;
+        restoreEnd = active.selectionEnd ?? 0;
+      }
+    }
+
     const courseOptions = db.courses
       .slice()
       .sort((a, b) => a.course_number - b.course_number)
@@ -131,6 +148,14 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         if (!Number.isFinite(n) || n <= 0) return;
         store.dispatch({ type: "set_target_loaf_g", grams: n });
       });
+    }
+
+    if (restoreSelector) {
+      const el = parent.querySelector(restoreSelector) as HTMLInputElement | HTMLTextAreaElement | null;
+      if (el) {
+        el.focus();
+        try { el.setSelectionRange(restoreStart, restoreEnd); } catch { /* some elements don't support */ }
+      }
     }
   }
   store.subscribe(render);
