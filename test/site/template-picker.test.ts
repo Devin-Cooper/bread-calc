@@ -103,4 +103,49 @@ describe("template-picker", () => {
     // Picker auto-closes after select
     expect(root.querySelector(".template-popover")).toBeNull();
   });
+
+  // ===== Task 3.5: unsaved-edits guard =====
+  it("shows confirm dialog when current state differs from baseline", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    store.dispatch({ type: "set_grams", index: 0, grams: 600 });
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    const firstOption = root.querySelector("[role='option']") as HTMLElement;
+    firstOption.click();
+    expect(document.querySelector("#template-confirm")).not.toBeNull();
+    expect(store.getState().name).toBe("Initial");
+  });
+
+  it("Cancel preserves the edited state, Replace dispatches the load", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    store.dispatch({ type: "set_grams", index: 0, grams: 600 });
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    (root.querySelector("[role='option']") as HTMLElement).click();
+    const cancel = document.querySelector("#template-confirm [data-action='cancel']") as HTMLButtonElement;
+    cancel.click();
+    expect(store.getState().name).toBe("Initial");
+    expect(store.getState().items[0]!.grams).toBe(600);
+    expect(document.querySelector("#template-confirm")).toBeNull();
+    // Try again, choose Replace
+    (root.querySelector("[role='option']") as HTMLElement).click();
+    const replace = document.querySelector("#template-confirm [data-action='replace']") as HTMLButtonElement;
+    replace.click();
+    expect(store.getState().name).toBe("Basic White Bread");
+  });
+
+  it("does NOT show confirm dialog after a clean template load", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore(STARTER);
+    mountPicker(root, store, db);
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    (root.querySelector("[role='option']") as HTMLElement).click();
+    expect(document.querySelector("#template-confirm")).toBeNull();
+    // Open again and select another — still no edits since the load reset the baseline
+    (root.querySelector(".template-trigger") as HTMLButtonElement).click();
+    (root.querySelectorAll("[role='option']")[1] as HTMLElement).click();
+    expect(document.querySelector("#template-confirm")).toBeNull();
+  });
 });

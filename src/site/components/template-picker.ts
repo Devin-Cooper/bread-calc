@@ -1,11 +1,48 @@
 import type { Store } from "../state.js";
-import type { Database } from "../../core/index.js";
+import type { Database, Recipe, RecipeItem } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { buildTemplates, loadTemplate, type TemplateEntry } from "../templates.js";
+
+function stripUids(recipe: Recipe): unknown {
+  return {
+    ...recipe,
+    items: recipe.items.map((it: RecipeItem) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { uid: _uid, ...rest } = it;
+      return rest;
+    }),
+  };
+}
+
+function canonicalStringify(value: unknown): string {
+  const sortKeys = (v: unknown): unknown => {
+    if (Array.isArray(v)) return v.map(sortKeys);
+    if (v && typeof v === "object") {
+      const out: Record<string, unknown> = {};
+      for (const k of Object.keys(v as Record<string, unknown>).sort()) {
+        out[k] = sortKeys((v as Record<string, unknown>)[k]);
+      }
+      return out;
+    }
+    return v;
+  };
+  return JSON.stringify(sortKeys(value));
+}
+
+function hashRecipe(recipe: Recipe): string {
+  const s = canonicalStringify(stripUids(recipe));
+  let h = 0x811c9dc5;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).padStart(8, "0");
+}
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   let isOpen = false;
   let filter = "";
+  let lastBaselineHash = hashRecipe(store.getState());
 
   // Build the static trigger button once; update aria-expanded in-place.
   const trigger = document.createElement("button");
@@ -63,11 +100,50 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         if (!id) return;
         const entry = templates.find((t) => t.id === id);
         if (!entry) return;
-        const loaded = loadTemplate(entry);
-        store.dispatch({ type: "load", recipe: loaded });
-        isOpen = false; filter = ""; render();
+        const isEdited = hashRecipe(store.getState()) !== lastBaselineHash;
+        if (isEdited) showConfirmDialog(entry);
+        else commitLoad(entry);
       });
     });
+  }
+
+  function commitLoad(entry: TemplateEntry): void {
+    const loaded = loadTemplate(entry);
+    store.dispatch({ type: "load", recipe: loaded });
+    lastBaselineHash = hashRecipe(loaded);
+    isOpen = false; filter = ""; render();
+  }
+
+  function showConfirmDialog(entry: TemplateEntry): void {
+    let dialog = document.querySelector<HTMLDialogElement>("#template-confirm");
+    if (!dialog) {
+      dialog = document.createElement("dialog");
+      dialog.id = "template-confirm";
+      document.body.appendChild(dialog);
+    }
+    dialog.innerHTML = `
+      <h2>Replace your current recipe?</h2>
+      <p>You have unsaved changes. Loading "<em>${escapeHtml(entry.name)}</em>" will discard them.</p>
+      <div class="dialog-actions">
+        <button type="button" data-action="cancel">Cancel</button>
+        <button type="button" data-action="replace" class="primary">Replace</button>
+      </div>
+    `;
+    if (typeof dialog.showModal === "function") dialog.showModal();
+    else dialog.setAttribute("open", "");
+    dialog.querySelector<HTMLButtonElement>("[data-action='cancel']")!.addEventListener("click", () => {
+      closeDialog(dialog!);
+    });
+    dialog.querySelector<HTMLButtonElement>("[data-action='replace']")!.addEventListener("click", () => {
+      commitLoad(entry);
+      closeDialog(dialog!);
+    });
+  }
+
+  function closeDialog(dialog: HTMLDialogElement): void {
+    if (typeof dialog.close === "function") dialog.close();
+    else dialog.removeAttribute("open");
+    dialog.remove();
   }
 
   function filterTemplates(templates: TemplateEntry[], q: string): TemplateEntry[] {
