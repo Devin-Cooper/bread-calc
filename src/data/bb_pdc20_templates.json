@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "attribution": "Recipes adapted from the Zojirushi BB-PDC20 Home Bakery Virtuoso Plus recipe booklet. Recipes themselves are not copyrightable; this credit is provided as a courtesy.",
+  "entries": [
+    {
+      "id": "basic_white_bread",
+      "name": "Basic White Bread",
+      "course": "White (Course 1)",
+      "notes": "Bread-machine basic; soft sandwich crumb.",
+      "items": [
+        { "ingredient_id": "bread_flour",       "grams": 553 },
+        { "ingredient_id": "water_tap",         "grams": 326 },
+        { "ingredient_id": "sugar_granulated",  "grams": 30  },
+        { "ingredient_id": "salt_table",        "grams": 9   },
+        { "ingredient_id": "butter_unsalted",   "grams": 28  },
+        { "ingredient_id": "yeast_instant",     "grams": 5   }
+      ]
+    },
+    {
+      "id": "french_bread",
+      "name": "French Bread",
+      "course": "European (Course 3)",
+      "notes": "Lean dough; crisper crust than the basic white.",
+      "items": [
+        { "ingredient_id": "bread_flour",       "grams": 553 },
+        { "ingredient_id": "water_tap",         "grams": 320 },
+        { "ingredient_id": "sugar_granulated",  "grams": 12  },
+        { "ingredient_id": "salt_table",        "grams": 9   },
+        { "ingredient_id": "butter_unsalted",   "grams": 14  },
+        { "ingredient_id": "yeast_instant",     "grams": 5   }
+      ]
+    },
+    {
+      "id": "whole_wheat_bread",
+      "name": "Whole Wheat Bread",
+      "course": "Whole Wheat (Course 2)",
+      "notes": "Higher hydration to compensate for whole-wheat thirst.",
+      "items": [
+        { "ingredient_id": "whole_wheat_flour", "grams": 553 },
+        { "ingredient_id": "water_tap",         "grams": 354 },
+        { "ingredient_id": "honey",             "grams": 30  },
+        { "ingredient_id": "salt_table",        "grams": 9   },
+        { "ingredient_id": "butter_unsalted",   "grams": 28  },
+        { "ingredient_id": "yeast_instant",     "grams": 5   }
+      ]
+    },
+    {
+      "id": "pizza_dough",
+      "name": "Pizza Dough",
+      "course": "Dough (Course 11)",
+      "notes": "Lean dough for hand-shaping after the cycle.",
+      "items": [
+        { "ingredient_id": "bread_flour",             "grams": 488 },
+        { "ingredient_id": "water_tap",               "grams": 300 },
+        { "ingredient_id": "oil_olive_extra_virgin",  "grams": 14  },
+        { "ingredient_id": "salt_table",              "grams": 9   },
+        { "ingredient_id": "yeast_instant",           "grams": 5   }
+      ]
+    },
+    {
+      "id": "honey_bread",
+      "name": "Honey Bread",
+      "course": "White (Course 1)",
+      "notes": "Slightly sweeter; honey replaces granulated sugar.",
+      "items": [
+        { "ingredient_id": "bread_flour",       "grams": 553 },
+        { "ingredient_id": "water_tap",         "grams": 336 },
+        { "ingredient_id": "honey",             "grams": 28  },
+        { "ingredient_id": "salt_table",        "grams": 9   },
+        { "ingredient_id": "butter_unsalted",   "grams": 28  },
+        { "ingredient_id": "yeast_instant",     "grams": 5   }
+      ]
+    }
+  ]
+}
