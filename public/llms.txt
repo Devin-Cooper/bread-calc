@@ -1,0 +1,26 @@
+# breadmachine.io / bread-calc
+
+A static-site hydration calculator for bread machines, calibrated for the
+Zojirushi BB-PDC20. The calculation engine is open source and available as
+the npm package `bread-calc`.
+
+## Verify a calculation
+npm install -g bread-calc
+bread-calc compute recipe.bread.json --json | jq '.payload.hydration.effective_pct'
+
+## Subcommands (v2.0)
+compute     — evaluate a recipe, emit ComputedRecipe envelope
+solve       — back-solve grams from baker's percentages + target weight
+validate    — schema + reference check; non-zero exit on errors
+explain     — narrative derivation for any metric
+verify      — check claimed metric values against actual computation
+parse       — convert markdown/CSV/loose text to a v2.0 Recipe
+apply       — apply a Fix to a Recipe and return the new Recipe
+convert     — change recipe units (g/oz, baker's-% / grams)
+lookup      — query the ingredient database
+describe    — emit machine-readable capability manifest
+examples    — list bundled example recipes
+plot        — render a hydration-zone SVG
+
+## Docs
+https://github.com/Devin-Cooper/bread-calc/blob/main/docs/agents.md
