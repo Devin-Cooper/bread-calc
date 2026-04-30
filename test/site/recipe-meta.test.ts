@@ -76,4 +76,23 @@ describe("recipe-meta component", () => {
     (parent.querySelector('[data-clear="crust_shade"]') as HTMLButtonElement).click();
     expect("crust_shade" in store.getState()).toBe(false);
   });
+  it("renders loaf size buttons (1lb/1.5lb/2lb)", () => {
+    const parent = document.createElement("div");
+    mount(parent, createStore({ ...baseRecipe }), minimalDb);
+    expect(parent.querySelectorAll("[data-size]").length).toBe(3);
+  });
+  it("dispatches set_loaf_size when a button is clicked", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, minimalDb);
+    (parent.querySelector('[data-size="2lb"]') as HTMLButtonElement).click();
+    expect(store.getState().loaf_size).toBe("2lb");
+  });
+  it("clear button resets loaf_size to undefined", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, loaf_size: "2lb" });
+    mount(parent, store, minimalDb);
+    (parent.querySelector('[data-clear="loaf_size"]') as HTMLButtonElement).click();
+    expect("loaf_size" in store.getState()).toBe(false);
+  });
 });
