@@ -1,0 +1,82 @@
+/* Recipe-table layout — desktop ≥768px is a 5-column grid;
+ * mobile <768px is a two-row stacked card per ingredient.
+ */
+
+#recipe-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+[role="row"] {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto auto;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-2) 0;
+}
+
+.row-header {
+  font-weight: 600;
+  color: var(--color-fg-muted);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.solved-grams {
+  color: var(--color-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+input.pct-derived {
+  color: var(--color-fg-subtle);
+  font-style: italic;
+}
+
+[role="row"] button[data-action="remove"] {
+  width: 44px; height: 44px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--color-fg-subtle);
+  cursor: pointer;
+}
+[role="row"] button[data-action="remove"]:hover {
+  background: var(--color-bg-muted);
+  color: var(--danger-600);
+  border-color: var(--color-border);
+}
+
+@media (max-width: 767px) {
+  /* Two-row dense layout */
+  [role="row"]:not(.row-header) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: var(--space-1) var(--space-2);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg-canvas);
+    margin-bottom: var(--space-2);
+  }
+
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(1) {
+    grid-column: 1 / 2;
+    grid-row: 1;
+    font-weight: 600;
+  }
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(2),
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(3),
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(4) {
+    grid-row: 2;
+  }
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(2) { grid-column: 1; }
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(3) { grid-column: 2; }
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(4) { grid-column: 1 / span 2; }
+  [role="row"]:not(.row-header) [role="cell"]:nth-child(5) {
+    grid-column: 2; grid-row: 1; align-self: start; justify-self: end;
+  }
+
+  /* Hide the desktop header row — mobile cards self-describe */
+  .row-header { display: none; }
+}

@@ -8,6 +8,7 @@
 @import url("./styles/snapshot-card.css");
 @import url("./styles/zone-band.css");
 @import url("./styles/role-pill.css");
+@import url("./styles/recipe-table.css");
 
 * { box-sizing: border-box; }
 
