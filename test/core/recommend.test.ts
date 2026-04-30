@@ -179,3 +179,85 @@ describe("recommendCourse — intent gate", () => {
     }
   });
 });
+
+describe("recommendCourse — invariants and ranking", () => {
+  it("always returns 14 entries (one per catalog course)", () => {
+    const recs = recommendCourse(baseRecipe, db);
+    expect(recs.length).toBe(14);
+  });
+
+  it("every recommendation has reasons.length === 9", () => {
+    const recs = recommendCourse(baseRecipe, db);
+    for (const r of recs) {
+      expect(r.reasons.length).toBe(9);
+    }
+  });
+
+  it("eligible courses come before ineligible courses", () => {
+    const recs = recommendCourse(baseRecipe, db);
+    let seenIneligible = false;
+    for (const r of recs) {
+      if (!r.eligible) seenIneligible = true;
+      else if (seenIneligible) {
+        throw new Error(`Eligible course ${r.course_id} appears after an ineligible course`);
+      }
+    }
+    expect(true).toBe(true);
+  });
+
+  it("eligible courses are ranked 1..N; ineligible courses have rank null", () => {
+    const recs = recommendCourse(baseRecipe, db);
+    const eligibleRecs = recs.filter((r) => r.eligible);
+    eligibleRecs.forEach((r, i) => expect(r.rank).toBe(i + 1));
+    for (const r of recs.filter((r) => !r.eligible)) expect(r.rank).toBe(null);
+  });
+
+  it("hydration tier ranks White (ideal 58 %) ahead of Whole Wheat (ideal 67 %) for a 58 % recipe", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "bread_flour", grams: 500 },
+        { uid: "u_test_a01c", ingredient_id: "water_tap", grams: 290 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const whiteRank = recs.find((r) => r.course_id === "white")?.rank;
+    const wwRank = recs.find((r) => r.course_id === "whole_wheat")?.rank;
+    expect(whiteRank).toBeDefined();
+    expect(wwRank).toBeDefined();
+    expect(whiteRank!).toBeLessThan(wwRank!);
+  });
+
+  it("whole-wheat tier ranks Whole Wheat ahead of White for a 60 %-WW recipe", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "whole_wheat_flour", grams: 300 },
+        { uid: "u_test_a01c", ingredient_id: "bread_flour", grams: 200 },
+        { uid: "u_test_a01d", ingredient_id: "water_tap", grams: 320 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db);
+    const whiteRank = recs.find((r) => r.course_id === "white")?.rank;
+    const wwRank = recs.find((r) => r.course_id === "whole_wheat")?.rank;
+    expect(wwRank!).toBeLessThan(whiteRank!);
+  });
+
+  it("ineligible courses are sorted by course_number", () => {
+    const recipe: Recipe = {
+      schema_version: "2.0",
+      items: [
+        { uid: "u_test_a01b", ingredient_id: "milk_whole", grams: 200 },
+        { uid: "u_test_a01c", ingredient_id: "salt_table", grams: 9 },
+        { uid: "u_test_a01d", ingredient_id: "sugar_granulated", grams: 12 },
+        { uid: "u_test_a01e", ingredient_id: "egg_whole_large", grams: 50 },
+        { uid: "u_test_a01f", ingredient_id: "bread_flour", grams: 500 },
+      ],
+    };
+    const recs = recommendCourse(recipe, db, { intent: "bake" });
+    const ineligible = recs.filter((r) => !r.eligible);
+    const courseNumbers = ineligible.map((r) => db.courses.find((c) => c.id === r.course_id)!.course_number);
+    const sorted = [...courseNumbers].sort((a, b) => a - b);
+    expect(courseNumbers).toEqual(sorted);
+  });
+});

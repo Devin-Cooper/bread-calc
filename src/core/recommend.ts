@@ -378,18 +378,83 @@ export function recommendCourse(
   opts?: RecommendOpts,
 ): readonly CourseRecommendation[] {
   const dietary = deriveDietary(recipe, db);
-  return db.courses
-    .slice()
-    .sort((a, b) => a.course_number - b.course_number)
-    .map((course, i) => {
-      const intentReason = evaluateIntentGate(course, opts);
-      const dietaryReason = evaluateDietaryGate(course, dietary);
-      const eligible = intentReason.verdict !== "mismatch" && dietaryReason.verdict !== "mismatch";
-      return {
-        course_id: course.id,
-        rank: eligible ? i + 1 : null,
-        eligible,
-        reasons: [intentReason, dietaryReason],
-      };
+  const facts = deriveRecipeFacts(recipe, db);
+  const recipeTags = deriveRecipeTags(facts);
+
+  type Row = {
+    course: BBPDC20Course;
+    eligible: boolean;
+    reasons: RecommendationReason[];
+    scores: readonly number[];
+  };
+
+  const rows: Row[] = db.courses.map((course) => {
+    const intent = evaluateIntentGate(course, opts);
+    const dietaryReason = evaluateDietaryGate(course, dietary);
+    const eligibilityFailed = intent.verdict === "mismatch" || dietaryReason.verdict === "mismatch";
+
+    const fillerNeutral = (tier: RecommendationTier): RecommendationReason => ({
+      tier, verdict: "neutral", evidence: "Not evaluated — eligibility failed",
     });
+
+    if (eligibilityFailed) {
+      return {
+        course,
+        eligible: false,
+        reasons: [
+          intent, dietaryReason,
+          fillerNeutral("confidence"), fillerNeutral("hydration"),
+          fillerNeutral("whole_wheat"), fillerNeutral("yeast"),
+          fillerNeutral("crust_shade"), fillerNeutral("loaf_size"),
+          fillerNeutral("recommended_for"),
+        ],
+        scores: [],
+      };
+    }
+
+    const t1 = evaluateConfidence(course);
+    const t2 = evaluateHydration(course, facts);
+    const t3 = evaluateWholeWheat(course, facts);
+    const t4 = evaluateYeast(course, facts);
+    const t5 = evaluateCrustShade(course, recipe);
+    const t6 = evaluateLoafSize(course, recipe);
+    const t7 = evaluateRecommendedFor(course, recipeTags);
+
+    return {
+      course,
+      eligible: true,
+      reasons: [intent, dietaryReason, t1.reason, t2.reason, t3.reason, t4.reason, t5.reason, t6.reason, t7.reason],
+      scores: [t1.score, t2.score, t3.score, t4.score, t5.score, t6.score, t7.score],
+    };
+  });
+
+  const eligibleRows = rows.filter((r) => r.eligible);
+  eligibleRows.sort((a, b) => {
+    for (let i = 0; i < a.scores.length; i++) {
+      if (a.scores[i]! !== b.scores[i]!) return b.scores[i]! - a.scores[i]!;
+    }
+    return a.course.course_number - b.course.course_number;
+  });
+
+  const ineligibleRows = rows.filter((r) => !r.eligible);
+  ineligibleRows.sort((a, b) => a.course.course_number - b.course.course_number);
+
+  const out: CourseRecommendation[] = [];
+  eligibleRows.forEach((row, i) => {
+    out.push({
+      course_id: row.course.id,
+      rank: i + 1,
+      eligible: true,
+      reasons: row.reasons,
+    });
+  });
+  for (const row of ineligibleRows) {
+    out.push({
+      course_id: row.course.id,
+      rank: null,
+      eligible: false,
+      reasons: row.reasons,
+    });
+  }
+  return out;
 }
