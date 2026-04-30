@@ -87,4 +87,38 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     expect(parent.querySelector(".kc-course-block")).toBeNull();
   });
+
+  it("crust/size sub-line: shows user picks when recipe.crust_shade and recipe.loaf_size are set", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "white", crust_shade: "dark", loaf_size: "2lb" });
+    mount(parent, store, db);
+    const subline = parent.querySelector(".kc-course-subline");
+    expect(subline).not.toBeNull();
+    expect(subline!.textContent).toContain("Crust:");
+    expect(subline!.textContent).toContain("Dark");
+    expect(subline!.textContent).toContain("Size:");
+    expect(subline!.textContent).toContain("2");
+    expect(subline!.textContent).toContain("lb");
+  });
+
+  it("crust/size sub-line: falls back to course defaults when recipe fields are unset", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "white" });
+    mount(parent, store, db);
+    const subline = parent.querySelector(".kc-course-subline");
+    expect(subline).not.toBeNull();
+    expect(subline!.textContent).toContain("Medium");
+    expect(subline!.textContent).toContain("2");
+    expect(subline!.textContent).toContain("lb");
+  });
+
+  it("crust/size sub-line: omitted when course is non-baking (Dough)", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "dough" });
+    mount(parent, store, db);
+    const courseBlock = parent.querySelector(".kc-course-block");
+    expect(courseBlock).not.toBeNull();
+    expect(courseBlock!.textContent).toContain("11 — Dough");
+    expect(parent.querySelector(".kc-course-subline")).toBeNull();
+  });
 });
