@@ -1,4 +1,5 @@
 import type { BBPDC20Course, Database, Recipe } from "./types.js";
+import { computeRecipe } from "./compute.js";
 
 /* Dataset constants — ground-truthed against src/data/flours.json + src/data/ingredients.json */
 
@@ -7,8 +8,7 @@ const GF_FLOUR_IDS: ReadonlySet<string> = new Set([
   "buckwheat_flour",
 ]);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _WHOLE_GRAIN_FLOUR_IDS: ReadonlySet<string> = new Set([
+const WHOLE_GRAIN_FLOUR_IDS: ReadonlySet<string> = new Set([
   "whole_wheat_flour", "white_whole_wheat_flour",
   "spelt_flour", "einkorn_flour", "kamut_flour",
   "rye_flour_dark", "rye_flour_light",
@@ -109,6 +109,53 @@ function deriveDietary(recipe: Recipe, db: Database): DietaryFacts {
   const isVegan = isEggFree && !hasDairyIngredient;
 
   return { is_gluten_free: isGlutenFree, is_vegan: isVegan, is_egg_free: isEggFree, is_salt_free: isSaltFree, is_sugar_free: isSugarFree };
+}
+
+type YeastKind = "instant" | "active_dry" | null;
+type LeavenerKind = "chemical" | null;
+
+interface RecipeFacts {
+  readonly hydration_pct: number | null;
+  readonly ww_pct: number;
+  readonly yeast_kind: YeastKind;
+  readonly leavener_kind: LeavenerKind;
+}
+
+function deriveRecipeFacts(recipe: Recipe, db: Database): RecipeFacts {
+  const flourLookup = new Map(db.flours.map((f) => [f.id, f]));
+  const ingrLookup = new Map(db.ingredients.map((i) => [i.id, i]));
+
+  let totalFlour = 0;
+  let wholeGrainFlour = 0;
+  let yeastKind: YeastKind = null;
+  let leavenerKind: LeavenerKind = null;
+
+  for (const item of recipe.items) {
+    const flour = flourLookup.get(item.ingredient_id);
+    if (flour) {
+      totalFlour += item.grams ?? 0;
+      if (WHOLE_GRAIN_FLOUR_IDS.has(flour.id)) wholeGrainFlour += item.grams ?? 0;
+      continue;
+    }
+    const ingr = ingrLookup.get(item.ingredient_id);
+    if (!ingr) continue;
+    if (ingr.category === "yeast") {
+      if (ingr.id === "yeast_instant") yeastKind = "instant";
+      else if (ingr.id === "yeast_active_dry") yeastKind = "active_dry";
+    } else if (ingr.category === "leavener") {
+      leavenerKind = "chemical";
+    }
+  }
+
+  let hydration: number | null = null;
+  try {
+    hydration = computeRecipe(recipe, db).hydration.effective_pct;
+  } catch {
+    hydration = null;
+  }
+
+  const wwPct = totalFlour > 0 ? (wholeGrainFlour / totalFlour) * 100 : 0;
+  return { hydration_pct: hydration, ww_pct: wwPct, yeast_kind: yeastKind, leavener_kind: leavenerKind };
 }
 
 function evaluateDietaryGate(course: BBPDC20Course, dietary: DietaryFacts): RecommendationReason {
