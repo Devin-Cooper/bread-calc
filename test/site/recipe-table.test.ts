@@ -104,4 +104,41 @@ describe("recipe-table", () => {
     wet.click();
     expect(store.getState().items[0]!.role).toBe("wet");
   });
+
+  // Regression: focus restoration must respect the input's data-field
+  // (grams vs bakers_pct) — restoring to the first input always was a bug
+  // that jumped the cursor between columns mid-typing.
+  it("preserves focus on the bakers_pct input across re-render after typing", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+    ]});
+    mountTable(root, store, db);
+    const pctInput = root.querySelector('input[data-field="bakers_pct"]') as HTMLInputElement;
+    pctInput.focus();
+    pctInput.value = "5";
+    pctInput.dispatchEvent(new Event("input", { bubbles: true }));
+    const active = document.activeElement as HTMLInputElement | null;
+    expect(active?.dataset["field"]).toBe("bakers_pct");
+    expect(store.getState().items[0]!.bakers_pct).toBe(5);
+    expect(store.getState().items[0]!.grams).toBe(500); // unchanged
+  });
+
+  // Regression: WIP decimal entry like "1." must survive the re-render.
+  // parseFloat("1.") = 1; the round-trip through the store would otherwise
+  // restore value="1" and eat the trailing dot, breaking decimal entry.
+  it("preserves work-in-progress decimal value across re-render", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "u_brdfl001", ingredient_id: "bread_flour", grams: 500 },
+    ]});
+    mountTable(root, store, db);
+    const grams = root.querySelector('input[data-field="grams"]') as HTMLInputElement;
+    grams.focus();
+    grams.value = "1.";
+    grams.dispatchEvent(new Event("input", { bubbles: true }));
+    const active = document.activeElement as HTMLInputElement | null;
+    expect(active?.value).toBe("1.");
+    expect(active?.dataset["field"]).toBe("grams");
+  });
 });

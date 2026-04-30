@@ -31,10 +31,15 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       if (ing) return { category: ing.category, isLiquid: ing.is_liquid ?? false };
       return null;
     };
-    // Focus restoration: capture active element BEFORE clearing,
-    // restore at end of render() if the focused element was inside a row.
+    // Focus restoration: capture active element BEFORE clearing.
+    // We capture three things so the restore lands on the SAME input the user
+    // was typing in (grams vs. bakers_pct) and preserves their work-in-progress
+    // string verbatim — important for decimals like "1." where the parsed
+    // float is "1" and the round-trip would otherwise eat the trailing dot.
     const active = document.activeElement as HTMLElement | null;
     const activeKey = active?.closest("[data-focus-key]")?.getAttribute("data-focus-key");
+    const activeField = active instanceof HTMLInputElement ? active.dataset["field"] ?? null : null;
+    const activeRawValue = active instanceof HTMLInputElement ? active.value : null;
     const cursorPos = active instanceof HTMLInputElement ? active.selectionStart : null;
     parent.innerHTML = "";
     if (state.items.length === 0) {
@@ -106,12 +111,25 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
     if (activeKey) {
       const restored = parent.querySelector(`[data-focus-key="${activeKey}"]`) as HTMLElement | null;
       if (restored) {
-        // Prefer focusing an inner input (the typical case during editing);
-        // fall back to the row itself if no input survived (e.g. focus was
-        // on the remove button — rare, but harmless).
-        const input = restored.querySelector("input") as HTMLInputElement | null;
-        (input ?? restored).focus();
-        if (input && cursorPos != null) input.setSelectionRange(cursorPos, cursorPos);
+        // Restore to the SAME input field (grams vs. bakers_pct) the user was
+        // typing in — not just the first input in the row. Falling back to the
+        // first input would jump the cursor between columns.
+        let input: HTMLInputElement | null = null;
+        if (activeField) input = restored.querySelector<HTMLInputElement>(`input[data-field="${activeField}"]`);
+        input ??= restored.querySelector("input");
+        if (input) {
+          // Preserve the user's WIP raw string (e.g. "1." mid-decimal-entry)
+          // over the store-derived value attribute. The store value comes from
+          // parseFloat(input.value) which strips trailing dots; replaying the
+          // raw string keeps the input field stable while the user types.
+          if (activeRawValue !== null && activeField === input.dataset["field"]) {
+            input.value = activeRawValue;
+          }
+          input.focus();
+          if (cursorPos != null) input.setSelectionRange(cursorPos, cursorPos);
+        } else {
+          restored.focus();
+        }
       }
     }
   }
