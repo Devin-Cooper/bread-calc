@@ -539,6 +539,11 @@ function dispatchRecommend(positionals: string[]) {
     intentFlag === "bake" ? "bake" : intentFlag === "dough" ? "dough" : undefined;
   const limit = values["limit"] !== undefined ? parseInt(String(values["limit"]), 10) : undefined;
   const result = recommend(recipe, db, intent !== undefined ? { intent } : undefined);
+  // Exit code 4 requires ALL 14 courses ineligible. With the current catalog,
+  // every recipe finds at least one passing course (most catalog rows have
+  // empty dietary_modes, so dietary never excludes them all). The exit-4
+  // path is wired and correct but not naturally reachable; would require a
+  // future catalog row whose dietary_modes excludes the recipe's profile.
   const allIneligible = result.recommendations.every((r) => !r.eligible);
   if (values["json"]) {
     console.log(JSON.stringify(wrap("recommend", readPkg().version, result), null, 2));

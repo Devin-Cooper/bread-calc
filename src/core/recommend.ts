@@ -186,6 +186,9 @@ interface SoftTierResult {
 
 const CONFIDENCE_RANK: Record<string, number> = { verified: 3, inferred: 2, community: 1 };
 
+// All 14 catalog rows currently ship with confidence: "verified", so this tier
+// is effectively a no-op today. Wired and tested for the day a community-sourced
+// or inferred row lands in src/data/bb_pdc20_courses.json.
 function evaluateConfidence(course: BBPDC20Course): SoftTierResult {
   const score = CONFIDENCE_RANK[course.confidence] ?? 0;
   return {
@@ -194,6 +197,14 @@ function evaluateConfidence(course: BBPDC20Course): SoftTierResult {
   };
 }
 
+// Note: courses without a published `hydration_range` (Course 11 Dough,
+// Course 12 Sourdough Starter, Course 13 Cake, Course 14 Jam) score 0 here,
+// which can outrank baking courses that score negative when the recipe
+// hydration sits outside their range. A typical bread recipe with no
+// `recipe.course` set may therefore surface a non-baking course as the top
+// recommendation. The kitchen card and recipe-meta strip handle this cleanly
+// (sub-line omits for non-baking courses) but the UX is suboptimal — see
+// PR #14 description for the follow-up tuning opportunity.
 function evaluateHydration(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
   const range = course.hydration_range;
   if (!range) {
@@ -253,6 +264,12 @@ function evaluateWholeWheat(course: BBPDC20Course, facts: RecipeFacts): SoftTier
   };
 }
 
+// Note: `BBPDC20YeastCompat` includes "sourdough" and "fresh" but no current
+// ingredient in src/data/ingredients.json maps to those. As a result the
+// "sourdough" branch of `recipe_yeast` is dead code today — Course 12
+// Sourdough Starter (`yeast_compatibility: ["sourdough"]`) will mismatch
+// every recipe on tier 4 until a sourdough_starter ingredient is added.
+// Documented in spec §10; revisit when a real sourdough ingredient lands.
 function evaluateYeast(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
   if (facts.yeast_kind === null && facts.leavener_kind === null) {
     return {
@@ -464,4 +481,44 @@ export function recommendCourse(
     });
   }
   return out;
+}
+
+/**
+ * Resolves which course a UI consumer should display for a given recipe.
+ *
+ * Rules (matches the kitchen-card and recipe-meta strip's display logic):
+ * - If `recipe.course` is set AND resolves to a known catalog row → return
+ *   that course with `source: "user"`. NO eligibility check is applied —
+ *   user-set courses are rendered verbatim. Eligibility violations surface
+ *   in the on-screen warnings panel, not here.
+ * - If `recipe.course` is set but unknown to `db.courses` → return null.
+ *   Consumers should omit the course display rather than fall back to a
+ *   recommendation (respects user intent).
+ * - If `recipe.course` is unset → call `recommendCourse(recipe, db)` and
+ *   return the top eligible course with `source: "recommended"`. Returns
+ *   null if no course is eligible.
+ *
+ * Used by `src/site/pdf/kitchen-card.ts` and may be used by other consumers
+ * that want the same "user pick wins, recommendation fills in" semantics.
+ */
+export interface ResolvedCourse {
+  readonly course: BBPDC20Course;
+  readonly source: "user" | "recommended";
+}
+
+export function resolveCourse(
+  recipe: Recipe,
+  db: Database,
+): ResolvedCourse | null {
+  if (recipe.course !== undefined) {
+    const found = db.courses.find((c) => c.id === recipe.course);
+    if (found) return { course: found, source: "user" };
+    return null;
+  }
+  const recs = recommendCourse(recipe, db);
+  const top = recs.find((r) => r.eligible);
+  if (!top) return null;
+  const found = db.courses.find((c) => c.id === top.course_id);
+  if (!found) return null;
+  return { course: found, source: "recommended" };
 }
