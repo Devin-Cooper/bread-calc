@@ -82,43 +82,110 @@
 }
 
 /* ─── Reference ticks ─────────────────────────────────────────────────────── */
-
+/*
+ * Thin, dim, anchored at the BOTTOM of the band so they don't fight visually
+ * with the active zone fill (which uses Ben-Day dots in the band's center) or
+ * with the user marker (which sits above and drops a vertical line into the
+ * band). Hover/focus expands the tick to full height in accent color so it's
+ * easy to find specific reference recipes.
+ */
 .zone-tick {
   position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 3px; height: 70%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 1.5px; height: 32%;
   background: var(--color-fg-default);
-  opacity: 0.55;
+  opacity: 0.32;
   border: none; padding: 0;
   cursor: pointer;
   z-index: 1;
-  border-radius: 2px;
+  border-radius: 0;
+  transition: opacity var(--duration-fast) var(--easing-standard),
+              height var(--duration-fast) var(--easing-standard),
+              background var(--duration-fast) var(--easing-standard);
 }
-.zone-tick:hover { opacity: 1; background: var(--color-fg-default); }
+.zone-tick:hover {
+  opacity: 1;
+  height: 80%;
+  background: var(--color-accent-fg);
+}
 .zone-tick:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
+  opacity: 1;
+  height: 80%;
+  background: var(--color-accent-fg);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
 /* ─── User hydration marker ───────────────────────────────────────────────── */
-
+/*
+ * Three pieces stacked vertically:
+ *   1. Value badge (above the band) — accent fill, paper text, stamp shadow
+ *   2. Triangle pointer (inverted ▼) — bridges badge → band
+ *   3. Vertical drop-line into the band itself (via ::after) — anchors the
+ *      marker to its exact x-position so the eye traces from "62%" badge
+ *      straight down to the recipe's location on the band
+ *
+ * The marker is z-index above ticks + segments so it always reads first.
+ */
 .zone-marker {
   position: absolute;
-  bottom: calc(100% + 4px);
+  bottom: calc(100% + 6px);
   transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center;
-  color: var(--color-accent-fg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--color-fg-on-accent);
   cursor: default;
-  z-index: 3;
+  z-index: 5;
+  pointer-events: none;
 }
 .zone-marker:focus-visible {
-  outline: 3px solid var(--color-focus-ring);
+  outline: 2px solid var(--color-focus-ring);
   outline-offset: 4px;
   border-radius: var(--radius-sm);
 }
 .zone-marker-value {
-  margin-bottom: -2px;
+  background-color: var(--color-accent-fg);
+  background-image: var(--pattern-benday);
+  background-size: var(--pattern-benday-size);
+  color: var(--color-fg-on-accent);
+  font-family: var(--font-sans);
+  font-size: var(--type-small-size);
+  font-weight: var(--weight-black);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  padding: 2px var(--space-2);
+  border: 1.5px solid var(--color-fg-strong);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-stamp);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.zone-marker-arrow {
+  display: block;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--color-fg-strong);
+  margin-top: 1px;
+}
+/* Vertical drop-line that extends from the marker DOWN into the band,
+ * anchoring the badge to its exact x-position. The line lives behind the
+ * marker (z-index sits between ticks and marker). */
+.zone-marker::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 6px);  /* start just below the arrow tip */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 48px;            /* full band height (matches .zone-band height) */
+  background: var(--color-fg-strong);
+  z-index: -1;
+  pointer-events: none;
+}
+@media (max-width: 767px) {
+  .zone-marker::after { height: 64px; }
 }
 
 /* ─── Zone note ───────────────────────────────────────────────────────────── */
