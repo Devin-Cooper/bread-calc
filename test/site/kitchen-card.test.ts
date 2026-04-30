@@ -166,4 +166,34 @@ describe("kitchen-card component", () => {
     mount(parent, store, db);
     expect(parent.querySelector(".kc-footer")?.textContent?.trim()).toBe("breadmachine.io");
   });
+
+  it("course block: omitted when recommendCourse returns no eligible course (empty courses)", () => {
+    const stubDb: Database = { ...db, courses: [] };
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, stubDb);
+    expect(parent.querySelector(".kc-course-block")).toBeNull();
+  });
+
+  it("course block: non-baking course wins as recommendation → heading renders, sub-line omits", () => {
+    const nonBakingCourse = db.courses.find((c) => c.id === "dough")!;
+    const stubDb: Database = { ...db, courses: [nonBakingCourse] };
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, stubDb);
+    const courseBlock = parent.querySelector(".kc-course-block");
+    expect(courseBlock).not.toBeNull();
+    expect(courseBlock!.textContent).toContain("Recommended: 11 — Dough");
+    expect(parent.querySelector(".kc-course-subline")).toBeNull();
+  });
+
+  it("course block: non-baking course as user pick → heading renders, sub-line omits", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "dough" });
+    mount(parent, store, db);
+    const courseBlock = parent.querySelector(".kc-course-block");
+    expect(courseBlock).not.toBeNull();
+    expect(courseBlock!.textContent).toContain("11 — Dough");
+    expect(parent.querySelector(".kc-course-subline")).toBeNull();
+  });
 });
