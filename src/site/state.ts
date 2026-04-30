@@ -15,6 +15,7 @@ export type Action =
   | { type: "set_crust_shade"; crust_shade: CrustShade | undefined }
   | { type: "set_loaf_size"; loaf_size: LoafSize | undefined }
   | { type: "set_extended_notes"; extended_notes: string }
+  | { type: "set_bake_hints"; bake_hints: string[] }
   | { type: "set_headline_metric"; metric: "effective" | "nominal" | "total_liquid" }
   | { type: "set_free_water_factor_override"; ingredient_id: string; factor: number | undefined }
   | { type: "load"; recipe: Recipe };
@@ -88,6 +89,14 @@ function reduce(state: Recipe, action: Action): Recipe {
         return rest;
       }
       return { ...state, extended_notes: action.extended_notes };
+    }
+    case "set_bake_hints": {
+      if (action.bake_hints.length === 0) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { bake_hints: _bake_hints, ...rest } = state;
+        return rest;
+      }
+      return { ...state, bake_hints: action.bake_hints };
     }
     case "set_headline_metric": return { ...state, headline_metric: action.metric };
     case "set_free_water_factor_override": {

@@ -114,4 +114,14 @@ describe("createStore", () => {
     s.dispatch({ type: "set_extended_notes", extended_notes: "" });
     expect("extended_notes" in s.getState()).toBe(false);
   });
+  it("dispatches set_bake_hints and sets the array", () => {
+    const s = createStore({ schema_version: "2.0", items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_bake_hints", bake_hints: ["watch crust at 50min", "brush egg wash"] });
+    expect(s.getState().bake_hints).toEqual(["watch crust at 50min", "brush egg wash"]);
+  });
+  it("set_bake_hints([]) clears the field", () => {
+    const s = createStore({ schema_version: "2.0", bake_hints: ["a"], items: [{ uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 }] });
+    s.dispatch({ type: "set_bake_hints", bake_hints: [] });
+    expect("bake_hints" in s.getState()).toBe(false);
+  });
 });
