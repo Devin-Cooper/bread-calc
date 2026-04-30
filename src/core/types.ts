@@ -83,12 +83,63 @@ export interface Machine {
   inclusion_max_fraction_of_flour: number;
 }
 
+export type BBPDC20StageName =
+  | "preheat" | "knead_1" | "rest" | "knead_2"
+  | "rise_1" | "punch" | "add_ins_beep" | "rise_2"
+  | "preheat_bake" | "bake" | "cool" | "keep_warm";
+
+export interface BBPDC20Stage {
+  readonly name: BBPDC20StageName;
+  readonly duration_minutes: number;
+  readonly target_temp_c: number | null;
+  readonly notes?: string;
+}
+
+export type BBPDC20LoafSize = "1lb" | "1.5lb" | "2lb";
+export type BBPDC20CrustShade = "light" | "medium" | "dark";
+export type BBPDC20DietaryMode =
+  | "vegan" | "salt_free" | "sugar_free" | "egg_free" | "gluten_free";
+export type BBPDC20YeastCompat =
+  | "instant" | "active_dry" | "sourdough" | "fresh";
+export type BBPDC20Confidence = "verified" | "inferred" | "community";
+
+export interface BBPDC20Course {
+  readonly id: string;
+  readonly course_number: number;
+  readonly name: string;
+
+  readonly total_minutes: number;
+  readonly stages: readonly BBPDC20Stage[];
+
+  readonly bakes: boolean;
+  readonly loaf_sizes: readonly BBPDC20LoafSize[];
+  readonly crust_shades: readonly BBPDC20CrustShade[];
+  readonly inclusions_beep: boolean;
+  readonly dietary_modes: readonly BBPDC20DietaryMode[];
+
+  readonly recommended_for: readonly string[];
+  readonly recommended_for_notes?: string;
+  readonly hydration_range?: {
+    readonly min_pct: number;
+    readonly max_pct: number;
+    readonly ideal_pct?: number;
+  };
+  readonly whole_wheat_max_pct?: number;
+  readonly yeast_compatibility: readonly BBPDC20YeastCompat[];
+
+  readonly confidence: BBPDC20Confidence;
+  readonly sources: readonly string[];
+
+  readonly notes?: string;
+}
+
 export interface Database {
   ingredients: readonly Ingredient[];
   flours: readonly Flour[];
   defaults: Defaults;
   references: readonly BBPDC20Recipe[];
   machines: readonly Machine[];
+  courses: readonly BBPDC20Course[];
 }
 
 export interface RecipeItem {

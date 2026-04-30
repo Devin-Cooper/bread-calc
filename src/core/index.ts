@@ -18,5 +18,8 @@ export type {
   RecipeValidationResult,
   ExplainNode, ExplainTree,
   ConstantNode, ProjectFieldNode, SumNode, WeightedSumNode, ProductNode, RatioNode, ScaleNode, ProjectFromTreeNode,
+  BBPDC20StageName, BBPDC20Stage, BBPDC20Course,
+  BBPDC20LoafSize, BBPDC20CrustShade, BBPDC20DietaryMode,
+  BBPDC20YeastCompat, BBPDC20Confidence,
 } from "./types.js";
 export { RecipeValidationError } from "./types.js";
