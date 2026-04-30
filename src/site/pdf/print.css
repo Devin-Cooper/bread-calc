@@ -1,6 +1,6 @@
 @media print {
-  /* 4 × 6 inch index-card layout */
-  @page { size: 4in 6in; margin: 0.18in; }
+  /* 6 × 4 inch landscape recipe card */
+  @page { size: 6in 4in; margin: 0.18in; }
 
   /* Hide everything except the kitchen card */
   body > *:not(#kitchen-card) { display: none !important; }
@@ -11,7 +11,7 @@
     background: #fff;
     margin: 0;
     padding: 0;
-    font-size: 8.5pt;
+    font-size: 10pt;
     line-height: 1.3;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -24,51 +24,58 @@
 
   .kc-card {
     width: 100%;
-    height: 5.6in;
+    height: 3.64in;  /* 4in - 0.18in × 2 margins */
+    border: 0.5pt solid #000;
+    padding: 0.12in 0.16in;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    box-sizing: border-box;
+    position: relative;
   }
 
+  /* Header band: recipe name on the left, metric strip on the right */
+  .kc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.18in;
+    border-bottom: 0.75pt solid #000;
+    padding-bottom: 4pt;
+    margin-bottom: 6pt;
+  }
+  .kc-header-text { flex: 1; min-width: 0; }
   .kc-name {
     font-family: "Fraunces", Georgia, serif;
-    font-size: 16pt;
-    font-weight: 500;
-    line-height: 1.15;
+    font-size: 18pt;
+    font-weight: 600;
+    line-height: 1.1;
     margin: 0 0 2pt;
     color: #000;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
   .kc-notes {
     font-style: italic;
     color: #555;
-    margin: 0 0 6pt;
-    font-size: 8pt;
+    margin: 0;
+    font-size: 9pt;
     line-height: 1.25;
     overflow: hidden;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
   }
-  .kc-header {
-    border-bottom: 0.75pt solid #000;
-    padding-bottom: 4pt;
-    margin-bottom: 6pt;
-  }
 
+  /* Metric strip: now inside the header, on the right */
   .kc-metric-strip {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 6pt;
-    padding-bottom: 6pt;
-    margin-bottom: 6pt;
-    border-bottom: 0.25pt solid #888;
-    page-break-inside: avoid;
+    display: flex;
+    gap: 10pt;
+    align-items: flex-start;
+    flex-shrink: 0;
   }
-  .kc-metric { display: flex; flex-direction: column; }
+  .kc-metric { display: flex; flex-direction: column; min-width: 0; }
   .kc-metric-label {
     font-size: 6.5pt;
     text-transform: uppercase;
@@ -77,18 +84,29 @@
     margin-bottom: 1pt;
   }
   .kc-metric-value {
-    font-size: 12pt;
+    font-size: 11pt;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: #000;
     line-height: 1.1;
   }
 
+  /* Two-column body */
+  .kc-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+    gap: 0.18in;
+    align-items: start;
+    flex: 1;
+    min-height: 0;
+  }
+  .kc-col-left, .kc-col-right { min-width: 0; }
+
+  /* Ingredients table (left column) */
   .kc-table {
     width: 100%;
     border-collapse: collapse;
     page-break-inside: avoid;
-    flex: 1;
   }
   .kc-table th {
     text-align: left;
@@ -110,7 +128,7 @@
     color: #666;
   }
   .kc-table td {
-    padding: 2.5pt 4pt;
+    padding: 2pt 4pt;
     font-size: 9pt;
     border-bottom: 0.25pt solid #ddd;
     vertical-align: baseline;
@@ -118,11 +136,64 @@
   .kc-td-name { font-weight: 400; color: #111; }
   .kc-table tr:last-child td { border-bottom: none; }
 
+  /* Right-column section headings */
+  .kc-section-heading {
+    font-size: 7pt;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #666;
+    margin: 0 0 3pt;
+    padding-bottom: 1pt;
+    border-bottom: 0.25pt solid #aaa;
+  }
+
+  /* Course block */
+  .kc-course-block { margin-bottom: 6pt; }
+  .kc-course-heading {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 11pt;
+    font-weight: 500;
+    margin: 0 0 1pt;
+    color: #000;
+    line-height: 1.15;
+  }
+  .kc-course-subline {
+    font-size: 8.5pt;
+    color: #444;
+    margin: 0;
+  }
+
+  /* Notes block */
+  .kc-notes-block { margin-bottom: 6pt; }
+  .kc-notes-block p {
+    font-size: 8.5pt;
+    margin: 0 0 3pt;
+    line-height: 1.3;
+    color: #222;
+  }
+  .kc-notes-block p:last-child { margin-bottom: 0; }
+
+  /* Bake hints block */
+  .kc-hints-block { margin-bottom: 6pt; }
+  .kc-hints-list {
+    list-style: disc;
+    margin: 0;
+    padding-left: 0.15in;
+  }
+  .kc-hints-list li {
+    font-size: 8.5pt;
+    line-height: 1.3;
+    color: #222;
+    margin: 0 0 1pt;
+  }
+  .kc-hints-list li:last-child { margin-bottom: 0; }
+
+  /* Brand footer (absolute, bottom-right) */
   .kc-footer {
-    margin-top: 4pt;
-    padding-top: 3pt;
-    border-top: 0.25pt solid #ccc;
-    text-align: center;
+    position: absolute;
+    bottom: 0.04in;
+    right: 0.16in;
     font-size: 6pt;
     text-transform: uppercase;
     letter-spacing: 0.12em;
