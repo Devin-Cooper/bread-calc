@@ -1,16 +1,20 @@
 @media print {
-  @page { size: letter; margin: 0.6in; }
+  /* 4 × 6 inch index-card layout */
+  @page { size: 4in 6in; margin: 0.18in; }
 
   /* Hide everything except the kitchen card */
   body > *:not(#kitchen-card) { display: none !important; }
 
   body {
     font-family: "Inter", system-ui, sans-serif;
-    color: #000;
+    color: #111;
     background: #fff;
     margin: 0;
     padding: 0;
-    font-size: 11pt;
+    font-size: 8.5pt;
+    line-height: 1.3;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
   #kitchen-card {
@@ -18,69 +22,110 @@
     padding: 0;
   }
 
+  .kc-card {
+    width: 100%;
+    height: 5.6in;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
   .kc-name {
     font-family: "Fraunces", Georgia, serif;
-    font-size: 32pt;
+    font-size: 16pt;
     font-weight: 500;
-    margin: 0 0 4pt;
+    line-height: 1.15;
+    margin: 0 0 2pt;
     color: #000;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .kc-notes {
     font-style: italic;
     color: #555;
-    margin: 0 0 12pt;
-    font-size: 11pt;
+    margin: 0 0 6pt;
+    font-size: 8pt;
+    line-height: 1.25;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
   }
   .kc-header {
-    border-bottom: 1pt solid #000;
-    padding-bottom: 8pt;
-    margin-bottom: 12pt;
+    border-bottom: 0.75pt solid #000;
+    padding-bottom: 4pt;
+    margin-bottom: 6pt;
   }
 
   .kc-metric-strip {
-    display: flex;
-    justify-content: space-between;
-    gap: 24pt;
-    border-bottom: 1pt solid #000;
-    padding-bottom: 12pt;
-    margin-bottom: 16pt;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6pt;
+    padding-bottom: 6pt;
+    margin-bottom: 6pt;
+    border-bottom: 0.25pt solid #888;
     page-break-inside: avoid;
   }
   .kc-metric { display: flex; flex-direction: column; }
   .kc-metric-label {
-    font-size: 9pt;
+    font-size: 6.5pt;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #444;
-    margin-bottom: 2pt;
+    letter-spacing: 0.06em;
+    color: #666;
+    margin-bottom: 1pt;
   }
   .kc-metric-value {
-    font-size: 18pt;
-    font-weight: 500;
+    font-size: 12pt;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
     color: #000;
+    line-height: 1.1;
   }
 
   .kc-table {
     width: 100%;
     border-collapse: collapse;
     page-break-inside: avoid;
+    flex: 1;
   }
   .kc-table th {
     text-align: left;
-    font-size: 9pt;
+    font-size: 6.5pt;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    font-weight: 500;
-    color: #444;
-    padding: 4pt 6pt;
-    border-bottom: 0.5pt solid #888;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: #666;
+    padding: 3pt 4pt 2pt;
+    border-bottom: 0.5pt solid #000;
   }
-  .kc-th-num, .kc-td-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .kc-th-num, .kc-td-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .kc-th-role, .kc-td-role {
+    font-size: 7.5pt;
+    text-transform: lowercase;
+    color: #666;
+  }
   .kc-table td {
-    padding: 6pt;
-    font-size: 11pt;
-    border-bottom: 0.25pt solid #ccc;
+    padding: 2.5pt 4pt;
+    font-size: 9pt;
+    border-bottom: 0.25pt solid #ddd;
+    vertical-align: baseline;
   }
+  .kc-td-name { font-weight: 400; color: #111; }
   .kc-table tr:last-child td { border-bottom: none; }
+
+  .kc-footer {
+    margin-top: 4pt;
+    padding-top: 3pt;
+    border-top: 0.25pt solid #ccc;
+    text-align: center;
+    font-size: 6pt;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #888;
+  }
 }
