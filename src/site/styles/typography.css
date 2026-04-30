@@ -1,4 +1,7 @@
-/* @font-face declarations + type scale tokens. */
+/* Typography baseline — @font-face declarations + utility classes.
+ * Font-family and weight tokens live in tokens.css (:root).
+ * Per spec C §5 (typography.css row).
+ */
 
 @font-face {
   font-family: "Inter";
@@ -16,58 +19,107 @@
   src: url("/fonts/fraunces-variable.woff2") format("woff2-variations");
 }
 
-:root {
-  --font-sans:     "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display:  "Fraunces", Georgia, "Times New Roman", serif;
+/* ── Body baseline ───────────────────────────────────────── */
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  color: var(--color-fg-default);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Type scale tokens (size / line-height / weight / tracking) */
+/* ── Heading defaults ────────────────────────────────────── */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-editorial);
+  color: var(--color-fg-strong);
+  margin: 0;
+}
+
+h1 {
+  font-size: var(--type-h1-size);
+  line-height: var(--type-h1-lh);
+  font-weight: var(--weight-bold);
+}
+h2 {
+  font-size: var(--type-h2-size);
+  line-height: var(--type-h2-lh);
+  font-weight: var(--weight-semibold);
+}
+h3 {
+  font-size: var(--type-h3-size);
+  line-height: var(--type-h3-lh);
+  font-weight: var(--weight-semibold);
+}
+
+p { margin: 0 0 var(--space-3); }
+p:last-child { margin-bottom: 0; }
+
+small { font-size: var(--type-small-size); }
+
+code, kbd, samp {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.875em;
+}
+
+/* Apply tabular-nums to all numeric inputs by default */
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "cv11", "ss01";
+}
+
+/* ── Type scale utility classes ──────────────────────────── */
+/* Referenced by TS components and HTML — do not remove or rename. */
 
 .type-display-md {
-  font-family: var(--font-display);
-  font-size: 36px; line-height: 44px;
-  font-weight: 500;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.1;
+  font-weight: var(--weight-bold);
   font-variation-settings: "opsz" 72;
-  letter-spacing: -0.36px; /* -1% of 36 */
+  letter-spacing: -0.015em;
 }
 
 .type-heading-lg {
   font-family: var(--font-sans);
   font-size: 22px; line-height: 30px;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.22px;
 }
 
 .type-heading-md {
   font-family: var(--font-sans);
   font-size: 18px; line-height: 26px;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
   letter-spacing: -0.09px;
 }
 
 .type-body-lg {
   font-family: var(--font-sans);
-  font-size: 17px; line-height: 26px;
-  font-weight: 400;
+  font-size: 17px; line-height: 1.55;
+  font-weight: var(--weight-regular);
 }
 
 .type-body-md {
   font-family: var(--font-sans);
-  font-size: 15px; line-height: 22px;
-  font-weight: 400;
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-lh);
+  font-weight: var(--weight-regular);
 }
 
 .type-body-sm {
   font-family: var(--font-sans);
   font-size: 13px; line-height: 18px;
-  font-weight: 500;
-  letter-spacing: 0.13px; /* +1% of 13 */
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.13px;
 }
 
 .type-numeric-display {
   font-family: var(--font-sans);
   font-size: 32px; line-height: 36px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.32px;
 }
@@ -75,26 +127,21 @@
 .type-numeric-md {
   font-family: var(--font-sans);
   font-size: 17px; line-height: 24px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   font-variant-numeric: tabular-nums;
 }
 
 .type-numeric-sm {
   font-family: var(--font-sans);
   font-size: 13px; line-height: 18px;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   font-variant-numeric: tabular-nums;
 }
 
 .type-caption {
   font-family: var(--font-sans);
-  font-size: 12px; line-height: 16px;
-  font-weight: 500;
-  letter-spacing: 0.24px; /* +2% of 12 */
-}
-
-/* Apply tabular-nums to all numeric inputs by default */
-input[type="number"] {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "cv11", "ss01";
+  font-size: var(--type-eyebrow-size);
+  line-height: var(--type-eyebrow-lh);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.24px;
 }
