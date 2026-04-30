@@ -14,7 +14,7 @@ const db: Database = {
   flours: [
     { id: "bread_flour", name: "Bread flour" } as never,
   ] as never,
-  references: [], machines: [], defaults: { default_machine_id: "m" } as never,
+  references: [], machines: [], courses: [], defaults: { default_machine_id: "m" } as never,
 };
 
 const items: Recipe["items"] = [

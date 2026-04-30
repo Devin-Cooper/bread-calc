@@ -24,6 +24,7 @@ function tokens(s: string): string[] {
 import ingredientsFile from "../data/ingredients.json"      with { type: "json" };
 import floursFile      from "../data/flours.json"           with { type: "json" };
 import refsFile        from "../data/bb_pdc20_recipes.json" with { type: "json" };
+import coursesFile     from "../data/bb_pdc20_courses.json" with { type: "json" };
 import machinesFile    from "../data/machines.json"         with { type: "json" };
 import defaultsRaw     from "../data/defaults.json"         with { type: "json" };
 
@@ -36,6 +37,7 @@ function defaultDb(): Database {
     flours:      (floursFile as any).entries,
     references:  (refsFile as any).entries,
     machines:    (machinesFile as any).entries,
+    courses:     (coursesFile as any).entries,
     defaults:    defaultsRaw as any,
   };
   /* eslint-enable @typescript-eslint/no-explicit-any */

@@ -22,7 +22,7 @@ const machine: Machine = {
   flour_quantity_typical_min_g: 470, flour_quantity_typical_max_g: 620,
   inclusion_max_fraction_of_flour: 0.30,
 };
-const db: Database = { ingredients: [water, salt, yeast], flours: [flour], defaults, references: [], machines: [machine] };
+const db: Database = { ingredients: [water, salt, yeast], flours: [flour], defaults, references: [], machines: [machine], courses: [] };
 
 describe("computeRecipe — totals", () => {
   it("computes total_mass_g as sum of all grams", () => {

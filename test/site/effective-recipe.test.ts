@@ -9,6 +9,7 @@ const db: Database = {
   flours:      JSON.parse(readFileSync("src/data/flours.json", "utf8")).entries,
   references:  JSON.parse(readFileSync("src/data/bb_pdc20_recipes.json", "utf8")).entries,
   machines:    JSON.parse(readFileSync("src/data/machines.json", "utf8")).entries,
+  courses:     [],
   defaults:    JSON.parse(readFileSync("src/data/defaults.json", "utf8")),
 };
 

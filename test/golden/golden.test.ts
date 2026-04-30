@@ -10,7 +10,7 @@ const flours = JSON.parse(readFileSync("src/data/flours.json", "utf8")).entries;
 const refs = JSON.parse(readFileSync("src/data/bb_pdc20_recipes.json", "utf8")).entries;
 const machines = JSON.parse(readFileSync("src/data/machines.json", "utf8")).entries;
 const defaults = JSON.parse(readFileSync("src/data/defaults.json", "utf8"));
-const db: Database = { ingredients, flours, references: refs, machines, defaults };
+const db: Database = { ingredients, flours, references: refs, machines, courses: [], defaults };
 
 const FIXTURES_DIR = "test/golden/fixtures";
 

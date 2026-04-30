@@ -16,6 +16,7 @@ const db: Database = {
   flours:      (floursFile as any).entries,
   references:  (recipesFile as any).entries,
   machines:    (machinesFile as any).entries,
+  courses:     [],
   defaults:    defaultsRaw as any,
 };
 /* eslint-enable @typescript-eslint/no-explicit-any */
