@@ -68,4 +68,23 @@ describe("kitchen-card component", () => {
     expect(courseBlock!.textContent).toContain("1 — White");
     expect(courseBlock!.textContent).not.toContain("Recommended:");
   });
+
+  it("course block: shows 'Recommended:' prefix when recipe.course is unset", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    const courseBlock = parent.querySelector(".kc-course-block");
+    expect(courseBlock).not.toBeNull();
+    // recommendCourse ranks dough first for this recipe because dough has no hydration_range
+    // (neutral score) whereas white's 64% hydration sits 6 pp outside its ideal of 58%
+    expect(courseBlock!.textContent).toContain("Recommended:");
+    expect(courseBlock!.textContent).toContain("11 — Dough");
+  });
+
+  it("course block: omitted when recipe.course is set to unknown id", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, course: "made_up_course" });
+    mount(parent, store, db);
+    expect(parent.querySelector(".kc-course-block")).toBeNull();
+  });
 });
