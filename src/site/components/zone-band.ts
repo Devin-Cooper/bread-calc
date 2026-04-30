@@ -48,32 +48,38 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
       <h2 class="type-heading-lg zone-band-heading">Where you land
         <button type="button" class="help-icon" data-help="zones" aria-label="Explain hydration zones">?</button>
       </h2>
-      <div class="zone-band" role="img"
-           aria-label="${ariaLabel(userHy, activeZoneId, refs.length)}">
-        ${ZONE_SEGMENTS.map((z) => {
-          const left = pctOnTrack(z.min);
-          const width = pctOnTrack(z.max) - pctOnTrack(z.min);
-          const active = z.id === activeZoneId ? " is-active" : "";
-          return `<div class="zone-segment${active}" data-zone-id="${z.id}"
-                       style="left: ${left}%; width: ${width}%;">
-                    <span class="zone-segment-label type-body-sm">${z.label}</span>
-                  </div>`;
-        }).join("")}
-        ${refs.map((ref) => {
-          const left = pctOnTrack(ref.hydration_pct_nominal);
-          return `<button type="button" class="zone-tick" data-tick-name="${escapeHtml(ref.name)}"
-                          data-tick-zone="${escapeHtml(ref.zone)}"
-                          data-tick-hy="${ref.hydration_pct_nominal}"
-                          aria-label="${escapeHtml(ref.name)}, ${ref.hydration_pct_nominal}% hydration"
-                          style="left: ${left}%;"></button>`;
-        }).join("")}
+      <div class="zone-band-track">
         ${userPct != null ? `
-          <div class="zone-marker" tabindex="0" role="img"
-               aria-label="Your recipe at ${userHy!.toFixed(0)}% hydration"
-               style="left: ${userPct}%;">
-            <span class="type-numeric-md zone-marker-value">${userHy!.toFixed(0)} %</span>
+          <div class="zone-marker-badge" style="left: ${userPct}%;"
+               tabindex="0" role="img"
+               aria-label="Your recipe at ${userHy!.toFixed(0)}% hydration">
+            <span class="zone-marker-eyebrow">You are here</span>
+            <span class="zone-marker-value">${userHy!.toFixed(0)} %</span>
             <span class="zone-marker-arrow" aria-hidden="true">▼</span>
           </div>` : ""}
+        <div class="zone-band" role="img"
+             aria-label="${ariaLabel(userHy, activeZoneId, refs.length)}">
+          ${ZONE_SEGMENTS.map((z) => {
+            const left = pctOnTrack(z.min);
+            const width = pctOnTrack(z.max) - pctOnTrack(z.min);
+            const active = z.id === activeZoneId ? " is-active" : "";
+            return `<div class="zone-segment${active}" data-zone-id="${z.id}"
+                         style="left: ${left}%; width: ${width}%;">
+                      <span class="zone-segment-label type-body-sm">${z.label}</span>
+                    </div>`;
+          }).join("")}
+          ${refs.map((ref) => {
+            const left = pctOnTrack(ref.hydration_pct_nominal);
+            return `<button type="button" class="zone-tick" data-tick-name="${escapeHtml(ref.name)}"
+                            data-tick-zone="${escapeHtml(ref.zone)}"
+                            data-tick-hy="${ref.hydration_pct_nominal}"
+                            aria-label="${escapeHtml(ref.name)}, ${ref.hydration_pct_nominal}% hydration"
+                            style="left: ${left}%;"></button>`;
+          }).join("")}
+          ${userPct != null ? `
+            <div class="zone-marker-line" aria-hidden="true" style="left: ${userPct}%;"></div>
+          ` : ""}
+        </div>
       </div>
       <p class="zone-note type-body-md">${activeNote ? escapeHtml(activeNote) : "Add ingredients to see where your recipe lands."}</p>
     `;

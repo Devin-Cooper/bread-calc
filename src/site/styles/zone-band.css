@@ -119,73 +119,100 @@
 
 /* ─── User hydration marker ───────────────────────────────────────────────── */
 /*
- * Three pieces stacked vertically:
- *   1. Value badge (above the band) — accent fill, paper text, stamp shadow
- *   2. Triangle pointer (inverted ▼) — bridges badge → band
- *   3. Vertical drop-line into the band itself (via ::after) — anchors the
- *      marker to its exact x-position so the eye traces from "62%" badge
- *      straight down to the recipe's location on the band
+ * Restructured: marker is split into two siblings, both inside .zone-band-track
+ * which wraps .zone-band. This lets the BADGE float ABOVE the band (escaping
+ * the band's overflow:hidden clip) while the LINE renders inside the band as
+ * a bold accent ribbon spanning the full band height.
  *
- * The marker is z-index above ticks + segments so it always reads first.
+ * Visual flow (top → bottom):
+ *   .zone-marker-badge  — labeled accent stamp above the band ("You are here / 62%")
+ *     ↓ ▼ pointer
+ *   .zone-marker-line   — 4px-wide solid accent ribbon spanning the full band
+ *
+ * The badge and line share the same `left: X%` and translate -50% so they
+ * line up vertically. Eye traces straight down from "62%" into the band.
  */
-.zone-marker {
+
+.zone-band-track {
+  position: relative;
+  /* Reserve room above the band for the floating badge */
+  margin-top: calc(var(--space-12) + 4px);
+}
+
+/* Bold "you are here" ribbon inside the band — full height, accent fill,
+ * black 1px borders for definition against any background */
+.zone-marker-line {
   position: absolute;
-  bottom: calc(100% + 6px);
+  top: 0; bottom: 0;
+  transform: translateX(-50%);
+  width: 4px;
+  background-color: var(--color-accent-fg);
+  background-image: var(--pattern-benday);
+  background-size: var(--pattern-benday-size);
+  border-left: 1px solid var(--color-fg-strong);
+  border-right: 1px solid var(--color-fg-strong);
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Floating badge above the band */
+.zone-marker-badge {
+  position: absolute;
+  bottom: calc(100% + 8px);  /* 8px gap between badge bottom and band top */
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: var(--color-fg-on-accent);
-  cursor: default;
   z-index: 5;
-  pointer-events: none;
+  cursor: default;
+  pointer-events: auto;
 }
-.zone-marker:focus-visible {
+.zone-marker-badge:focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 4px;
   border-radius: var(--radius-sm);
 }
+
+.zone-marker-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  font-weight: var(--weight-bold);
+  color: var(--color-fg-strong);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-fg-strong);
+  border-bottom: none;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  padding: 1px var(--space-2);
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
 .zone-marker-value {
   background-color: var(--color-accent-fg);
   background-image: var(--pattern-benday);
   background-size: var(--pattern-benday-size);
   color: var(--color-fg-on-accent);
   font-family: var(--font-sans);
-  font-size: var(--type-small-size);
+  font-size: var(--type-body-size);
   font-weight: var(--weight-black);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
-  padding: 2px var(--space-2);
+  padding: 2px var(--space-3);
   border: 1.5px solid var(--color-fg-strong);
-  border-radius: var(--radius-sm);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
   box-shadow: var(--shadow-stamp);
   white-space: nowrap;
   line-height: 1.2;
 }
+
 .zone-marker-arrow {
   display: block;
-  font-size: 14px;
+  font-size: 18px;
   line-height: 1;
   color: var(--color-fg-strong);
-  margin-top: 1px;
-}
-/* Vertical drop-line that extends from the marker DOWN into the band,
- * anchoring the badge to its exact x-position. The line lives behind the
- * marker (z-index sits between ticks and marker). */
-.zone-marker::after {
-  content: "";
-  position: absolute;
-  top: calc(100% + 6px);  /* start just below the arrow tip */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 48px;            /* full band height (matches .zone-band height) */
-  background: var(--color-fg-strong);
-  z-index: -1;
-  pointer-events: none;
-}
-@media (max-width: 767px) {
-  .zone-marker::after { height: 64px; }
+  margin-top: -1px;
 }
 
 /* ─── Zone note ───────────────────────────────────────────────────────────── */
