@@ -539,6 +539,166 @@
         "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
       ],
       "notes": "Manual page 13 cycle chart: total 2:25 (single time — Crust Control NOT supported), REST OFF: 2:10, Add Beep at approx. 37 min, separate 1-hour keep-warm hold. REST OFF supported (page 12); Crust Control NOT supported (page 18); Timer NOT supported (page 17). Recipe PDF (page 16) recipes use 7.5g Rapid Rise Yeast (more than Course 2's 6g)."
+    },
+    {
+      "id": "dough",
+      "course_number": 11,
+      "name": "Dough",
+      "total_minutes": 110,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 23,
+          "target_temp_c": null,
+          "notes": "REST cycle. Length computed from REST OFF delta (1:50 - 1:27 = 23 min, manual page 13). Shorter than baking courses' 31 min."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 15,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (38 min) - REST length (23 min) = 15 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 38 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 72,
+          "target_temp_c": null,
+          "notes": "Single rise; manual chart shows ONE Punch Down event (vs two for baking courses). Cycle ends after rise_1 — no bake, no keep-warm."
+        }
+      ],
+      "bakes": false,
+      "loaf_sizes": [],
+      "crust_shades": [],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["dough_only", "shaping", "pizza_dough", "rolls", "bagels"],
+      "recommended_for_notes": "Knead + first rise only; the user shapes and bakes the dough externally. Recipe book pages 18-23 cover Butter Rolls, Doughnuts, Breadsticks, Bagels, and several Pizza variants — all use this course to produce shaped dough.",
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 1:50 (REST OFF: 1:27), Add Beep at approx. 38 min, NO bake, NO keep-warm. REST OFF supported (page 12); Crust Control NOT applicable (no bake); Timer NOT supported (page 17). Loaf sizes / crust shades empty arrays — course produces dough, not a baked loaf."
+    },
+    {
+      "id": "sourdough_starter",
+      "course_number": 12,
+      "name": "Sourdough Starter",
+      "total_minutes": 130,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 5,
+          "target_temp_c": null,
+          "notes": "Very short REST cycle. Length computed from REST OFF delta (2:10 - 2:05 = 5 min, manual page 13)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 25,
+          "target_temp_c": null,
+          "notes": "Duration estimated; manual chart shows no Add Beep on this course, so no anchor point exists for separating Knead from Rise. Estimate from chart visual proportions."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 100,
+          "target_temp_c": null,
+          "notes": "Long rise period for the starter culture to ferment. Manual chart shows no Punch Down events on this course."
+        }
+      ],
+      "bakes": false,
+      "loaf_sizes": [],
+      "crust_shades": [],
+      "inclusions_beep": false,
+      "dietary_modes": [],
+      "recommended_for": ["sourdough_culture", "starter_creation"],
+      "recommended_for_notes": "Cultivates a sourdough starter culture (NOT a sourdough loaf — the starter is then used in a separate bake on the WHOLE WHEAT or HOMEMADE course per the operating instructions page 22). Operating instructions page 21 covers starter preparation; page 22 covers the subsequent bake. The course produces a hydrated, fermented culture rather than a baked loaf.",
+      "yeast_compatibility": ["sourdough"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 2:10 (REST OFF: 2:05), NO Add Beep, NO bake, NO keep-warm, NO Punch Down. REST OFF supported (page 12); Crust Control NOT applicable; Timer NOT supported (page 17). The existing bb_pdc20_recipes.json has 'Sourdough' bread entries — those are sourdough LOAVES baked using this starter on a separate course (typically WHOLE WHEAT or HOMEMADE), not Course 12 itself."
+    },
+    {
+      "id": "cake",
+      "course_number": 13,
+      "name": "Cake",
+      "total_minutes": 110,
+      "stages": [
+        {
+          "name": "knead_1",
+          "duration_minutes": 16,
+          "target_temp_c": null,
+          "notes": "Mix-only stage; cakes use chemical leaveners (baking powder), not yeast — no rest, no rise. Add Beep fires at the end of mixing."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 16 min from start (page 13). Earliest Add Beep on the BB-PDC20 — fires during/at end of mixing for adding fruit/nuts to the batter."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 94,
+          "target_temp_c": null,
+          "notes": "Long bake — cake batter requires extended baking compared to bread dough. Duration computed as total_minutes - knead - add_beep."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["cake", "quick_bread", "no_knead", "chemical_leavener"],
+      "recommended_for_notes": "Mix + bake only — designed for cake batters and quick breads using baking powder (not yeast). Recipe book (page 25) covers Pound Cake, Tea Cake, and Corn Bread. NO REST, NO RISE phase: chemical leaveners activate immediately on hydration.",
+      "yeast_compatibility": [],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 1:50, Add Beep at approx. 16 min, Bake stage, NO keep-warm. REST OFF NOT supported (page 12); Crust Control supported (page 18); Timer NOT supported (page 17). yeast_compatibility=[] because the course uses chemical leaveners; the recommendation engine should match recipes with baking_powder (not yeast)."
+    },
+    {
+      "id": "jam",
+      "course_number": 14,
+      "name": "Jam",
+      "total_minutes": 80,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 10,
+          "target_temp_c": null,
+          "notes": "Manual chart labels this stage 'Heat' — heater warms ingredients before stirring begins. Not a true REST in the bread sense. Duration estimated from chart visual proportions."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 70,
+          "target_temp_c": null,
+          "notes": "Manual chart labels this stage 'Heat & Mix' — heater stays on while paddle stirs the cooking jam. Modeled as knead_1 (the closest stage in our taxonomy supporting paddle action) but is functionally a heated stir, not gluten development."
+        }
+      ],
+      "bakes": false,
+      "loaf_sizes": [],
+      "crust_shades": [],
+      "inclusions_beep": false,
+      "dietary_modes": [],
+      "recommended_for": ["jam", "preserves", "fruit_cooking"],
+      "recommended_for_notes": "Cooks fruit + sugar into jam or marmalade — heater stays on while the paddle stirs. Recipe book (page 26) covers Strawberry Jam and Orange Marmalade. NOT a bread course: produces no loaf, no crust, no rise. The 'preheat' and 'knead_1' stages model the manual's 'Heat' and 'Heat & Mix' labels respectively.",
+      "yeast_compatibility": [],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 1:20, NO Add Beep, NO Rest in bread sense, NO Rise, NO Bake, NO keep-warm. Chart labels stages 'Heat' and 'Heat & Mix' rather than the bread-cycle stages. REST OFF NOT supported (page 12); Crust Control NOT applicable; Timer NOT supported (page 17)."
     }
   ]
 }
