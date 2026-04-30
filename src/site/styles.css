@@ -144,54 +144,84 @@ input[type="text"]:focus-visible {
 /* Recipe meta — sub-project B */
 .recipe-meta-strip {
   display: flex;
-  gap: var(--space-md, 1rem);
+  gap: var(--space-4);
   flex-wrap: wrap;
-  margin: var(--space-md, 1rem) 0;
+  margin: var(--space-4) 0;
 }
 .recipe-meta-control {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
   border: 0;
   padding: 0;
 }
 .recipe-meta-label {
-  font-size: var(--type-body-sm, 0.875rem);
+  font-size: 0.875rem;
   font-weight: 500;
+  color: var(--color-fg-default);
 }
 .recipe-meta-clear {
   font-size: 0.8125rem;
+  color: var(--color-fg-muted);
   background: transparent;
-  border: 1px solid var(--border, #ccc);
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   padding: 2px 8px;
   cursor: pointer;
   align-self: flex-start;
   margin-top: 4px;
 }
+.recipe-meta-clear:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-fg-default);
+}
 .recipe-meta-details {
-  margin-top: var(--space-md, 1rem);
+  margin-top: var(--space-4);
+  color: var(--color-fg-default);
 }
 .recipe-meta-details summary {
   cursor: pointer;
   font-weight: 500;
 }
-.recipe-meta-extended { display: flex; flex-direction: column; gap: 0.25rem; margin: 0.5rem 0; }
-.recipe-meta-extended-notes { width: 100%; resize: vertical; min-height: 6rem; }
+.recipe-meta-extended { display: flex; flex-direction: column; gap: var(--space-1); margin: var(--space-2) 0; }
+.recipe-meta-extended-notes {
+  width: 100%;
+  resize: vertical;
+  min-height: 6rem;
+  color: var(--color-fg-default);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2);
+}
 .bake-hints-list {
   list-style: none;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
 }
-.bake-hints-list li { display: flex; gap: 0.5rem; align-items: center; }
-.bake-hints-list input[type='text'] { flex: 1; }
+.bake-hints-list li { display: flex; gap: var(--space-2); align-items: center; }
+.bake-hints-list input[type='text'] {
+  flex: 1;
+  color: var(--color-fg-default);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 6px;
+}
 .bake-hint-add, .bake-hint-remove {
   font-size: 0.8125rem;
+  color: var(--color-fg-muted);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
   padding: 2px 8px;
   cursor: pointer;
-  border-radius: 4px;
+}
+.bake-hint-add:hover, .bake-hint-remove:hover {
+  background: var(--color-bg-muted);
+  color: var(--color-fg-default);
 }
 
 /* Recommendation strip — sub-project C */
@@ -199,41 +229,49 @@ input[type="text"]:focus-visible {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0.5rem 0;
-  padding: 0.5rem 0.75rem;
-  background: var(--surface-2, #f5f5f5);
-  border-left: 3px solid var(--accent, #2a8);
-  border-radius: 0 4px 4px 0;
-  font-size: var(--type-body-sm, 0.875rem);
+  gap: var(--space-2);
+  margin: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-fg-default);
+  background: var(--color-bg-muted);
+  border-left: 3px solid var(--crust-600);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.875rem;
 }
-.rec-label { flex: 1; min-width: 0; }
+.rec-label { flex: 1; min-width: 0; color: var(--color-fg-default); }
+.rec-label strong { color: var(--color-emphasis); }
 .rec-use-this, .rec-use-top, .rec-see-all {
   font-size: 0.8125rem;
   padding: 4px 10px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  border: 1px solid var(--border, #ccc);
-  background: var(--bg, #fff);
+  color: var(--color-fg-default);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-canvas);
 }
 .rec-use-this:hover, .rec-use-top:hover, .rec-see-all:hover {
-  background: var(--surface-1, #f0f0f0);
+  background: var(--color-bg-surface);
 }
 .recommendation-empty {
-  color: var(--muted, #888);
+  color: var(--color-fg-muted);
   font-style: italic;
 }
 .recommendation-table {
   width: 100%;
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
   border-collapse: collapse;
-  font-size: var(--type-body-sm, 0.875rem);
+  font-size: 0.875rem;
+  color: var(--color-fg-default);
 }
 .recommendation-table th, .recommendation-table td {
   text-align: left;
   padding: 4px 8px;
-  border-bottom: 1px solid var(--border, #ddd);
+  border-bottom: 1px solid var(--color-border);
+}
+.recommendation-table th {
+  color: var(--color-fg-muted);
+  font-weight: 600;
 }
 .recommendation-table .rec-row[data-eligible="false"] {
-  color: var(--muted, #888);
+  color: var(--color-fg-subtle);
 }
