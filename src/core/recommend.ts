@@ -23,8 +23,7 @@ const VEGAN_EGG_SUBSTITUTE_IDS: ReadonlySet<string> = new Set([
   "aquafaba",
 ]);
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _RECIPE_TAG_VOCAB: ReadonlySet<string> = new Set([
+const RECIPE_TAG_VOCAB: ReadonlySet<string> = new Set([
   "high_hydration", "whole_wheat", "multigrain",
   "white_flour", "sandwich_loaf",
 ]);
@@ -175,6 +174,184 @@ function evaluateDietaryGate(course: BBPDC20Course, dietary: DietaryFacts): Reco
     return { tier: "dietary", verdict: "match", evidence: `Recipe satisfies course requirements: ${required.join(", ")}` };
   }
   return { tier: "dietary", verdict: "mismatch", evidence: `Course requires ${failed.join(", ")} but recipe is not` };
+}
+
+/* Soft-tier evaluators */
+
+interface SoftTierResult {
+  readonly reason: RecommendationReason;
+  readonly score: number;
+}
+
+const CONFIDENCE_RANK: Record<string, number> = { verified: 3, inferred: 2, community: 1 };
+
+function evaluateConfidence(course: BBPDC20Course): SoftTierResult {
+  const score = CONFIDENCE_RANK[course.confidence] ?? 0;
+  return {
+    reason: { tier: "confidence", verdict: "neutral", evidence: `Course confidence: ${course.confidence}` },
+    score,
+  };
+}
+
+function evaluateHydration(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
+  const range = course.hydration_range;
+  if (!range) {
+    return {
+      reason: { tier: "hydration", verdict: "neutral", evidence: "Course has no published hydration range" },
+      score: 0,
+    };
+  }
+  if (facts.hydration_pct === null) {
+    return {
+      reason: { tier: "hydration", verdict: "neutral", evidence: "Recipe hydration not computable" },
+      score: 0,
+    };
+  }
+  const target = range.ideal_pct ?? (range.min_pct + range.max_pct) / 2;
+  const distance = Math.abs(facts.hydration_pct - target);
+  const score = -distance;
+  const inRange = facts.hydration_pct >= range.min_pct && facts.hydration_pct <= range.max_pct;
+  return {
+    reason: {
+      tier: "hydration",
+      verdict: inRange ? "match" : "mismatch",
+      evidence: inRange
+        ? `Hydration ${facts.hydration_pct.toFixed(0)} % within range ${range.min_pct}-${range.max_pct} %`
+        : `Hydration ${facts.hydration_pct.toFixed(0)} % outside range ${range.min_pct}-${range.max_pct} %`,
+    },
+    score,
+  };
+}
+
+function evaluateWholeWheat(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
+  if (course.whole_wheat_max_pct === undefined) {
+    return {
+      reason: { tier: "whole_wheat", verdict: "neutral", evidence: "Course has no whole-wheat cap" },
+      score: 0,
+    };
+  }
+  const within = facts.ww_pct <= course.whole_wheat_max_pct;
+  const score = within
+    ? 100 - (course.whole_wheat_max_pct - facts.ww_pct)
+    : -(facts.ww_pct - course.whole_wheat_max_pct);
+  return {
+    reason: {
+      tier: "whole_wheat",
+      verdict: within ? "match" : "mismatch",
+      evidence: within
+        ? `Whole-wheat ${facts.ww_pct.toFixed(0)} % within cap ${course.whole_wheat_max_pct} %`
+        : `Whole-wheat ${facts.ww_pct.toFixed(0)} % above cap ${course.whole_wheat_max_pct} %`,
+    },
+    score,
+  };
+}
+
+function evaluateYeast(course: BBPDC20Course, facts: RecipeFacts): SoftTierResult {
+  if (facts.yeast_kind === null && facts.leavener_kind === null) {
+    return {
+      reason: { tier: "yeast", verdict: "neutral", evidence: "Recipe has no yeast or leavener" },
+      score: 0,
+    };
+  }
+  if (course.yeast_compatibility.length === 0) {
+    if (facts.leavener_kind === "chemical" && facts.yeast_kind === null) {
+      return {
+        reason: { tier: "yeast", verdict: "match", evidence: "Course uses chemical leavener; recipe has chemical leavener" },
+        score: 1,
+      };
+    }
+    return {
+      reason: { tier: "yeast", verdict: "mismatch", evidence: "Course requires no yeast; recipe has yeast" },
+      score: -1,
+    };
+  }
+  if (facts.yeast_kind === null) {
+    return {
+      reason: { tier: "yeast", verdict: "mismatch", evidence: "Course requires yeast; recipe has only chemical leavener" },
+      score: -1,
+    };
+  }
+  if (course.yeast_compatibility.includes(facts.yeast_kind)) {
+    return {
+      reason: { tier: "yeast", verdict: "match", evidence: `Yeast ${facts.yeast_kind} supported` },
+      score: 1,
+    };
+  }
+  return {
+    reason: { tier: "yeast", verdict: "mismatch", evidence: `Yeast ${facts.yeast_kind} not in course's compatibility list` },
+    score: -1,
+  };
+}
+
+function evaluateCrustShade(course: BBPDC20Course, recipe: Recipe): SoftTierResult {
+  if (recipe.crust_shade === undefined) {
+    return {
+      reason: { tier: "crust_shade", verdict: "neutral", evidence: "Recipe has no crust shade preference" },
+      score: 0,
+    };
+  }
+  if (course.crust_shades.includes(recipe.crust_shade)) {
+    return {
+      reason: { tier: "crust_shade", verdict: "match", evidence: `Course supports ${recipe.crust_shade} crust` },
+      score: 1,
+    };
+  }
+  return {
+    reason: { tier: "crust_shade", verdict: "mismatch", evidence: `Course does not support ${recipe.crust_shade} crust` },
+    score: -1,
+  };
+}
+
+function evaluateLoafSize(course: BBPDC20Course, recipe: Recipe): SoftTierResult {
+  if (recipe.loaf_size === undefined) {
+    return {
+      reason: { tier: "loaf_size", verdict: "neutral", evidence: "Recipe has no loaf size preference" },
+      score: 0,
+    };
+  }
+  if (course.loaf_sizes.includes(recipe.loaf_size)) {
+    return {
+      reason: { tier: "loaf_size", verdict: "match", evidence: `Course supports ${recipe.loaf_size} loaf` },
+      score: 1,
+    };
+  }
+  return {
+    reason: { tier: "loaf_size", verdict: "mismatch", evidence: `Course does not support ${recipe.loaf_size} loaf` },
+    score: -1,
+  };
+}
+
+function deriveRecipeTags(facts: RecipeFacts): ReadonlySet<string> {
+  const tags = new Set<string>();
+  if (facts.hydration_pct !== null && facts.hydration_pct > 70) tags.add("high_hydration");
+  if (facts.ww_pct > 50) tags.add("whole_wheat");
+  if (facts.ww_pct > 30 && facts.ww_pct <= 50) tags.add("multigrain");
+  if (facts.ww_pct === 0) {
+    tags.add("white_flour");
+    tags.add("sandwich_loaf");
+  }
+  return tags;
+}
+
+function evaluateRecommendedFor(course: BBPDC20Course, recipeTags: ReadonlySet<string>): SoftTierResult {
+  let overlap = 0;
+  const matched: string[] = [];
+  for (const tag of course.recommended_for) {
+    if (recipeTags.has(tag) && RECIPE_TAG_VOCAB.has(tag)) {
+      overlap++;
+      matched.push(tag);
+    }
+  }
+  if (overlap > 0) {
+    return {
+      reason: { tier: "recommended_for", verdict: "match", evidence: `Tags overlap: ${matched.join(", ")}` },
+      score: overlap,
+    };
+  }
+  return {
+    reason: { tier: "recommended_for", verdict: "neutral", evidence: "No tag overlap with course" },
+    score: 0,
+  };
 }
 
 /* Intent gate helper */
