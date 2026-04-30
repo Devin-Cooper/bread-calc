@@ -1,36 +1,80 @@
+/* Role pill — comic-action stamp: filled accent circle/oval with paper text.
+ * Popover listbox keeps the same gallery-card chrome from prior phases.
+ * Per spec C §5 (role-pill.css row).
+ */
+
 .role-pill-host {
   position: relative;
   display: inline-block;
 }
 
+/* Base pill — filled accent-fg stamp */
 .role-pill {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  padding: var(--space-1) var(--space-3);
-  background: var(--color-bg-canvas);
-  border: 1px solid var(--color-border);
+  padding: 2px var(--space-2);
+  background: var(--color-accent-fg);
+  color: var(--color-fg-on-accent);
+  border: none;
   border-radius: var(--radius-pill);
-  color: var(--color-fg-default);
-  font: inherit;
+  box-shadow: var(--shadow-stamp);
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--weight-bold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.4;
   cursor: pointer;
-  min-height: 32px;
+  min-height: 26px;
 }
-.role-pill:hover { background: var(--color-bg-muted); }
+.role-pill:hover {
+  filter: brightness(1.08);
+}
+
+/* Inferred / derived — lighter stamp with dashed outline hint */
 .role-pill.is-derived {
+  background: var(--color-bg-muted);
+  color: var(--color-fg-muted);
+  box-shadow: 1px 1px 0 var(--color-border-strong);
   font-style: italic;
-  color: var(--color-fg-subtle);
-  border-style: dashed;
+  border: var(--border-hairline) dashed var(--color-border-strong);
 }
 
-.role-pill-caret { color: var(--color-fg-subtle); font-size: 10px; }
+/* Per-role color coding via data-role attribute on the pill button */
+.role-pill[data-role="flour"]     { background: var(--ink-800); color: var(--paper-50); }
+.role-pill[data-role="salt"]      { background: var(--ink-800); color: var(--paper-50); }
+.role-pill[data-role="wet"]       { background: var(--info-600, var(--ink-600)); color: var(--paper-50); }
+.role-pill[data-role="fat"]       { background: var(--warn-600, var(--crust-500)); color: var(--ink-900); }
+.role-pill[data-role="sweetener"] { background: var(--crust-600); color: var(--paper-50); }
+.role-pill[data-role="yeast"]     { background: var(--success-600, var(--ink-600)); color: var(--paper-50); }
+.role-pill[data-role="leavener"]  { background: var(--info-600, var(--ink-600)); color: var(--paper-50); }
+.role-pill[data-role="inclusion"] {
+  background: var(--paper-300);
+  color: var(--ink-900);
+  box-shadow: 1px 1px 0 var(--ink-900);
+}
+.role-pill[data-role="enrichment"] {
+  background: var(--crust-100);
+  color: var(--ink-900);
+  box-shadow: 1px 1px 0 var(--crust-700);
+}
 
+/* Caret indicator */
+.role-pill-caret {
+  color: inherit;
+  opacity: 0.75;
+  font-size: 10px;
+}
+
+/* Popover listbox — gallery-card chrome with stamped shadow */
 .role-popover {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   background: var(--color-bg-surface);
-  border: 1px solid var(--color-border);
+  border: var(--border-hairline) solid var(--color-border-strong);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-overlay);
   padding: var(--space-1);
@@ -40,6 +84,7 @@
   flex-direction: column;
 }
 
+/* Option buttons inside the popover */
 .role-option {
   text-align: left;
   background: transparent;
@@ -47,8 +92,23 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   color: var(--color-fg-default);
+  font-family: var(--font-sans);
+  font-size: var(--type-small-size);
   cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 .role-option:hover { background: var(--color-bg-muted); }
-.role-option[aria-selected="true"] { background: var(--color-accent-bg); color: var(--crust-700); }
-.role-option-inferred { color: var(--color-fg-muted); border-top: 1px solid var(--color-border); margin-top: var(--space-1); }
+.role-option[aria-selected="true"] {
+  background: var(--color-accent-bg);
+  color: var(--crust-700);
+  font-weight: var(--weight-bold);
+}
+.role-option-inferred {
+  color: var(--color-fg-muted);
+  border-top: 1px solid var(--color-border);
+  margin-top: var(--space-1);
+  text-transform: none;
+  font-style: italic;
+  letter-spacing: 0;
+}

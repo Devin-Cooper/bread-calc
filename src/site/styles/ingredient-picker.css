@@ -1,0 +1,101 @@
+/* Ingredient picker — combobox with stamped filed-card chrome.
+ * Per spec C §5 (ingredient-picker.ts row).
+ *
+ * Actual class/id usage (ingredient-picker.ts):
+ *   parent div  → #ingredient-picker
+ *   input       → #ing-search  (type="search", role="combobox")
+ *   list        → #ing-results (role="listbox", ul)
+ *   list items  → li[role="option"]
+ */
+
+#ingredient-picker {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  background: var(--color-bg-canvas);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+}
+#ingredient-picker:focus-within {
+  box-shadow: var(--shadow-stamp);
+}
+
+/* Label inside the picker — keep it from adding extra padding */
+#ingredient-picker label {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
+  color: var(--color-fg-muted);
+  padding: var(--space-1) var(--space-2) 0;
+}
+
+/* Input stays clean — no border/bg of its own; the host provides the chrome */
+#ing-search {
+  display: block;
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: var(--space-1) var(--space-2) var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  color: var(--color-fg-default);
+  box-sizing: border-box;
+}
+#ing-search:focus { outline: none; }
+#ing-search::placeholder { color: var(--color-fg-subtle); }
+
+/* Suggestion dropdown — dot-textured panel with gallery border */
+#ing-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-bg-canvas);
+  background-image: var(--pattern-benday-soft);
+  background-size: var(--pattern-benday-size);
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-top: none;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  box-shadow: var(--shadow-overlay);
+  z-index: var(--z-popover);
+  max-height: 240px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Option items */
+#ing-results li[role="option"] {
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  font-size: var(--type-small-size);
+  font-family: var(--font-sans);
+  color: var(--color-fg-default);
+  border-bottom: var(--border-hairline) solid var(--color-border);
+}
+#ing-results li[role="option"]:last-child { border-bottom: none; }
+
+/* Selected item — 3px accent left-rule (preserves contrast, no fill) */
+#ing-results li[role="option"].is-selected,
+#ing-results li[role="option"][aria-selected="true"] {
+  border-left: 3px solid var(--color-accent-fg);
+  padding-left: calc(var(--space-3) - 3px);
+  background: var(--color-bg-muted);
+}
+
+#ing-results li[role="option"]:hover {
+  background: var(--color-bg-muted);
+}
+
+/* Category small label inside each option */
+#ing-results li small {
+  color: var(--color-fg-subtle);
+  font-size: var(--type-eyebrow-size);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-left: var(--space-1);
+}

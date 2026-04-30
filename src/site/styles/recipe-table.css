@@ -1,11 +1,18 @@
 /* Recipe-table layout — desktop ≥768px is a 5-column grid;
  * mobile <768px is a two-row stacked card per ingredient.
+ *
+ * Art-pop treatment (spec C §5): accent header bar + Ben-Day soft zebra wash
+ * on even rows; inputs stay clean (paper bg + 1px border; focus draws 1px
+ * accent ring via box-shadow — no width transition that shifts layout).
  */
 
 #recipe-table {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: 0;
+  border: var(--border-hairline) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
 }
 
 [role="row"] {
@@ -13,53 +20,121 @@
   grid-template-columns: minmax(0, 2fr) minmax(80px, 1fr) minmax(80px, 1fr) 120px 44px;
   gap: var(--space-2);
   align-items: center;
-  padding: var(--space-2) 0;
+  padding: var(--space-2) var(--space-3);
 }
 
+/* Accent header bar — solid accent-fg background with paper-color uppercase labels */
 .row-header {
-  font-weight: 600;
-  color: var(--color-fg-muted);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-accent-fg);
+  color: var(--color-fg-on-accent);
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: uppercase;
 }
 
 .row-header [role="columnheader"]:nth-child(2),
 .row-header [role="columnheader"]:nth-child(3) {
-  padding-left: var(--space-3);
+  padding-left: var(--space-1);
 }
 .row-header [role="columnheader"]:nth-child(4) {
-  padding-left: var(--space-3);
+  padding-left: var(--space-1);
+}
+
+/* Help-icon buttons inside header — keep them paper-color on accent bg */
+.row-header .help-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-fg-on-accent);
+  opacity: 0.75;
+  font-size: 0.625rem;
+  padding: 0 2px;
+  vertical-align: middle;
+}
+.row-header .help-icon:hover { opacity: 1; }
+
+/* Data rows — border-bottom hairline; even rows get soft Ben-Day wash */
+[role="row"]:not(.row-header) {
+  border-bottom: var(--border-hairline) solid var(--color-border);
+  font-size: var(--type-body-size);
+  color: var(--color-fg-default);
+}
+[role="row"]:not(.row-header):last-child { border-bottom: none; }
+
+/* Ben-Day soft zebra on even data rows
+ * nth-child counts from the row-header, so body rows start at :nth-child(2).
+ * :nth-child(odd) among all rows = :nth-child(2), 4, 6 … = odd data rows.
+ * Use the direct nth-child offset: header=1, so even data rows = :nth-child(even). */
+[role="row"]:not(.row-header):nth-child(even) {
+  background-image: var(--pattern-benday-soft);
+  background-size: var(--pattern-benday-size);
 }
 
 [role="row"] .role-pill-host {
   justify-self: start;
 }
 
+/* Solved-grams read-only display */
 .solved-grams {
   color: var(--color-fg-muted);
   font-variant-numeric: tabular-nums;
+  padding-left: var(--space-1);
 }
 
+/* Inputs stay clean — paper bg + 1px border default; focus draws 1px accent
+ * ring via box-shadow (no border-width change to avoid layout shift). */
+#recipe-table input[type="number"],
+#recipe-table input[type="text"] {
+  width: 100%;
+  background: var(--color-bg-canvas);
+  color: var(--color-fg-default);
+  border: var(--border-hairline) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-sans);
+  font-size: var(--type-body-size);
+  font-variant-numeric: tabular-nums;
+  box-sizing: border-box;
+}
+#recipe-table input:focus {
+  outline: none;
+  border-color: var(--color-accent-fg);
+  box-shadow: 0 0 0 1px var(--color-accent-fg);
+}
+
+/* Derived (inferred) baker's % — still clean, just italicised */
 input.pct-derived {
   color: var(--color-fg-subtle);
   font-style: italic;
 }
 
+/* Remove-row action button */
 [role="row"] button[data-action="remove"] {
   width: 44px; height: 44px;
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
-  color: var(--color-fg-subtle);
+  color: var(--color-fg-icon);
   cursor: pointer;
 }
 [role="row"] button[data-action="remove"]:hover {
   background: var(--color-bg-muted);
-  color: var(--danger-600);
+  color: var(--color-accent-fg);
   border-color: var(--color-border);
 }
 
 @media (max-width: 767px) {
-  /* Two-row dense layout */
+  /* Reset the outer border/overflow so mobile cards show their own borders */
+  #recipe-table {
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+    gap: var(--space-1);
+  }
+
+  /* Two-row dense layout per ingredient card */
   [role="row"]:not(.row-header) {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -69,6 +144,7 @@ input.pct-derived {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     background: var(--color-bg-canvas);
+    background-image: none; /* suppress zebra wash on mobile cards */
     margin-bottom: var(--space-2);
   }
 

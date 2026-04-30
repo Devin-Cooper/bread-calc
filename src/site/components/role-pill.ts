@@ -19,6 +19,7 @@ export function mount(parent: HTMLElement, props: PillProps): void {
     parent.innerHTML = `
       <button type="button" class="role-pill ${props.isDerived ? "is-derived" : ""}"
               data-role-trigger
+              data-role="${props.isDerived ? "" : props.current}"
               aria-haspopup="listbox"
               aria-expanded="${isOpen}"
               aria-label="Role: ${props.current}${props.isDerived ? " (inferred)" : ""}. Click to change.">
