@@ -70,4 +70,38 @@ describe("recipe-table", () => {
     expect(store.getState().items.length).toBe(1);
     expect(store.getState().items[0]!.ingredient_id).toBe("water_tap");
   });
+
+  it("renders a role-pill per row", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 },
+    ]});
+    mountTable(root, store, db);
+    expect(root.querySelector("[data-role-trigger]")).not.toBeNull();
+  });
+
+  it("emits data-uid on each row", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 },
+      { uid: "ijklmnop02", ingredient_id: "water_tap",   grams: 320 },
+    ]});
+    mountTable(root, store, db);
+    const rows = root.querySelectorAll<HTMLElement>('[role="row"]:not(.row-header)');
+    expect(rows[0]?.dataset["uid"]).toBe("abcdefgh01");
+    expect(rows[1]?.dataset["uid"]).toBe("ijklmnop02");
+  });
+
+  it("dispatches set_role when a role-pill option is clicked", () => {
+    const root = document.createElement("div"); document.body.appendChild(root);
+    const store = createStore({ schema_version: "2.0", items: [
+      { uid: "abcdefgh01", ingredient_id: "bread_flour", grams: 500 },
+    ]});
+    mountTable(root, store, db);
+    const trigger = root.querySelector("[data-role-trigger]") as HTMLButtonElement;
+    trigger.click();
+    const wet = root.querySelector('[role="option"][data-role="wet"]') as HTMLElement;
+    wet.click();
+    expect(store.getState().items[0]!.role).toBe("wet");
+  });
 });

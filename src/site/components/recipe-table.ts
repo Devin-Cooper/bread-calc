@@ -3,6 +3,7 @@ import type { Store } from "../state.js";
 import { computeRecipe, inferRole } from "../../core/index.js";
 import { escapeHtml } from "../../core/escape.js";
 import { effectiveRecipe } from "../effective-recipe.js";
+import { mount as mountRolePill, type Role } from "./role-pill.js";
 
 export function mount(parent: HTMLElement, store: Store, db: Database): void {
   function render() {
@@ -67,9 +68,6 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         ? (derivedPct != null ? derivedPct.toFixed(1) : "")
         : `${item.bakers_pct}`;
       const pctClass = pctIsDerived ? "pct-derived" : "";
-      const meta = lookupCategoryAndLiquid(item.ingredient_id);
-      const displayRole = item.role ?? (meta ? inferRole(meta.category as never, meta.isLiquid) : "");
-      const roleClass = item.role ? "role" : "role role-derived";
       row.innerHTML = `
         <span role="cell">${escapeHtml(item.ingredient_id)}</span>
         ${gramsCell}
@@ -77,10 +75,25 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
                data-field="bakers_pct" data-index="${i}" value="${pctValue}" class="${pctClass}"
                title="${pctIsDerived ? "Derived from grams. Type to override." : "User-set baker's percent."}"
                aria-label="bakers percent for ${escapeHtml(item.ingredient_id)}" />
-        <span role="cell" class="${roleClass}">${escapeHtml(displayRole)}</span>
+        <span role="cell" class="role-pill-host" data-role-host="${i}"></span>
         <button role="cell" data-action="remove" data-index="${i}" aria-label="remove ${escapeHtml(item.ingredient_id)}">✕</button>
       `;
       parent.appendChild(row);
+    }
+    // Mount role-pills (separate from row HTML build to avoid escaping issues with the popover).
+    for (let i = 0; i < state.items.length; i++) {
+      const host = parent.querySelector<HTMLElement>(`[data-role-host="${i}"]`);
+      if (!host) continue;
+      const item = state.items[i]!;
+      const meta = lookupCategoryAndLiquid(item.ingredient_id);
+      const inferred = meta ? inferRole(meta.category as never, meta.isLiquid) : ("inclusion" as Role);
+      const current = (item.role ?? inferred) as Role;
+      const isDerived = item.role == null;
+      mountRolePill(host, {
+        current,
+        isDerived,
+        onSelect: (r) => store.dispatch({ type: "set_role", index: i, role: r }),
+      });
     }
     if (activeKey) {
       const restored = parent.querySelector(`[data-focus-key="${activeKey}"]`) as HTMLElement | null;
