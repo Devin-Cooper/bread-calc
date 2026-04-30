@@ -51,6 +51,7 @@ export function mount(parent: HTMLElement, store: Store, db: Database): void {
         </div>
 
         ${renderCourseBlock(store.getState(), db) ?? ""}
+        ${renderNotesBlock(store.getState()) ?? ""}
 
         <table class="kc-table">
           <thead>
@@ -132,6 +133,19 @@ function renderCrustSizeSubline(recipe: Recipe, course: BBPDC20Course): string |
   if (size) parts.push(`Size:&nbsp;${escapeHtml(size)}`);
   if (parts.length === 0) return null;
   return parts.join("&nbsp;·&nbsp;");
+}
+
+function renderNotesBlock(recipe: Recipe): string | null {
+  const text = recipe.extended_notes ?? "";
+  const paragraphs = text.split(/\n\n+/).map((p) => p.trim()).filter((p) => p.length > 0);
+  if (paragraphs.length === 0) return null;
+  const ps = paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join("");
+  return `
+    <div class="kc-notes-block">
+      <h2 class="kc-section-heading">Notes</h2>
+      ${ps}
+    </div>
+  `;
 }
 
 function renderCourseBlock(recipe: Recipe, db: Database): string | null {

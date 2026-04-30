@@ -121,4 +121,23 @@ describe("kitchen-card component", () => {
     expect(courseBlock!.textContent).toContain("11 — Dough");
     expect(parent.querySelector(".kc-course-subline")).toBeNull();
   });
+
+  it("notes block: extended_notes renders multi-paragraph as separate <p> elements", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, extended_notes: "First paragraph.\n\nSecond paragraph." });
+    mount(parent, store, db);
+    const notesBlock = parent.querySelector(".kc-notes-block");
+    expect(notesBlock).not.toBeNull();
+    const paragraphs = notesBlock!.querySelectorAll("p");
+    expect(paragraphs.length).toBe(2);
+    expect(paragraphs[0]!.textContent).toBe("First paragraph.");
+    expect(paragraphs[1]!.textContent).toBe("Second paragraph.");
+  });
+
+  it("notes block: omitted when extended_notes is undefined", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, db);
+    expect(parent.querySelector(".kc-notes-block")).toBeNull();
+  });
 });
