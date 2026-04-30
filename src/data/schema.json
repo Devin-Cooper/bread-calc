@@ -119,6 +119,46 @@
       "additionalProperties": true,
       "allOf": [{ "$ref": "#/$defs/ForbiddenKeys" }]
     },
+    "BBPDC20TemplateItem": {
+      "type": "object",
+      "required": ["ingredient_id", "grams"],
+      "additionalProperties": false,
+      "properties": {
+        "ingredient_id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "grams": { "type": "number", "minimum": 0 }
+      },
+      "allOf": [{ "$ref": "#/$defs/ForbiddenKeys" }]
+    },
+    "BBPDC20TemplateEntry": {
+      "type": "object",
+      "required": ["id", "name", "course", "items"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "name": { "type": "string", "minLength": 1 },
+        "course": { "type": "string", "minLength": 1 },
+        "notes": { "type": "string" },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/BBPDC20TemplateItem" }
+        }
+      },
+      "allOf": [{ "$ref": "#/$defs/ForbiddenKeys" }]
+    },
+    "BBPDC20TemplatesFile": {
+      "type": "object",
+      "required": ["schema_version", "attribution", "entries"],
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": { "const": "1.0" },
+        "attribution": { "type": "string" },
+        "entries": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/BBPDC20TemplateEntry" }
+        }
+      }
+    },
     "Defaults": {
       "type": "object",
       "required": ["default_free_water_factors_by_category", "default_bake_loss_pct", "default_machine_id"],
@@ -218,6 +258,7 @@
     { "$ref": "#/$defs/IngredientsFile" },
     { "$ref": "#/$defs/FloursFile" },
     { "$ref": "#/$defs/BBPDC20RecipesFile" },
+    { "$ref": "#/$defs/BBPDC20TemplatesFile" },
     { "$ref": "#/$defs/MachinesFile" },
     { "$ref": "#/$defs/Defaults" }
   ]
