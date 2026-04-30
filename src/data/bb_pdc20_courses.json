@@ -54,7 +54,168 @@
         "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
         "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
       ],
-      "notes": "Manual page 13 cycle chart: total 3:25 (REST OFF: 2:54), Add Beep at approx. 45 min, separate 1-hour keep-warm hold (not included in total_minutes; model treats keep_warm as the post-cycle hold the user can cancel via the manual's page-16 step 8). Manual page 14 basic white recipe: 553g bread flour, 320g water, 6g rapid rise yeast — 57.9% hydration. Crust Control supports LIGHT/MEDIUM/DARK (manual page 18). Timer supported (manual page 17). Rest Off supported (manual page 12)."
+      "notes": "Manual page 13 cycle chart: total 3:25 MEDIUM (also 3:15 LIGHT / 3:35 DARK per recipe-book page 6 crust-time table), REST OFF: 2:54, Add Beep at approx. 45 min, separate 1-hour keep-warm hold (not included in total_minutes; model treats keep_warm as the post-cycle hold the user can cancel via the manual's page-16 step 8). Manual page 14 basic white recipe: 553g bread flour, 320g water, 6g rapid rise yeast — 57.9% hydration. Crust Control supports LIGHT/MEDIUM/DARK (manual page 18). Timer supported (manual page 17). Rest Off supported (manual page 12)."
+    },
+    {
+      "id": "whole_wheat",
+      "course_number": 2,
+      "name": "Whole Wheat",
+      "total_minutes": 200,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST cycle stabilizes ingredient temperature; same 31-minute REST length as Course 1 (computed from REST OFF delta: 3:20 - 2:49)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 22,
+          "target_temp_c": null,
+          "notes": "Duration estimated from Add Beep timing midpoint (53 min, manual range 48-58 min) minus REST length (31 min)."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual page 13: 'Approx. 48-58 min' from start — published as a range, not a single value (the only course on the BB-PDC20 with a ranged Add Beep timing)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 99,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band; sub-stage durations not published. Modeled as a single rise_1 stage."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 48,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from residual after Rest, Knead, and Rise are accounted for; manual does not publish bake duration explicitly."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["medium"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["whole_wheat", "high_hydration", "rye", "mixed_grain"],
+      "recommended_for_notes": "Optimized for whole-wheat or mixed-grain loaves with longer rises. Recipe book (page 8) shows 100% Whole Wheat, Whole Wheat Walnut, Light Rye, and Pumpernickel variants — hydration ranges 60-80%.",
+      "hydration_range": { "min_pct": 60, "max_pct": 80, "ideal_pct": 67 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:20 (REST OFF: 2:49), Add Beep at approx. 48-58 min RANGE (the only ranged Add Beep on the catalog), separate 1-hour keep-warm hold. Crust Control NOT available (page 18) — single MEDIUM crust shade. Timer supported (page 17). Recipe PDF (page 8): 100% Whole Wheat 553g WW + 370g water = 67% hydration; 100% WW Walnut 563g WW + 450g water = 80% hydration; Light Rye mixed flour 60% hydration; Pumpernickel mixed flour 77% hydration."
+    },
+    {
+      "id": "european",
+      "course_number": 3,
+      "name": "European",
+      "total_minutes": 195,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 27,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length not directly measurable. Estimated from chart visual proportions (slightly shorter than Courses 1/2's 31 min)."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 16,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (43 min) - estimated REST length (27 min) = 16 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 43 min from start (page 13)."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 102,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart proportions; European has a longer bake than Course 1 White, producing a denser/darker crust at the fixed MEDIUM setting."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["medium"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["white_flour", "rustic", "sandwich_loaf", "lean_dough"],
+      "recommended_for_notes": "Rustic European-style white-flour loaves. Recipe book (page 9) covers French, Rustic Herb, Sesame, and Bacon Bread — all white-flour-based with 58-65% hydration. Manual flags this course as temperature-sensitive: results may suffer when room temperature exceeds 77°F (use chilled water).",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 58 },
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:15, Add Beep at approx. 43 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control NOT available (page 18) — single MEDIUM crust shade; Timer IS supported (page 17). Recipe PDF (page 9): French/Rustic/Sesame breads use 320g water + 553g bread flour = 58% hydration; Bacon Bread uses 360g water = 65%. Manual note: room temperature above 77°F may produce unsatisfactory results — use water chilled to 41°F."
+    },
+    {
+      "id": "multigrain",
+      "course_number": 4,
+      "name": "Multigrain",
+      "total_minutes": 205,
+      "stages": [
+        {
+          "name": "preheat",
+          "duration_minutes": 31,
+          "target_temp_c": null,
+          "notes": "REST OFF NOT supported on this course (manual page 12); REST length assumed equal to Courses 1/2 (31 min) since cycle structure mirrors Course 1 Basic White."
+        },
+        {
+          "name": "knead_1",
+          "duration_minutes": 14,
+          "target_temp_c": null,
+          "notes": "Duration: Add Beep timing (45 min) - assumed REST length (31 min) = 14 min."
+        },
+        {
+          "name": "add_ins_beep",
+          "duration_minutes": 0,
+          "target_temp_c": null,
+          "notes": "Manual: Add Beep at approximately 45 min from start (page 13). Recipe book Multigrain Raisin Bread (page 10) has the user add raisins at this beep."
+        },
+        {
+          "name": "rise_1",
+          "duration_minutes": 110,
+          "target_temp_c": null,
+          "notes": "Manual chart shows two unpublished Punch Down events within Rise band; structure mirrors Course 1 Basic White."
+        },
+        {
+          "name": "bake",
+          "duration_minutes": 50,
+          "target_temp_c": null,
+          "notes": "Bake duration estimated from chart visual proportions; identical to Course 1 White at MEDIUM crust."
+        }
+      ],
+      "bakes": true,
+      "loaf_sizes": ["1.5lb", "2lb"],
+      "crust_shades": ["light", "medium", "dark"],
+      "inclusions_beep": true,
+      "dietary_modes": [],
+      "recommended_for": ["multigrain", "whole_grain", "mixed_flour", "seeded"],
+      "recommended_for_notes": "Recipe book (page 10) shows 7 Grain, 12 Grain, and Multigrain Raisin breads using mixed flours — whole wheat + bread + grain cereals + seeds. Hydration 57-68% across recipes.",
+      "hydration_range": { "min_pct": 55, "max_pct": 70, "ideal_pct": 60 },
+      "whole_wheat_max_pct": 100,
+      "yeast_compatibility": ["instant", "active_dry"],
+      "confidence": "verified",
+      "sources": [
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_e.pdf",
+        "https://www.zojirushi.com/servicesupport/manuals/manual_pdf/bb_pdc20_recipe_e.pdf"
+      ],
+      "notes": "Manual page 13 cycle chart: total 3:15 LIGHT / 3:25 MEDIUM / 3:35 DARK, Add Beep at approx. 45 min, separate 1-hour keep-warm hold. REST OFF NOT supported (page 12); Crust Control IS supported (page 18); Timer supported (page 17). Recipe PDF (page 10): 7 Grain Bread 310g water + 545g grain mix = 57% hydration; 12 Grain ~330g water; Multigrain Raisin 320g water + 521g grain = 61%."
     }
   ]
 }
