@@ -12,6 +12,7 @@ import { mount as mountTipStrip } from "./components/tip-strip.js";
 import { mount as mountDrawer, applyTheme } from "./components/settings-drawer.js";
 import { mount as mountHeadline } from "./components/recipe-headline.js";
 import { mount as mountZoneBand } from "./components/zone-band.js";
+import { mount as mountShowMath } from "./components/show-math.js";
 import { saveRecipeAsFile, readRecipeFile } from "./persistence/file-io.js";
 
 import ingredientsFile from "../data/ingredients.json" with { type: "json" };
@@ -112,6 +113,7 @@ async function loadInitialRecipe(): Promise<Recipe> {
   });
   mountZoneBand(document.querySelector("#zone-band") as HTMLElement, store, db);
   mountWarnings(document.querySelector("#warnings-panel") as HTMLElement, store, db);
+  mountShowMath(document.querySelector("#show-math-section") as HTMLElement, store, db);
 
   let timer: number | undefined;
   store.subscribe(() => {

@@ -10,6 +10,7 @@
 @import url("./styles/role-pill.css");
 @import url("./styles/recipe-table.css");
 @import url("./styles/warnings-panel.css");
+@import url("./styles/show-math.css");
 
 * { box-sizing: border-box; }
 
