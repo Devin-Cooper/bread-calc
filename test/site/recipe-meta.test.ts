@@ -126,4 +126,40 @@ describe("recipe-meta component", () => {
     ta.dispatchEvent(new Event("input"));
     expect("extended_notes" in store.getState()).toBe(false);
   });
+  it("renders one input per bake hint", () => {
+    const parent = document.createElement("div");
+    mount(parent, createStore({ ...baseRecipe, bake_hints: ["a", "b", "c"] }), minimalDb);
+    expect(parent.querySelectorAll(".bake-hints-list input[type='text']").length).toBe(3);
+  });
+  it("'+ Add hint' button appends a new empty hint", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe });
+    mount(parent, store, minimalDb);
+    (parent.querySelector(".bake-hint-add") as HTMLButtonElement).click();
+    expect(store.getState().bake_hints).toEqual([""]);
+  });
+  it("trash button removes a hint and dispatches the new array", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, bake_hints: ["a", "b"] });
+    mount(parent, store, minimalDb);
+    const trashBtns = parent.querySelectorAll(".bake-hint-remove");
+    (trashBtns[0] as HTMLButtonElement).click();
+    expect(store.getState().bake_hints).toEqual(["b"]);
+  });
+  it("removing the last hint clears the field (empty array → undefined)", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, bake_hints: ["only"] });
+    mount(parent, store, minimalDb);
+    (parent.querySelector(".bake-hint-remove") as HTMLButtonElement).click();
+    expect("bake_hints" in store.getState()).toBe(false);
+  });
+  it("editing a hint input dispatches the updated array", () => {
+    const parent = document.createElement("div");
+    const store = createStore({ ...baseRecipe, bake_hints: ["a", "b"] });
+    mount(parent, store, minimalDb);
+    const inputs = parent.querySelectorAll(".bake-hints-list input[type='text']") as NodeListOf<HTMLInputElement>;
+    inputs[1]!.value = "B-edited";
+    inputs[1]!.dispatchEvent(new Event("input"));
+    expect(store.getState().bake_hints).toEqual(["a", "B-edited"]);
+  });
 });
