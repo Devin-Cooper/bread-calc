@@ -194,7 +194,7 @@
           { "uid": "u_pn_05_rye", "ingredient_id": "rye_flour_dark", "grams": 98 },
           { "uid": "u_pn_06_corn", "ingredient_id": "cornmeal", "grams": 35 },
           { "uid": "u_pn_07_sugar", "ingredient_id": "sugar_granulated", "grams": 48 },
-          { "uid": "u_pn_08_molas", "ingredient_id": "molasses", "grams": 40 },
+          { "uid": "u_pn_08_molas", "ingredient_id": "molasses_dark", "grams": 40 },
           { "uid": "u_pn_09_oil", "ingredient_id": "vegetable_oil", "grams": 24 },
           { "uid": "u_pn_10_drymilk", "ingredient_id": "milk_powder_nonfat", "grams": 8 },
           { "uid": "u_pn_11_salt", "ingredient_id": "salt_table", "grams": 10 },

@@ -99,7 +99,7 @@
       "notes": "Alias for oil_olive_extra_virgin; used in BB-PDC20 herb and lean-style recipes." },
 
     { "id": "vegetable_oil", "name": "Vegetable oil (neutral)", "category": "fats",
-      "is_liquid": true, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100,
+      "is_liquid": false, "water_pct": 0, "salt_pct": 0, "sugar_pct": 0, "fat_pct": 100,
       "free_water_factor": 0, "density_g_per_cup": 218,
       "notes": "Neutral vegetable / soybean oil. USDA density 218 g/cup." },
 
@@ -128,12 +128,6 @@
       "is_liquid": false, "water_pct": 0.93, "salt_pct": 0.024, "sugar_pct": 51.5, "fat_pct": 31.0,
       "free_water_factor": 0.5, "density_g_per_cup": 170, "usda_fdc_id": 169593,
       "notes": "Semisweet chocolate chips; alias for chocolate_semisweet_chips. Used in BB-PDC20 Chocolate Bread." },
-
-    { "id": "molasses", "name": "Molasses, dark", "category": "sweeteners",
-      "is_liquid": false, "water_pct": 21.0, "salt_pct": 0.04, "sugar_pct": 75, "fat_pct": 0.1,
-      "free_water_factor": 0.4, "density_g_per_cup": 337, "usda_fdc_id": 168820,
-      "flags": ["humectant_bound_water"],
-      "notes": "Dark molasses; alias for molasses_dark. Used in BB-PDC20 Pumpernickel Bread." },
 
     { "id": "dried_basil", "name": "Basil, dried", "category": "herbs_spices",
       "is_liquid": false, "water_pct": 6.0, "salt_pct": 0.04, "sugar_pct": 1.7, "fat_pct": 4.0,
