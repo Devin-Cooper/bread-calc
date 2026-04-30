@@ -25,7 +25,7 @@
   display: flex; align-items: center; justify-content: center;
   color: var(--color-fg-subtle);
   pointer-events: none;
-  z-index: 2;
+  z-index: 0;
 }
 .zone-segment:last-of-type { border-right: none; }
 .zone-segment.is-active {
@@ -35,20 +35,29 @@
 .zone-segment-label {
   font-variant: small-caps;
   letter-spacing: 0.04em;
+  background: var(--color-bg-muted);
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  position: relative;
+  z-index: 2;
+}
+.zone-segment.is-active .zone-segment-label {
+  background: var(--color-accent-bg);
 }
 
 .zone-tick {
   position: absolute;
-  bottom: 4px;
-  transform: translateX(-50%);
-  width: 3px; height: 30%;
-  background: var(--color-fg-subtle);
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 3px; height: 70%;
+  background: var(--color-fg-default);
+  opacity: 0.55;
   border: none; padding: 0;
   cursor: pointer;
   z-index: 1;
   border-radius: 2px;
 }
-.zone-tick:hover { background: var(--color-fg-default); }
+.zone-tick:hover { opacity: 1; background: var(--color-fg-default); }
 .zone-tick:focus-visible {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
