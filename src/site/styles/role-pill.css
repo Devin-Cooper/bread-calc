@@ -1,0 +1,54 @@
+.role-pill-host {
+  position: relative;
+  display: inline-block;
+}
+
+.role-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-bg-canvas);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-fg-default);
+  font: inherit;
+  cursor: pointer;
+  min-height: 32px;
+}
+.role-pill:hover { background: var(--color-bg-muted); }
+.role-pill.is-derived {
+  font-style: italic;
+  color: var(--color-fg-subtle);
+  border-style: dashed;
+}
+
+.role-pill-caret { color: var(--color-fg-subtle); font-size: 10px; }
+
+.role-popover {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-overlay);
+  padding: var(--space-1);
+  min-width: 160px;
+  z-index: var(--z-popover);
+  display: flex;
+  flex-direction: column;
+}
+
+.role-option {
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-fg-default);
+  cursor: pointer;
+}
+.role-option:hover { background: var(--color-bg-muted); }
+.role-option[aria-selected="true"] { background: var(--color-accent-bg); color: var(--crust-700); }
+.role-option-inferred { color: var(--color-fg-muted); border-top: 1px solid var(--color-border); margin-top: var(--space-1); }

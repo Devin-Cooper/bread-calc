@@ -7,6 +7,7 @@
 @import url("./styles/settings-drawer.css");
 @import url("./styles/snapshot-card.css");
 @import url("./styles/zone-band.css");
+@import url("./styles/role-pill.css");
 
 * { box-sizing: border-box; }
 
